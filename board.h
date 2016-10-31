@@ -71,7 +71,9 @@ public:
     void setCrossing(int x, int y, direction d, crossing c);
     track getTrack(int x, int y, direction d);
     void setTrack(int x, int y, direction d, track t);
-    
+    void resize(int height, int width);
+    int getNumRows() { return rows; };
+    int getNumCols() { return columns; };
 private:
     int rows;
     int columns;    //Note: counts full zig-zag cols; & not half-col at end

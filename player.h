@@ -15,6 +15,9 @@
 #define PLAYER_H
 
 #include <cstddef>
+#include <array>
+#include "train.h"
+#include "delivery.h"
 
 class player {
 public:
@@ -23,7 +26,11 @@ public:
     virtual ~player();
 private:
     static constexpr std::size_t num_deliveries = 3;
-
+    train trn;
+    short playerID;
+    int money;
+    bool active;
+    std::array<delivery,num_deliveries> deliv;
 };
 
 #endif /* PLAYER_H */

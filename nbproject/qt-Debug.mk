@@ -60,6 +60,7 @@ OBJECTS       = build/Debug/MinGW_Qt-Windows/board.o \
 DIST          =  board.h \
 		delivery.h \
 		direction.h \
+		engineer.h \
 		goods.h \
 		player.h \
 		terrain.h \
@@ -438,7 +439,8 @@ build/Debug/MinGW_Qt-Windows/delivery.o: delivery.cpp delivery.h
 build/Debug/MinGW_Qt-Windows/player.o: player.cpp player.h \
 		train.h \
 		goods.h \
-		delivery.h
+		delivery.h \
+		engineer.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/Debug/MinGW_Qt-Windows/player.o player.cpp
 
 build/Debug/MinGW_Qt-Windows/track.o: track.cpp track.h
@@ -558,6 +560,7 @@ build/Debug/MinGW_Qt-Windows/main.o: main.cpp C:/Qt/5.7/mingw53_32/include/QtWid
 		train.h \
 		goods.h \
 		delivery.h \
+		engineer.h \
 		track.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/Debug/MinGW_Qt-Windows/main.o main.cpp
 

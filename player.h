@@ -18,6 +18,7 @@
 #include <array>
 #include "train.h"
 #include "delivery.h"
+#include "engineer.h"
 
 class player {
 public:
@@ -30,6 +31,7 @@ private:
     short playerID;
     int money;
     bool active;
+    engineer eng;
     std::array<delivery,num_deliveries> deliv;
 };
 

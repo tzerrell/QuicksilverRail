@@ -5,37 +5,37 @@
  */
 
 /* 
- * File:   vertex.cpp
+ * File:   location.cpp
  * Author: tnc02_000
  * 
  * Created on October 31, 2016, 7:01 PM
  */
 
-#include "vertex.h"
+#include "location.h"
 #include <QtGui/QOpenGLTexture>
 
-std::map<terrain, QOpenGLTexture*> vertex::texture;
-std::map<terrain, QString> vertex::textureFilename;
-bool vertex::defaultTextureFilenamesInitialized = false;
+std::map<terrain, QOpenGLTexture*> location::texture;
+std::map<terrain, QString> location::textureFilename;
+bool location::defaultTextureFilenamesInitialized = false;
 
-vertex::vertex() {
+location::location() {
     if (!defaultTextureFilenamesInitialized)
         initializeDefaultTextureFilenames();
 }
 
-vertex::~vertex() {
+location::~location() {
 }
 
-QOpenGLTexture* vertex::getTexture() { 
+QOpenGLTexture* location::getTexture() { 
     auto it = texture.find(ter);
     if (it== texture.end()) {
-        vertex::loadTexture(ter);
+        location::loadTexture(ter);
         it = texture.find(ter);
     }
     return (*it).second;
 }
 
-void vertex::loadTexture(terrain t) {
+void location::loadTexture(terrain t) {
     //Note: the new and delete in this function correspond to each other. Since
     //texture is static, we don't need to deal with deletion in the dtor. The
     //only place other than here that this could be deleted is in unloadTexture
@@ -46,13 +46,13 @@ void vertex::loadTexture(terrain t) {
         texture.erase(it);
     }
     
-    QOpenGLTexture* newTexture = new QOpenGLTexture(QImage(vertex::textureFilename[t]).mirrored());
+    QOpenGLTexture* newTexture = new QOpenGLTexture(QImage(location::textureFilename[t]).mirrored());
     newTexture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
     newTexture->setMagnificationFilter(QOpenGLTexture::Linear);
     texture[t] = newTexture;
 }
 
-void vertex::unloadTexture(terrain t) {
+void location::unloadTexture(terrain t) {
     //This delete corresponds to the new of loadTexture
     
     auto it = texture.find(t);
@@ -62,11 +62,11 @@ void vertex::unloadTexture(terrain t) {
     }
 }
 
-void vertex::changeTextureFile(terrain t, QString newFilename) {
+void location::changeTextureFile(terrain t, QString newFilename) {
     textureFilename[t] = newFilename;
 }
 
-void vertex::initializeDefaultTextureFilenames() {
+void location::initializeDefaultTextureFilenames() {
     //TODO: This is just the first thing that came to mind; change
     textureFilename[terrain::City] = "res/terrCity.png";
     textureFilename[terrain::Desert] = "res/terrDesert.png";

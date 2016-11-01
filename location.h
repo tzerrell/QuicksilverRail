@@ -5,24 +5,24 @@
  */
 
 /* 
- * File:   vertex.h
+ * File:   location.h
  * Author: tnc02_000
  *
  * Created on October 31, 2016, 7:01 PM
  */
 
-#ifndef VERTEX_H
-#define VERTEX_H
+#ifndef LOCATION_H
+#define LOCATION_H
 
 #include <QtGui/QOpenGLTexture>
 
 #include "terrain.h"
 
-class vertex {
+class location {
 public:
-    vertex();
-    vertex(const vertex&) = delete;
-    virtual ~vertex();
+    location();
+    location(const location&) = delete;
+    virtual ~location();
     
     terrain getTerrain() { return ter; };
     void setTerrain(terrain t) { ter = t; };
@@ -40,5 +40,5 @@ private:
     static std::map<terrain, QString> textureFilename;
 };
 
-#endif /* VERTEX_H */
+#endif /* LOCATION_H */
 

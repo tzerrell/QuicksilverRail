@@ -65,8 +65,8 @@ public:
     board(const board& orig);
     virtual ~board();
     
-    terrain getVertex(int x, int y);
-    void setVertex(int x, int y, terrain t);
+    terrain getLocation(int x, int y);
+    void setLocation(int x, int y, terrain t);
     crossing getCrossing(int x, int y, direction d);
     void setCrossing(int x, int y, direction d, crossing c);
     track getTrack(int x, int y, direction d);

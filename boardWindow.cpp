@@ -22,10 +22,12 @@
 
 boardWindow::boardWindow(QWindow* parent)
         : QWindow(parent)
+        , subject(nullptr)
         , animating(false)
         , context(0)
         , view(10,10,50,50)    //TODO: Choose an appropriate default view
 {
+    surfaceFormat.setSamples(4);
     setSurfaceType(QWindow::OpenGLSurface);
 }
 
@@ -47,7 +49,9 @@ void boardWindow::render() {
     context->makeCurrent(this);
     if (uninitialized) {
         initializeOpenGLFunctions();
+        
         //other OpenGL initialization code goes here
+        glClearColor(1.0f,1.0f,1.0f,1.0f);
     }
     
     const qreal pixelRatio = devicePixelRatio();

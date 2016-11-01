@@ -30,6 +30,7 @@ public:
     boardWindow(const boardWindow&) = delete;
     virtual ~boardWindow();
     
+    void setFormat() { QWindow::setFormat(surfaceFormat); };
     void setAnimating(bool val) { 
         animating = val;
         if (animating) renderLater();
@@ -44,6 +45,7 @@ private:
     board* subject;
     bool animating;
     bool updatePending;
+    QSurfaceFormat surfaceFormat;
     QOpenGLContext *context;
     QRectF view;
 };

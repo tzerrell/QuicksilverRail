@@ -786,6 +786,32 @@ build/Debug/MinGW_Qt-Windows/main.o: main.cpp C:/Qt/5.7/mingw53_32/include/QtWid
 		C:/Qt/5.7/mingw53_32/include/QtGui/qtouchdevice.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qguiapplication.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qinputmethod.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QGuiApplication \
+		boardWindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QWindow \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qwindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QObject \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QEvent \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QMargins \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QRect \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qsurface.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qsurfaceformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qicon.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLFunctions \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglfunctions.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopengl.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qt_windows.h \
+		C:/Qt/5.7/mingw53_32/include/QtANGLE/GLES3/gl3.h \
+		C:/Qt/5.7/mingw53_32/include/QtANGLE/GLES3/gl3platform.h \
+		C:/Qt/5.7/mingw53_32/include/QtANGLE/KHR/khrplatform.h \
+		C:/Qt/5.7/mingw53_32/include/QtANGLE/GLES2/gl2.h \
+		C:/Qt/5.7/mingw53_32/include/QtANGLE/GLES2/gl2platform.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopengles2ext.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglext.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglcontext.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QScopedPointer \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QSurfaceFormat \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglversionfunctions.h \
 		board.h \
 		terrain.h \
 		direction.h \

@@ -12,6 +12,9 @@
  */
 
 #include <QApplication>
+#include <QtGui/QGuiApplication>
+
+#include "boardWindow.h"
 
 #include "board.h"
 #include "terrain.h"
@@ -22,7 +25,13 @@ int main(int argc, char *argv[]) {
     // initialize resources, if needed
     // Q_INIT_RESOURCE(resfile);
 
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
+    
+    boardWindow tempWindow;
+    tempWindow.resize(640,400);
+    tempWindow.show();
+    
+    tempWindow.setAnimating(true);
 
     // create and show your widgets here
 

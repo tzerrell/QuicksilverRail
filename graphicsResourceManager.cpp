@@ -12,7 +12,6 @@
  */
 
 #include "graphicsResourceManager.h"
-#include "board.h"
 
 #include <fstream>
 #include <iostream>

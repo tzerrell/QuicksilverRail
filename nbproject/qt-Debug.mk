@@ -777,10 +777,7 @@ build/Debug/MinGW_Qt-Windows/graphicsResourceManager.o: graphicsResourceManager.
 		C:/Qt/5.7/mingw53_32/include/QtCore/qset.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qcontiguouscache.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qsharedpointer.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qsharedpointer_impl.h \
-		board.h \
-		terrain.h \
-		direction.h
+		C:/Qt/5.7/mingw53_32/include/QtCore/qsharedpointer_impl.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/Debug/MinGW_Qt-Windows/graphicsResourceManager.o graphicsResourceManager.cpp
 
 build/Debug/MinGW_Qt-Windows/location.o: location.cpp location.h \

@@ -22,6 +22,7 @@
 #include "terrain.h"
 #include "player.h"
 #include "track.h"
+#include "graphicsResourceManager.h"
 
 void initializeLogging() {
     freopen("log/error.log","w",stderr);

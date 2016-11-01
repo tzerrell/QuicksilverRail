@@ -68,16 +68,16 @@ void vertex::changeTextureFile(terrain t, QString newFilename) {
 
 void vertex::initializeDefaultTextureFilenames() {
     //TODO: This is just the first thing that came to mind; change
-    textureFilename[terrain::City] = "terrCity.png";
-    textureFilename[terrain::Desert] = "terrDesert.png";
-    textureFilename[terrain::Forest] = "terrForest.png";
-    textureFilename[terrain::Hills] = "terrHills.png";
-    textureFilename[terrain::Jungle] = "terrJungle.png";
-    textureFilename[terrain::Mountains] = "terrMountains.png";
-    textureFilename[terrain::Plains] = "terrPlains.png";
-    textureFilename[terrain::Port] = "terrPort.png";
-    textureFilename[terrain::Swamp] = "terrSwamp.png";
-    textureFilename[terrain::Town] = "terrTown.png";
+    textureFilename[terrain::City] = "res/terrCity.png";
+    textureFilename[terrain::Desert] = "res/terrDesert.png";
+    textureFilename[terrain::Forest] = "res/terrForest.png";
+    textureFilename[terrain::Hills] = "res/terrHills.png";
+    textureFilename[terrain::Jungle] = "res/terrJungle.png";
+    textureFilename[terrain::Mountains] = "res/terrMountains.png";
+    textureFilename[terrain::Plains] = "res/terrPlains.png";
+    textureFilename[terrain::Port] = "res/terrPort.png";
+    textureFilename[terrain::Swamp] = "res/terrSwamp.png";
+    textureFilename[terrain::Town] = "res/terrTown.png";
     
     defaultTextureFilenamesInitialized = true;
 }

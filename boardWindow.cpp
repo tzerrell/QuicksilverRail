@@ -30,6 +30,7 @@ boardWindow::boardWindow(QWindow* parent)
         , animating(false)
         , context(0)
         , view(10,10,50,50)    //TODO: Choose an appropriate default view
+        , locationStripElementBufferIDs(nullptr)
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)
 {
@@ -106,7 +107,8 @@ void boardWindow::renderLater() {
     }
 }
 
-bool boardWindow::constructVertexBuffers() {
+bool boardWindow::constructGLBuffers() {
+    //construct a vertex buffer for the location icon quadrilaterals
     std::vector<GLfloat> vertexCoords;
     try {
         /* For each row, produce line of triangles like so:
@@ -146,9 +148,9 @@ bool boardWindow::constructVertexBuffers() {
         }
     }
     catch (const std::bad_alloc& ex) {
-            std::cerr << "Bad allocation in constructVertexBuffers. The board"
-                    << " is too large. Vertex buffers not constructed.\n";
-            return false;
+        std::cerr << "Bad allocation in constructVertexBuffers. The board"
+                << " is too large. Location vertex buffers not constructed.\n";
+        return false;
     }
     
     glDeleteBuffers(1, &locationVertexBufferID);    //if there are any previous contents, delete them
@@ -156,6 +158,46 @@ bool boardWindow::constructVertexBuffers() {
     glBindBuffer(GL_ARRAY_BUFFER, locationVertexBufferID);
     glBufferData(GL_ARRAY_BUFFER, vertexCoords.size() * sizeof(GLfloat),
             &vertexCoords[0], GL_STATIC_DRAW);
+    
+    //construct an element buffer for each strip of quads
+    std::vector<GLushort> vertexIndices;
+    std::vector<GLushort> stripStartIndices;
+    GLushort currIndex = 0;
+    try {
+        for (int i = 0; i < subject->getNumRows(); ++i) {
+            int rowParity = i%2;
+            for (int j = 0; j < subject->getNumCols() + 1 + rowParity; ++j) {
+                vertexIndices.push_back(currIndex);
+                if (j == 0) {
+                    stripStartIndices.push_back(currIndex);
+                }
+                ++currIndex;
+            }
+        }
+        stripStartIndices.push_back(currIndex);
+    }
+    catch (const std::bad_alloc& ex) {
+        std::cerr << "Bad allocation in constructGLBuffers. The board"
+                << " is too large. Location element buffers not constructed.\n";
+        std::cerr << "Warning: Partial construction of GLBuffers.\n";
+        return false;
+    }
+    
+    //TODO: need to delete and null out locationStripElementBufferIDs whenever
+    //the size of the board is changed, as we can't do that here (won't know
+    //how many rows there are & thus won't know how many buffers to delete).
+    if (locationStripElementBufferIDs != nullptr) {
+        glDeleteBuffers(subject->getNumRows(), locationStripElementBufferIDs);
+        delete[] locationStripElementBufferIDs;
+    }
+    locationStripElementBufferIDs = new GLuint[subject->getNumRows()];
+    glGenBuffers(subject->getNumRows(), locationStripElementBufferIDs);
+    for (int i = 0; i < subject->getNumRows(); ++i) {
+        glBindBuffer(GL_ARRAY_BUFFER, locationStripElementBufferIDs[i]);
+        glBufferData(GL_ARRAY_BUFFER, 
+                (stripStartIndices[i+1] - stripStartIndices[i])*sizeof(GLushort), 
+                &vertexIndices[stripStartIndices[i]], GL_STATIC_DRAW);
+    }
     
     //TODO: Same thing for connectionVertexBuffer
     

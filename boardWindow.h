@@ -43,7 +43,7 @@ protected:
     bool event(QEvent *event) Q_DECL_OVERRIDE;
     void exposeEvent(QExposeEvent *event) Q_DECL_OVERRIDE;
     
-    bool constructVertexBuffers();
+    bool constructGLBuffers();
 private:
     board* subject;
     bool animating;
@@ -53,7 +53,9 @@ private:
     QRectF view;
     
     GLuint locationVertexBufferID;
+    GLuint* locationStripElementBufferIDs;
     GLuint connectionVertexBufferID;
+    GLuint* connectionStripElementBuffersID;
     
     //Board graphical parameters. Things like how far apart vertices are
     const GLfloat locHorizSpacing;

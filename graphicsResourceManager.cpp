@@ -12,6 +12,7 @@
  */
 
 #include "graphicsResourceManager.h"
+#include "board.h"
 
 #include <fstream>
 #include <iostream>
@@ -75,7 +76,36 @@ bool graphicsResourceManager::createShaderProgram() {
     glCompileShader(vertShaderID);
     glGetShaderiv(vertShaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
     if ( infoLogLength > 0 ){
-        errorMessage.reserve(infoLogLength+1);
+        try {
+            errorMessage.reserve(infoLogLength+1);
+        }
+        catch (const std::length_error& ex) {
+            std::cerr << "Vertex shader compilation error. Shader program "
+                    << "not created. Shader compiler error log too long to "
+                    << "output.\n";
+            std::cerr << "Length error in handling previous error: " 
+                    << ex.what() << '\n';
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        catch (const std::bad_alloc& ex) {
+            std::cerr << "Vertex shader compilation error. Shader program "
+                    << "not created. Shader compiler error log too long to "
+                    << "output.\n";
+            std::cerr << "Bad allocation in handling previous error: " 
+                    << ex.what() << '\n';
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        catch (...) {
+            std::cerr << "Vertex shader compilation error. Shader program not "
+                    << "created. Unexpected exception while handling error.\n";
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
         glGetShaderInfoLog(vertShaderID, infoLogLength, NULL, &errorMessage[0]);
         std::cerr << "Vertex shader compilation error. Shader program "
                 << "not created. Shader compiler error log follows:\n"
@@ -92,7 +122,36 @@ bool graphicsResourceManager::createShaderProgram() {
     glCompileShader(fragShaderID);
     glGetShaderiv(fragShaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
     if ( infoLogLength > 0 ){
-        errorMessage.reserve(infoLogLength+1);
+        try {
+            errorMessage.reserve(infoLogLength+1);
+        }
+        catch (const std::length_error& ex) {
+            std::cerr << "Fragment shader compilation error. Shader program "
+                    << "not created. Shader compiler error log too long to "
+                    << "output.\n";
+            std::cerr << "Length error in handling previous error: " 
+                    << ex.what() << '\n';
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        catch (const std::bad_alloc& ex) {
+            std::cerr << "Fragment shader compilation error. Shader program "
+                    << "not created. Shader compiler error log too long to "
+                    << "output.\n";
+            std::cerr << "Bad allocation in handling previous error: " 
+                    << ex.what() << '\n';
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        catch (...) {
+            std::cerr << "Fragment shader compilation error. Shader program not "
+                    << "created. Unexpected exception while handling error.\n";
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
         glGetShaderInfoLog(fragShaderID, infoLogLength, NULL, &errorMessage[0]);
         std::cerr << "Fragment shader compilation error. Shader program "
                 << "not created. Shader compiler error log follows:\n"
@@ -111,7 +170,42 @@ bool graphicsResourceManager::createShaderProgram() {
     glLinkProgram(programID);
     glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &infoLogLength);
     if ( infoLogLength > 0 ){
-        errorMessage.reserve(infoLogLength+1);
+        try {
+            errorMessage.reserve(infoLogLength+1);
+        }
+        catch (const std::length_error& ex) {
+            std::cerr << "GLSL linker error. Shader program not "
+                    << "not created. Shader compiler error log too long to "
+                    << "output.\n";
+            std::cerr << "Length error in handling previous error: " 
+                    << ex.what() << '\n';
+            glDetachShader(programID, vertShaderID);
+            glDetachShader(programID, fragShaderID);
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        catch (const std::bad_alloc& ex) {
+            std::cerr << "GLSL linker error. Shader program not "
+                    << "not created. Shader compiler error log too long to "
+                    << "output.\n";
+            std::cerr << "Bad allocation in handling previous error: " 
+                    << ex.what() << '\n';
+            glDetachShader(programID, vertShaderID);
+            glDetachShader(programID, fragShaderID);
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        catch (...) {
+            std::cerr << "GLSL linker error. Shader program not "
+                    << "created. Unexpected exception while handling error.\n";            
+            glDetachShader(programID, vertShaderID);
+            glDetachShader(programID, fragShaderID);
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
         glGetProgramInfoLog(programID, infoLogLength, NULL, &errorMessage[0]);
         std::cerr << "GLSL linker error. Shader program not created. Error "
                 << "log follows:\n"

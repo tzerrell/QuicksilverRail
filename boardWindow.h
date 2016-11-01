@@ -42,6 +42,8 @@ public slots:
 protected:
     bool event(QEvent *event) Q_DECL_OVERRIDE;
     void exposeEvent(QExposeEvent *event) Q_DECL_OVERRIDE;
+    
+    bool constructVertexBuffers();
 private:
     board* subject;
     bool animating;
@@ -49,6 +51,14 @@ private:
     QSurfaceFormat surfaceFormat;
     QOpenGLContext *context;
     QRectF view;
+    
+    GLuint locationVertexBufferID;
+    GLuint connectionVertexBufferID;
+    
+    //Board graphical parameters. Things like how far apart vertices are
+    const GLfloat locHorizSpacing;
+    const GLfloat locVertSpacing;
+    //const GLfloat vertexIconWidth == locHorizSpacing
 };
 
 #endif /* BOARDWINDOW_H */

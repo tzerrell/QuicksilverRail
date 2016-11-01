@@ -5,20 +5,20 @@
  */
 
 /* 
- * File:   edge.cpp
+ * File:   connection.cpp
  * Author: tnc02_000
  * 
  * Created on October 31, 2016, 7:01 PM
  */
 
-#include "edge.h"
+#include "connection.h"
 
-edge::edge() {
+connection::connection() {
 }
 
-edge::edge(const edge& orig) {
+connection::connection(const connection& orig) {
 }
 
-edge::~edge() {
+connection::~connection() {
 }
 

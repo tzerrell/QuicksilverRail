@@ -6,16 +6,16 @@
                    projectFiles="true">
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/board.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/boardWindow.h</itemPath>
+      <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/connection.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/delivery.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/direction.h</itemPath>
-      <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/edge.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/engineer.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/goods.h</itemPath>
+      <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/location.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/player.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/terrain.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/track.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/train.h</itemPath>
-      <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/location.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -26,8 +26,8 @@
                    projectFiles="true">
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/board.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/boardWindow.cpp</itemPath>
+      <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/connection.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/delivery.cpp</itemPath>
-      <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/edge.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/location.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/player.cpp</itemPath>
@@ -84,6 +84,16 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/connection.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/connection.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/delivery.cpp"
             ex="false"
             tool="1"
@@ -95,16 +105,6 @@
             flavor2="0">
       </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/direction.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/edge.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/edge.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -122,6 +122,11 @@
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/location.cpp"
             ex="false"
             tool="1"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/location.h"
+            ex="false"
+            tool="3"
             flavor2="0">
       </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/player.cpp"
@@ -155,11 +160,6 @@
             flavor2="0">
       </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/train.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/location.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -211,6 +211,16 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/connection.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/connection.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/delivery.cpp"
             ex="false"
             tool="1"
@@ -222,16 +232,6 @@
             flavor2="0">
       </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/direction.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/edge.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/edge.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -249,6 +249,11 @@
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/location.cpp"
             ex="false"
             tool="1"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/location.h"
+            ex="false"
+            tool="3"
             flavor2="0">
       </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/player.cpp"
@@ -282,11 +287,6 @@
             flavor2="0">
       </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/train.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/location.h"
             ex="false"
             tool="3"
             flavor2="0">

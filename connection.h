@@ -5,23 +5,23 @@
  */
 
 /* 
- * File:   edge.h
+ * File:   connection.h
  * Author: tnc02_000
  *
  * Created on October 31, 2016, 7:01 PM
  */
 
-#ifndef EDGE_H
-#define EDGE_H
+#ifndef CONNECTION_H
+#define CONNECTION_H
 
-class edge {
+class connection {
 public:
-    edge();
-    edge(const edge& orig);
-    virtual ~edge();
+    connection();
+    connection(const connection& orig);
+    virtual ~connection();
 private:
 
 };
 
-#endif /* EDGE_H */
+#endif /* CONNECTION_H */
 

@@ -1,8 +1,8 @@
 INPUT(
 ./build/Debug/MinGW_Qt-Windows/board.o
 ./build/Debug/MinGW_Qt-Windows/boardWindow.o
+./build/Debug/MinGW_Qt-Windows/connection.o
 ./build/Debug/MinGW_Qt-Windows/delivery.o
-./build/Debug/MinGW_Qt-Windows/edge.o
 ./build/Debug/MinGW_Qt-Windows/location.o
 ./build/Debug/MinGW_Qt-Windows/player.o
 ./build/Debug/MinGW_Qt-Windows/track.o

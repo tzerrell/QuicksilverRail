@@ -29,7 +29,7 @@ boardWindow::boardWindow(QWindow* parent)
         , subject(nullptr)
         , animating(false)
         , context(0)
-        , view(10,10,50,50)    //TODO: Choose an appropriate default view
+        , view(-10,-10,50,50)    //TODO: Choose an appropriate default view
         , locationStripElementBufferIDs(nullptr)
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)

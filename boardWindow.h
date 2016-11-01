@@ -28,6 +28,7 @@ class boardWindow : public QWindow, protected QOpenGLFunctions {
 public:
     explicit boardWindow(QWindow* parent = 0);
     boardWindow(const boardWindow&) = delete;
+    boardWindow(const boardWindow&&) = delete;
     virtual ~boardWindow();
     
     void setFormat() { QWindow::setFormat(surfaceFormat); };

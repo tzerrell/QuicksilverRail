@@ -8,5 +8,6 @@ INPUT(
 ./build/Debug/MinGW_Qt-Windows/track.o
 ./build/Debug/MinGW_Qt-Windows/train.o
 ./build/Debug/MinGW_Qt-Windows/main.o
+./build/Debug/MinGW_Qt-Windows/qrc_images.o
 ./build/Debug/MinGW_Qt-Windows/moc_boardWindow.o
 );

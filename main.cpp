@@ -14,6 +14,8 @@
 #include <QApplication>
 #include <QtGui/QGuiApplication>
 
+#include <cstdio>
+#include <iostream>
 #include "boardWindow.h"
 
 #include "board.h"
@@ -21,19 +23,23 @@
 #include "player.h"
 #include "track.h"
 
-int main(int argc, char *argv[]) {
-    // initialize resources, if needed
-    // Q_INIT_RESOURCE(resfile);
+void initializeLogging() {
+    freopen("log/error.log","w",stderr);
+    freopen("log/info.log","w",stdout);
+    std::cout << "Logging to files enabled.";
+}
 
+int main(int argc, char *argv[]) {
+    initializeLogging();
+    
     QGuiApplication app(argc, argv);
     
+    // create and show your widgets here
     boardWindow tempWindow;
     tempWindow.resize(640,400);
     tempWindow.show();
     
     tempWindow.setAnimating(true);
-
-    // create and show your widgets here
-
+    
     return app.exec();
 }

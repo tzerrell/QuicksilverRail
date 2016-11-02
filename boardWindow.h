@@ -18,6 +18,8 @@
 
 #include <QtGui/QWindow>
 #include <QtGui/QOpenGLFunctions>
+#include <QtGui/QOpenGLBuffer>
+#include <QtGui/QOpenGLShaderProgram>
 
 #include <qopengl.h>
 
@@ -36,6 +38,8 @@ public:
         animating = val;
         if (animating) renderLater();
     };
+    
+    bool updateShaders(std::string vertShaderFile, std::string fragShaderFile);
 public slots:
     void render();
     void renderLater();
@@ -48,19 +52,27 @@ private:
     board* subject;
     bool animating;
     bool updatePending;
+    bool verbose;
     QSurfaceFormat surfaceFormat;
     QOpenGLContext *context;
     QRectF view;
     
-    GLuint locationVertexBufferID;
-    GLuint* locationStripElementBufferIDs;
-    GLuint connectionVertexBufferID;
-    GLuint* connectionStripElementBuffersID;
+    QOpenGLBuffer locationVertexBuffer;
+    std::vector<QOpenGLBuffer> locationStripElementBuffer;
+    QOpenGLBuffer connectionVertexBuffer;
+    std::vector<QOpenGLBuffer> connectionStripElementBuffer;
     
     //Board graphical parameters. Things like how far apart vertices are
     const GLfloat locHorizSpacing;
     const GLfloat locVertSpacing;
     //const GLfloat vertexIconWidth == locHorizSpacing
+    
+    ////
+    bool createShaderProgram();     //return whether successfully created. If false, the old shader program (if any) is retained in shaderProgramID
+    std::string readFileToString(std::string filename);
+    std::string vertexShaderFilename;
+    std::string fragmentShaderFilename;
+    QOpenGLShaderProgram shaderProgram;
 };
 
 #endif /* BOARDWINDOW_H */

@@ -107,6 +107,11 @@ void boardWindow::renderLater() {
     }
 }
 
+std::string boardWindow::readFileToString(std::string filename) {
+    
+}
+
+//TODO: Rewrite
 bool boardWindow::constructGLBuffers() {
     //construct a vertex buffer for the location icon quadrilaterals
     std::vector<GLfloat> vertexCoords;

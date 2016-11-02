@@ -18,6 +18,8 @@
 #include <QtGui/QMatrix4x4>
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 #include "board.h"
 
@@ -30,15 +32,17 @@ boardWindow::boardWindow(QWindow* parent)
         , animating(false)
         , context(0)
         , view(-10,-10,50,50)    //TODO: Choose an appropriate default view
-        , locationStripElementBufferIDs(nullptr)
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)
+        , verbose(true)
 {
+    subject = new board;    //TODO: do this in a reasonable way ...
     surfaceFormat.setSamples(4);
     setSurfaceType(QWindow::OpenGLSurface);
 }
 
 boardWindow::~boardWindow() {
+    delete subject;
     if (context) delete context;
 }
 
@@ -62,7 +66,9 @@ void boardWindow::render() {
         initializeOpenGLFunctions();
         
         //other OpenGL initialization code goes here
-        glClearColor(1.0f,1.0f,1.0f,1.0f);
+        updateShaders("generic.vertexshader", "generic.fragmentshader");    //TODO: adjust to allow custom filenames
+        constructGLBuffers();
+        glClearColor(0.7f,0.7f,0.7f,1.0f);
     }
     
     const qreal pixelRatio = devicePixelRatio();
@@ -74,6 +80,19 @@ void boardWindow::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     //TODO: render scene
+    //TODO: do this in a real way
+    locationVertexBuffer.bind();
+    locationStripElementBuffer[0].bind();
+    
+    int TODOoffset = 0;
+    
+    int vertPositionHandle = shaderProgram.attributeLocation("TODOposition"); //TODO
+    shaderProgram.enableAttributeArray(vertPositionHandle);
+    shaderProgram.setAttributeBuffer(vertPositionHandle, GL_FLOAT, TODOoffset, 
+            3, sizeof(GLfloat /*TODO*/));
+    
+    glDrawElements(GL_TRIANGLE_STRIP, 5, GL_UNSIGNED_SHORT, 0);
+    //TODO: End of test render
     
     
     context->swapBuffers(this);
@@ -107,14 +126,83 @@ void boardWindow::renderLater() {
     }
 }
 
+bool boardWindow::updateShaders(std::string vertShaderFile, std::string fragShaderFile) {
+    vertexShaderFilename = vertShaderFile;
+    fragmentShaderFilename = fragShaderFile;
+    return createShaderProgram();
+}
+
+/*
 std::string boardWindow::readFileToString(std::string filename) {
+    std::ostringstream codeStream;
+    std::ifstream fin;
     
+    if (verbose) {
+        std::cout << "Loading file \"" << filename << "\" to string.\n";
+    }
+    
+    fin.open(filename);
+    if(fin.is_open()) {
+        codeStream << fin.rdbuf();
+        fin.close();
+        return codeStream.str();
+    }
+    else {
+        std::cerr << "Unable to open file " << filename << "\n";
+        fin.close();
+        return std::string("");
+    }
+}
+*/
+
+bool boardWindow::createShaderProgram() {
+    QOpenGLShader vShader(QOpenGLShader::Vertex);
+    QOpenGLShader fShader(QOpenGLShader::Fragment);
+    if (!vShader.compileSourceFile(QString::fromStdString(vertexShaderFilename))) {
+        std::cerr << "Unable to compile vertex shader from \""
+                << vertexShaderFilename << "\"\n";
+        std::string utf8_log = fShader.log().toUtf8().constData();
+        std::cerr << "GLSL compiler errors:" << utf8_log << "\n";
+        return false;
+    }
+    if (!fShader.compileSourceFile(QString::fromStdString(fragmentShaderFilename))) {
+        std::cerr << "Unable to compile fragment shader from \""
+                << fragmentShaderFilename << "\"\n";
+        std::string utf8_log = fShader.log().toUtf8().constData();
+        std::cerr << "GLSL compiler errors:" << utf8_log << "\n";
+        return false;
+    }
+    
+    if (!shaderProgram.addShader(&vShader)) {
+        std::cerr << "Unable to add vertex shader to shader program.\n";
+        std::string utf8_log = shaderProgram.log().toUtf8().constData();
+        std::cerr << "OpenGL errors:" << utf8_log << "\n";
+        return false;
+    }
+    if (!shaderProgram.addShader(&fShader)) {
+        std::cerr << "Unable to add fragment shader to shader program.\n";
+        std::string utf8_log = shaderProgram.log().toUtf8().constData();
+        std::cerr << "OpenGL errors:" << utf8_log << "\n";
+        return false;
+    }
+    if (!shaderProgram.link()) {
+        std::cerr << "Unable to link shader program.\n";
+        std::string utf8_log = shaderProgram.log().toUtf8().constData();
+        std::cerr << "GLSL Linker errors:" << utf8_log << "\n";
+        return false;
+    }
+    if (!shaderProgram.bind()) {
+        std::cerr << "Unable to bind shader program to context.\n";
+        return false;
+    }
+    return true;
 }
 
 //TODO: Rewrite
 bool boardWindow::constructGLBuffers() {
     //construct a vertex buffer for the location icon quadrilaterals
     std::vector<GLfloat> vertexCoords;
+    if (verbose) std::cout << "Constructing locationVertexBuffer";
     try {
         /* For each row, produce line of triangles like so:
          * 2--4--6--8
@@ -154,15 +242,14 @@ bool boardWindow::constructGLBuffers() {
     }
     catch (const std::bad_alloc& ex) {
         std::cerr << "Bad allocation in constructVertexBuffers. The board"
-                << " is too large. Location vertex buffers not constructed.\n";
+                << " is too large. Location vertex buffer not constructed.\n";
         return false;
     }
-    
-    glDeleteBuffers(1, &locationVertexBufferID);    //if there are any previous contents, delete them
-    glGenBuffers(1, &locationVertexBufferID);
-    glBindBuffer(GL_ARRAY_BUFFER, locationVertexBufferID);
-    glBufferData(GL_ARRAY_BUFFER, vertexCoords.size() * sizeof(GLfloat),
-            &vertexCoords[0], GL_STATIC_DRAW);
+    locationVertexBuffer.create();
+    locationVertexBuffer.bind();
+    locationVertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    locationVertexBuffer.allocate(&vertexCoords[0], vertexCoords.size()*sizeof(vertexCoords[0]));
+    locationVertexBuffer.release();
     
     //construct an element buffer for each strip of quads
     std::vector<GLushort> vertexIndices;
@@ -188,20 +275,16 @@ bool boardWindow::constructGLBuffers() {
         return false;
     }
     
-    //TODO: need to delete and null out locationStripElementBufferIDs whenever
-    //the size of the board is changed, as we can't do that here (won't know
-    //how many rows there are & thus won't know how many buffers to delete).
-    if (locationStripElementBufferIDs != nullptr) {
-        glDeleteBuffers(subject->getNumRows(), locationStripElementBufferIDs);
-        delete[] locationStripElementBufferIDs;
-    }
-    locationStripElementBufferIDs = new GLuint[subject->getNumRows()];
-    glGenBuffers(subject->getNumRows(), locationStripElementBufferIDs);
     for (int i = 0; i < subject->getNumRows(); ++i) {
-        glBindBuffer(GL_ARRAY_BUFFER, locationStripElementBufferIDs[i]);
-        glBufferData(GL_ARRAY_BUFFER, 
-                (stripStartIndices[i+1] - stripStartIndices[i])*sizeof(GLushort), 
-                &vertexIndices[stripStartIndices[i]], GL_STATIC_DRAW);
+        QOpenGLBuffer currBuffer;
+        currBuffer.create();
+        currBuffer.bind();
+        currBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+        currBuffer.allocate(&vertexIndices[stripStartIndices[i]] 
+                , sizeof(vertexIndices[0])
+                * (stripStartIndices[i+1] - stripStartIndices[i]));
+        currBuffer.release();
+        locationStripElementBuffer.push_back(currBuffer);
     }
     
     //TODO: Same thing for connectionVertexBuffer

@@ -36,6 +36,8 @@ public:
         animating = val;
         if (animating) renderLater();
     };
+    ////
+    bool updateShaderFiles(std::string vertFile, std::string fragFile);
 public slots:
     void render();
     void renderLater();
@@ -44,6 +46,7 @@ protected:
     void exposeEvent(QExposeEvent *event) Q_DECL_OVERRIDE;
     
     bool constructGLBuffers();
+    void drawBoard();
 private:
     board* subject;
     bool animating;
@@ -61,6 +64,13 @@ private:
     const GLfloat locHorizSpacing;
     const GLfloat locVertSpacing;
     //const GLfloat vertexIconWidth == locHorizSpacing
+    
+    ////
+    bool createShaderProgram();     //return whether successfully created. If false, the old shader program (if any) is retained in shaderProgramID
+    std::string vertexShaderFilename;
+    std::string fragmentShaderFilename;
+    GLuint shaderProgramID;
+    bool verbose;
 };
 
 #endif /* BOARDWINDOW_H */

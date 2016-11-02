@@ -13,7 +13,10 @@
 
 #include "board.h"
 
-board::board() {
+board::board()
+        : rows(1)       //TODO: Let these actually come from something...
+        , columns(3)
+{
 }
 
 board::board(const board& orig) {

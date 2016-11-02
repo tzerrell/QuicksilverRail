@@ -18,6 +18,8 @@
 #include <QtGui/QMatrix4x4>
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 #include "board.h"
 
@@ -30,12 +32,15 @@ boardWindow::boardWindow(QWindow* parent)
         , animating(false)
         , context(0)
         , view(-10,-10,50,50)    //TODO: Choose an appropriate default view
+        , locationVertexBufferID(0)
         , locationStripElementBufferIDs(nullptr)
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)
 {
     surfaceFormat.setSamples(4);
     setSurfaceType(QWindow::OpenGLSurface);
+    
+    subject = new board;    //TODO: construct this in a smarter way; or at least do so in board
 }
 
 boardWindow::~boardWindow() {
@@ -62,7 +67,9 @@ void boardWindow::render() {
         initializeOpenGLFunctions();
         
         //other OpenGL initialization code goes here
-        glClearColor(1.0f,1.0f,1.0f,1.0f);
+        constructGLBuffers();
+        updateShaderFiles("generic.vertexshader", "generic.fragmentshader");
+        glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
     }
     
     const qreal pixelRatio = devicePixelRatio();
@@ -70,6 +77,9 @@ void boardWindow::render() {
     
     QMatrix4x4 renderMatrix;
     renderMatrix.ortho(view);
+    
+    //TODO
+    drawBoard();
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
@@ -79,6 +89,29 @@ void boardWindow::render() {
     context->swapBuffers(this);
     
     if (animating) renderLater();
+}
+
+void boardWindow::drawBoard() {
+    glBindBuffer(GL_ARRAY_BUFFER, locationVertexBufferID);
+    glVertexAttribPointer(
+       0,                  //TODO: make significant
+       3,                  // size
+       GL_FLOAT,           // type
+       GL_FALSE,           // normalized?
+       0,                  // stride
+       (void*)0            // array buffer offset
+    );
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, locationStripElementBufferIDs[0]);    //TODO: Program SegFaults with 0x0 in the pointer locationStripElementBufferIDs
+    glDrawElements(
+        GL_TRIANGLE_STRIP,  /* mode */
+        5,                  /* count */
+        GL_UNSIGNED_SHORT,  /* type */
+        (void*)0            /* element array buffer offset */
+    );
+    
+    
+    //TODO: Needs to be more thoroughly implemented
 }
 
 bool boardWindow::event(QEvent *event)
@@ -193,8 +226,8 @@ bool boardWindow::constructGLBuffers() {
     locationStripElementBufferIDs = new GLuint[subject->getNumRows()];
     glGenBuffers(subject->getNumRows(), locationStripElementBufferIDs);
     for (int i = 0; i < subject->getNumRows(); ++i) {
-        glBindBuffer(GL_ARRAY_BUFFER, locationStripElementBufferIDs[i]);
-        glBufferData(GL_ARRAY_BUFFER, 
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, locationStripElementBufferIDs[i]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
                 (stripStartIndices[i+1] - stripStartIndices[i])*sizeof(GLushort), 
                 &vertexIndices[stripStartIndices[i]], GL_STATIC_DRAW);
     }
@@ -203,3 +236,221 @@ bool boardWindow::constructGLBuffers() {
     
     return true;
 }
+
+
+bool boardWindow::updateShaderFiles(std::string vertFile, std::string fragFile) {
+    vertexShaderFilename = vertFile;
+    fragmentShaderFilename = fragFile;
+    return createShaderProgram();
+}
+
+bool boardWindow::createShaderProgram() {
+    std::ostringstream vertShaderCodeStream;
+    std::string vertShaderCode;
+    std::ostringstream fragShaderCodeStream;
+    std::string fragShaderCode;
+    std::ifstream fin;
+    
+    if (verbose) {
+        std::cout << "Creating GLSL shader program from vertex shader file \""
+                << vertexShaderFilename << "\" and fragment shader file \""
+                << fragmentShaderFilename << "\"\n";
+    }
+    
+    //Read shader code files into strings
+    fin.open(vertexShaderFilename);
+    if(fin.is_open()) {
+        vertShaderCodeStream << fin.rdbuf();
+        vertShaderCode = vertShaderCodeStream.str();
+    }
+    else {
+        std::cerr << "Unable to open vertex shader file "
+                << vertexShaderFilename << ". Shader program not created.\n";
+        return false;
+    }
+    fin.close();
+    
+    fin.open(fragmentShaderFilename);
+    if(fin.is_open()) {
+        fragShaderCodeStream << fin.rdbuf();
+        fragShaderCode = fragShaderCodeStream.str();
+    }
+    else {
+        std::cerr << "Unable to open fragment shader file "
+                << vertexShaderFilename << ". Shader program not created.\n";
+        return false;
+    }
+    fin.close();
+    
+    //Compile Shaders
+    GLuint vertShaderID = glCreateShader(GL_VERTEX_SHADER);
+    GLuint fragShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+    int infoLogLength;
+    std::vector<char> errorMessage;
+    
+    if (verbose) std::cout << "Compiling vertex shader\n";
+    const char* vertCodePtr = vertShaderCode.c_str();
+    glShaderSource(vertShaderID, 1, &vertCodePtr, NULL);    //yes, the & is correct, this requires an array of const char *
+    glCompileShader(vertShaderID);
+    glGetShaderiv(vertShaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
+    if ( infoLogLength > 1 ){
+        try {
+            errorMessage.reserve(infoLogLength+1);
+        }
+        catch (const std::length_error& ex) {
+            std::cerr << "Vertex shader compilation error. Shader program "
+                    << "not created. Shader compiler error log too long to "
+                    << "output.\n";
+            std::cerr << "Length error in handling previous error: " 
+                    << ex.what() << '\n';
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        catch (const std::bad_alloc& ex) {
+            std::cerr << "Vertex shader compilation error. Shader program "
+                    << "not created. Shader compiler error log too long to "
+                    << "output.\n";
+            std::cerr << "Bad allocation in handling previous error: " 
+                    << ex.what() << '\n';
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        catch (...) {
+            std::cerr << "Vertex shader compilation error. Shader program not "
+                    << "created. Unexpected exception while handling error.\n";
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        glGetShaderInfoLog(vertShaderID, infoLogLength, &infoLogLength, &errorMessage[0]);
+        std::cerr << "Vertex shader compilation error. Shader program "
+                << "not created. Shader compiler error log follows "
+                << "(Expect " << infoLogLength << " characters):\n"
+                << &errorMessage[0] << '\n';
+        std::cerr << "Vertex shader code:\n" << vertShaderCode << '\n';
+        //cleanup
+        glDeleteShader(vertShaderID);
+        glDeleteShader(fragShaderID);
+        return false;
+    }
+    
+    if (verbose) std::cout << "Compiling fragment shader\n";
+    const char* fragCodePtr = fragShaderCode.c_str();
+    glShaderSource(fragShaderID, 1, &fragCodePtr, NULL);    //yes, the & is correct, this requires an array of const char *
+    glCompileShader(fragShaderID);
+    glGetShaderiv(fragShaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
+    if ( infoLogLength > 1 ){
+        try {
+            errorMessage.reserve(infoLogLength+1);
+        }
+        catch (const std::length_error& ex) {
+            std::cerr << "Fragment shader compilation error. Shader program "
+                    << "not created. Shader compiler error log too long to "
+                    << "output.\n";
+            std::cerr << "Length error in handling previous error: " 
+                    << ex.what() << '\n';
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        catch (const std::bad_alloc& ex) {
+            std::cerr << "Fragment shader compilation error. Shader program "
+                    << "not created. Shader compiler error log too long to "
+                    << "output.\n";
+            std::cerr << "Bad allocation in handling previous error: " 
+                    << ex.what() << '\n';
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        catch (...) {
+            std::cerr << "Fragment shader compilation error. Shader program not "
+                    << "created. Unexpected exception while handling error.\n";
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        glGetShaderInfoLog(fragShaderID, infoLogLength, NULL, &errorMessage[0]);
+        std::cerr << "Fragment shader compilation error. Shader program "
+                << "not created. Shader compiler error log follows:\n"
+                << &errorMessage[0];            
+        //cleanup
+        glDeleteShader(vertShaderID);
+        glDeleteShader(fragShaderID);
+        return false;
+    }
+    
+    //Link GLSL program
+    if (verbose) std::cout << "Linking GLSL shader program\n";
+    GLuint programID = glCreateProgram();
+    glAttachShader(programID, vertShaderID);
+    glAttachShader(programID, fragShaderID);
+    glLinkProgram(programID);
+    glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &infoLogLength);
+    if ( infoLogLength > 1 ){
+        try {
+            errorMessage.reserve(infoLogLength+1);
+        }
+        catch (const std::length_error& ex) {
+            std::cerr << "GLSL linker error. Shader program not "
+                    << "not created. Shader compiler error log too long to "
+                    << "output.\n";
+            std::cerr << "Length error in handling previous error: " 
+                    << ex.what() << '\n';
+            glDetachShader(programID, vertShaderID);
+            glDetachShader(programID, fragShaderID);
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        catch (const std::bad_alloc& ex) {
+            std::cerr << "GLSL linker error. Shader program not "
+                    << "not created. Shader compiler error log too long to "
+                    << "output.\n";
+            std::cerr << "Bad allocation in handling previous error: " 
+                    << ex.what() << '\n';
+            glDetachShader(programID, vertShaderID);
+            glDetachShader(programID, fragShaderID);
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        catch (...) {
+            std::cerr << "GLSL linker error. Shader program not "
+                    << "created. Unexpected exception while handling error.\n";            
+            glDetachShader(programID, vertShaderID);
+            glDetachShader(programID, fragShaderID);
+            glDeleteShader(vertShaderID);
+            glDeleteShader(fragShaderID);
+            return false;
+        }
+        glGetProgramInfoLog(programID, infoLogLength, NULL, &errorMessage[0]);
+        std::cerr << "GLSL linker error. Shader program not created. Error "
+                << "log follows:\n"
+                << &errorMessage[0];
+        
+        //cleanup
+        glDetachShader(programID, vertShaderID);
+        glDetachShader(programID, fragShaderID);
+        glDeleteShader(vertShaderID);
+        glDeleteShader(fragShaderID);
+        return false;
+    }
+    
+    //cleanup
+    glDetachShader(programID, vertShaderID);
+    glDetachShader(programID, fragShaderID);
+    glDeleteShader(vertShaderID);
+    glDeleteShader(fragShaderID);
+    glDeleteProgram(programID);  //Delete old shader program (if no previous program, this does nothing, which is correct)
+    
+    //Set shader program to be what we just created
+    shaderProgramID = programID;
+    
+    return true;
+}
+
+
+

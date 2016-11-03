@@ -75,6 +75,8 @@ void boardWindow::testRender() {
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glDisableVertexAttribArray(0);
     
+    locationVertexBuffer.release();
+    
     context->swapBuffers(this);
 }
 
@@ -132,8 +134,10 @@ void boardWindow::render() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,6,GL_FLOAT, GL_FALSE,0,(void*)0);
     
-    //glDrawElements(GL_TRIANGLE_STRIP, 5, GL_UNSIGNED_SHORT, 0);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4 /*TODO*/);
+    glDrawElements(GL_TRIANGLE_STRIP, 5, GL_UNSIGNED_SHORT, 0);
+    //glDrawArrays(GL_TRIANGLE_STRIP, 0, 4 /*TODO*/);
+    locationVertexBuffer.release();
+    locationStripElementBuffer[0].release();
     //TODO: End of test render
     
     //TODO
@@ -161,7 +165,7 @@ bool boardWindow::event(QEvent *event)
 void boardWindow::exposeEvent(QExposeEvent *event)
 {
     Q_UNUSED(event);
-    if (isExposed()) render(); //testRender(); //TODOrender();
+    if (isExposed()) render(); //TODO: Can switch render function here for testing
 }
 
 void boardWindow::renderLater() {
@@ -302,7 +306,7 @@ bool boardWindow::constructTestBuffers() {
     }
     stripStartIndices.push_back(currIndex);
     for (int i = 0; i < subject->getNumRows(); ++i) {
-        QOpenGLBuffer currBuffer;
+        QOpenGLBuffer currBuffer(QOpenGLBuffer::IndexBuffer);
         currBuffer.create();
         currBuffer.bind();
         currBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);

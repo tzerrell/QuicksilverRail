@@ -117,25 +117,18 @@ void boardWindow::render() {
     
     //TODO: render scene
     //TODO: do this in a real way
-    locationVertexBuffer.bind();  //TODO: Removing this causes a crash
-    //locationStripElementBuffer[0].bind(); //TODO: Adding this breaks triangle visibility
+    locationVertexBuffer.bind();
+    locationStripElementBuffer[0].bind();
     
-    
-    
-    int vertPositionHandle = shaderProgram.attributeLocation("position"); //TODO
+    int vertPositionHandle = shaderProgram.attributeLocation("position");
     shaderProgram.enableAttributeArray(vertPositionHandle);
     shaderProgram.setAttributeBuffer(vertPositionHandle, GL_FLOAT, 0, 
             3, sizeof(GLfloat /*TODO*/));
     
-    //locationVertexBuffer.bind();  //TODO: Removing this is ok
-    locationStripElementBuffer[0].bind(); //TODO: Removing this is ok //Modifying it doesn't seem to affect which elements are drawn
-    
-    //TODO
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,6,GL_FLOAT, GL_FALSE,0,(void*)0);
     
     glDrawElements(GL_TRIANGLE_STRIP, 5, GL_UNSIGNED_SHORT, 0);
-    //glDrawArrays(GL_TRIANGLE_STRIP, 0, 4 /*TODO*/);
     locationVertexBuffer.release();
     locationStripElementBuffer[0].release();
     //TODO: End of test render
@@ -154,8 +147,7 @@ bool boardWindow::event(QEvent *event)
     switch (event->type()) {
     case QEvent::UpdateRequest:
         updatePending = false;
-        //TODO testRender();
-        render();
+        render();   //TODO: Can switch render function here for testing
         return true;
     default:
         return QWindow::event(event);
@@ -251,14 +243,8 @@ bool boardWindow::createShaderProgram() {
 bool boardWindow::constructTestBuffers() {
     std::vector<GLfloat> vertexCoords;
     if (verbose) std::cout << "Constructing test buffers.\n";
-    
-    /* Simple test form ... 
-    vertexCoords.push_back(-0.5); vertexCoords.push_back(-0.5); vertexCoords.push_back( 0.0);
-    vertexCoords.push_back( 0.5); vertexCoords.push_back(-0.5); vertexCoords.push_back( 0.0);
-    vertexCoords.push_back( 0.0); vertexCoords.push_back( 1.0); vertexCoords.push_back( 0.0);
-    /**/
+
     //TODO: Main form simplified ...
-    /**/
     for (int i = 0; i < 1; ++i) {
         int rowParity = i%2;
         for (int j = 0; j < 3 + 1 + rowParity; ++j) {

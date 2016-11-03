@@ -50,6 +50,9 @@ void boardWindow::initGL() {
     updateShaders("generic.vertexshader", "generic.fragmentshader");    //TODO: adjust to allow custom filenames
     projMatrixHandle = glGetUniformLocation(shaderProgram.programId(), "projectionMat");
     constructGLBuffers();
+    //TODO: Once I have objects at different heights, enable depth testing
+    //glEnable(GL_DEPTH_TEST);
+    //glDepthFunc(GL_LESS);
     glClearColor(0.7f,0.7f,0.7f,1.0f);
 }
 

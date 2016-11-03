@@ -954,8 +954,7 @@ build/Debug/MinGW_Qt-Windows/main.o: main.cpp C:/Qt/5.7/mingw53_32/include/QtWid
 		goods.h \
 		delivery.h \
 		engineer.h \
-		track.h \
-		graphicsResourceManager.h
+		track.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/Debug/MinGW_Qt-Windows/main.o main.cpp
 
 build/Debug/MinGW_Qt-Windows/qrc_images.o: qrc_images.cpp 

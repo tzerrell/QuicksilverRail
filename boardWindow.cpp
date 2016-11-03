@@ -31,7 +31,7 @@ boardWindow::boardWindow(QWindow* parent)
         , subject(nullptr)
         , animating(false)
         , context(0)
-        , view(-20,-20,50,50)    //TODO: Choose an appropriate default view
+        , view(-20,-30,40,40)    //TODO: Choose an appropriate default view
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)
         , verbose(true)
@@ -96,9 +96,9 @@ void boardWindow::render() {
             3, sizeof(GLfloat /*TODO*/));
     
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0,6,GL_FLOAT, GL_FALSE,0,(void*)0);
+    glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
     
-    glDrawElements(GL_TRIANGLE_STRIP, 5, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
     locationVertexBuffer.release();
     locationStripElementBuffer[0].release();
     //TODO: End of test render
@@ -212,18 +212,26 @@ bool boardWindow::constructGLBuffers() {
             int rowParity = i%2;
             for (int j = 0; j < subject->getNumCols() + 1 + rowParity; ++j) {
                 //lower left coord
-                vertexCoords.push_back((j - (rowParity)/2.0) * locHorizSpacing
-                        - locHorizSpacing/2.0);
-                vertexCoords.push_back((i - 1.0) * locVertSpacing
-                        - locHorizSpacing/2.0);
-                vertexCoords.push_back(0.0);
+                GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
+                GLfloat LLy = (i - 1.0) * locVertSpacing - locHorizSpacing/2.0;
+                GLfloat LLz = 0.0;
+                vertexCoords.push_back(LLx);
+                vertexCoords.push_back(LLy);
+                vertexCoords.push_back(LLz);
 
                 //upper left coord
-                vertexCoords.push_back((j - (rowParity)/2.0) * locHorizSpacing
-                        - locHorizSpacing/2.0);
-                vertexCoords.push_back((i - 1.0) * locVertSpacing
-                        + locHorizSpacing/2.0);
-                vertexCoords.push_back(0.0);
+                GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
+                GLfloat ULy = (i - 1.0) * locVertSpacing + locHorizSpacing/2.0;
+                GLfloat ULz = 0.0;
+                vertexCoords.push_back(ULx);
+                vertexCoords.push_back(ULy);
+                vertexCoords.push_back(ULz);
+                
+                if (verbose) {
+                    std::cout << "Adding vertices (" << LLx << ", " << LLy
+                            << ", " << LLz << ") and (" << ULx << ", " << ULy
+                            << ", " << ULz << ")\n";
+                }
             }
         }
     }

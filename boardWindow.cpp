@@ -211,6 +211,12 @@ bool boardWindow::constructGLBuffers() {
         for (int i = 0; i < subject->getNumRows(); ++i) {
             int rowParity = i%2;
             for (int j = 0; j < subject->getNumCols() + 1 + rowParity; ++j) {
+                //The formulas for these coordinates have two parts: the part
+                //with the i or j puts the center in the right place; the other
+                //term moves to where the vertex should be relative to the
+                //center. Note that rowParity is because every other row is
+                //shifted 50% in order to make a hex grid.
+                
                 //lower left coord
                 GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
                 GLfloat LLy = (i - 1.0) * locVertSpacing - locHorizSpacing/2.0;

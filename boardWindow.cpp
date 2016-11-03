@@ -102,16 +102,22 @@ void boardWindow::render() {
                 
         //other OpenGL initialization code goes here
         updateShaders("generic.vertexshader", "generic.fragmentshader");    //TODO: adjust to allow custom filenames
-        //TODO constructGLBuffers();
-        constructTestBuffers();
+        projMatrixHandle = glGetUniformLocation(shaderProgram.programId(), "projectionMat");
+        
+        //TODO 
+        constructGLBuffers();
+        //constructTestBuffers();
+        
         glClearColor(0.7f,0.7f,0.7f,1.0f);
     }
     
     const qreal pixelRatio = devicePixelRatio();
     glViewport(0, 0, width() * pixelRatio, height() * pixelRatio);
     
+    //Pass our orthographic projection matrix to GLSL
     QMatrix4x4 renderMatrix;
     renderMatrix.ortho(view);
+    glUniformMatrix4fv(projMatrixHandle, 1, GL_FALSE, renderMatrix.constData());
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
@@ -342,7 +348,7 @@ bool boardWindow::constructGLBuffers() {
                 vertexCoords.push_back((j - (rowParity)/2.0) * locHorizSpacing
                         - locHorizSpacing/2.0);
                 vertexCoords.push_back((i - 1.0) * locVertSpacing
-                        - locHorizSpacing/2.0);
+                        + locHorizSpacing/2.0);
                 vertexCoords.push_back(0.0);
             }
         }
@@ -383,7 +389,7 @@ bool boardWindow::constructGLBuffers() {
     }
     
     for (int i = 0; i < subject->getNumRows(); ++i) {
-        QOpenGLBuffer currBuffer;
+        QOpenGLBuffer currBuffer(QOpenGLBuffer::IndexBuffer);
         currBuffer.create();
         currBuffer.bind();
         currBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);

@@ -58,6 +58,7 @@ private:
     QSurfaceFormat surfaceFormat;
     QOpenGLContext *context;
     QRectF view;
+    GLuint projMatrixHandle;
     
     QOpenGLBuffer locationVertexBuffer;
     std::vector<QOpenGLBuffer> locationStripElementBuffer;

@@ -68,7 +68,8 @@ private:
     const GLfloat locVertSpacing;
     //const GLfloat vertexIconWidth == locHorizSpacing
     
-    ////
+    void initGL();
+    
     bool createShaderProgram();     //return whether successfully created. If false, the old shader program (if any) is retained in shaderProgramID
     std::string vertexShaderFilename;
     std::string fragmentShaderFilename;

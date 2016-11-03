@@ -46,6 +46,13 @@ boardWindow::~boardWindow() {
     if (context) delete context;
 }
 
+void boardWindow::initGL() {
+    updateShaders("generic.vertexshader", "generic.fragmentshader");    //TODO: adjust to allow custom filenames
+    projMatrixHandle = glGetUniformLocation(shaderProgram.programId(), "projectionMat");
+    constructGLBuffers();
+    glClearColor(0.7f,0.7f,0.7f,1.0f);
+}
+
 void boardWindow::render() {
     if (!isExposed()) return;
     
@@ -65,14 +72,7 @@ void boardWindow::render() {
     if (uninitialized) {
         if (verbose) std::cout << "Initializing boardWindow.\n";
         initializeOpenGLFunctions();
-                
-        //other OpenGL initialization code goes here
-        updateShaders("generic.vertexshader", "generic.fragmentshader");    //TODO: adjust to allow custom filenames
-        projMatrixHandle = glGetUniformLocation(shaderProgram.programId(), "projectionMat");
-        
-        constructGLBuffers();
-        
-        glClearColor(0.7f,0.7f,0.7f,1.0f);
+        initGL();   //other OpenGL initialization code goes here
     }
     
     const qreal pixelRatio = devicePixelRatio();

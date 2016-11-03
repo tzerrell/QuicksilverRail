@@ -142,29 +142,6 @@ bool boardWindow::updateShaders(std::string vertShaderFile, std::string fragShad
     return createShaderProgram();
 }
 
-/*
-std::string boardWindow::readFileToString(std::string filename) {
-    std::ostringstream codeStream;
-    std::ifstream fin;
-    
-    if (verbose) {
-        std::cout << "Loading file \"" << filename << "\" to string.\n";
-    }
-    
-    fin.open(filename);
-    if(fin.is_open()) {
-        codeStream << fin.rdbuf();
-        fin.close();
-        return codeStream.str();
-    }
-    else {
-        std::cerr << "Unable to open file " << filename << "\n";
-        fin.close();
-        return std::string("");
-    }
-}
-*/
-
 bool boardWindow::createShaderProgram() {
     QOpenGLShader vShader(QOpenGLShader::Vertex);
     QOpenGLShader fShader(QOpenGLShader::Fragment);

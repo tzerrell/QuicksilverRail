@@ -70,7 +70,6 @@ private:
     
     ////
     bool createShaderProgram();     //return whether successfully created. If false, the old shader program (if any) is retained in shaderProgramID
-    //std::string readFileToString(std::string filename); //TODO: Remove or re-add
     std::string vertexShaderFilename;
     std::string fragmentShaderFilename;
     QOpenGLShaderProgram shaderProgram;

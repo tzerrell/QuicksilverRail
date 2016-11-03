@@ -27,7 +27,7 @@
 void initializeLogging() {
     freopen("log/error.log","w",stderr);
     freopen("log/info.log","w",stdout);
-    std::cout << "Logging to files enabled.";
+    std::cout << "Logging to files enabled.\n";
     std::cout.flush();
 }
 

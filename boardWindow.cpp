@@ -46,6 +46,38 @@ boardWindow::~boardWindow() {
     if (context) delete context;
 }
 
+void boardWindow::testRender() {
+    if (!isExposed()) return;
+    
+    bool uninitialized = false;
+    if (!context) {
+        context = new QOpenGLContext(this); //TODO: is deleting in dtor right?
+        context->setFormat(requestedFormat());
+        context->create();
+        
+        uninitialized = true;
+    }
+    context->makeCurrent(this);
+    if (uninitialized) {
+        if (verbose) std::cout << "Initializing boardWindow for testing.\n";
+        initializeOpenGLFunctions();
+        
+        constructTestBuffers();
+        //TODO constructGLBuffers();
+        glClearColor(0.7f,0.7f,0.7f,1.0f);
+    }
+    
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    locationVertexBuffer.bind();
+    
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDisableVertexAttribArray(0);
+    
+    context->swapBuffers(this);
+}
+
 void boardWindow::render() {
     if (!isExposed()) return;
     
@@ -63,6 +95,7 @@ void boardWindow::render() {
     }
     context->makeCurrent(this);
     if (uninitialized) {
+        if (verbose) std::cout << "Initializing boardWindow.\n";
         initializeOpenGLFunctions();
         
         //other OpenGL initialization code goes here
@@ -91,9 +124,19 @@ void boardWindow::render() {
     shaderProgram.setAttributeBuffer(vertPositionHandle, GL_FLOAT, TODOoffset, 
             3, sizeof(GLfloat /*TODO*/));
     
-    glDrawElements(GL_TRIANGLE_STRIP, 5, GL_UNSIGNED_SHORT, 0);
+    locationVertexBuffer.bind();
+    locationStripElementBuffer[0].bind();
+    
+    //TODO
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0,6,GL_FLOAT, GL_FALSE,0,(void*)0);
+    
+    //glDrawElements(GL_TRIANGLE_STRIP, 5, GL_UNSIGNED_SHORT, 0);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 6 /*TODO*/);
     //TODO: End of test render
     
+    //TODO
+    glDisableVertexAttribArray(0);
     
     context->swapBuffers(this);
     
@@ -106,6 +149,7 @@ bool boardWindow::event(QEvent *event)
     switch (event->type()) {
     case QEvent::UpdateRequest:
         updatePending = false;
+        //TODO testRender();
         render();
         return true;
     default:
@@ -116,7 +160,7 @@ bool boardWindow::event(QEvent *event)
 void boardWindow::exposeEvent(QExposeEvent *event)
 {
     Q_UNUSED(event);
-    if (isExposed()) render();
+    if (isExposed()) testRender();
 }
 
 void boardWindow::renderLater() {
@@ -162,7 +206,8 @@ bool boardWindow::createShaderProgram() {
         std::cerr << "Unable to compile vertex shader from \""
                 << vertexShaderFilename << "\"\n";
         std::string utf8_log = fShader.log().toUtf8().constData();
-        std::cerr << "GLSL compiler errors:" << utf8_log << "\n";
+        std::cerr << "GLSL compiler errors (expect " << utf8_log.size()
+                << " characters):" << utf8_log << "\n";
         return false;
     }
     if (!fShader.compileSourceFile(QString::fromStdString(fragmentShaderFilename))) {
@@ -198,11 +243,25 @@ bool boardWindow::createShaderProgram() {
     return true;
 }
 
-//TODO: Rewrite
+bool boardWindow::constructTestBuffers() {
+    std::vector<GLfloat> vertexCoords;
+    if (verbose) std::cout << "Constructing test buffers.\n";
+    vertexCoords.push_back(-0.5); vertexCoords.push_back(-0.5);
+    vertexCoords.push_back( 0.5); vertexCoords.push_back(-0.5);
+    vertexCoords.push_back( 0.0); vertexCoords.push_back( 1.0);
+    
+    locationVertexBuffer.create();
+    locationVertexBuffer.bind();
+    locationVertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    locationVertexBuffer.allocate(&vertexCoords[0], 6*sizeof(vertexCoords[0]));
+    
+    return true;
+}
+
 bool boardWindow::constructGLBuffers() {
     //construct a vertex buffer for the location icon quadrilaterals
     std::vector<GLfloat> vertexCoords;
-    if (verbose) std::cout << "Constructing locationVertexBuffer";
+    if (verbose) std::cout << "Constructing locationVertexBuffer.\n";
     try {
         /* For each row, produce line of triangles like so:
          * 2--4--6--8

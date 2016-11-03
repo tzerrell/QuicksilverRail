@@ -31,7 +31,7 @@ boardWindow::boardWindow(QWindow* parent)
         , subject(nullptr)
         , animating(false)
         , context(0)
-        , view(-20,-30,60,40)    //TODO: Choose an appropriate default view
+        , view(-20,-30,96,72)    //TODO: Choose an appropriate default view
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)
         , verbose(true)
@@ -88,7 +88,6 @@ void boardWindow::render() {
     //TODO: render scene
     //TODO: do this in a real way
     locationVertexBuffer.bind();
-    locationStripElementBuffer[0].bind();
     
     int vertPositionHandle = shaderProgram.attributeLocation("position");
     shaderProgram.enableAttributeArray(vertPositionHandle);
@@ -98,9 +97,15 @@ void boardWindow::render() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
     
-    glDrawElements(GL_TRIANGLE_STRIP, 7, GL_UNSIGNED_SHORT, 0);
+    for (int i = 0; i < subject->getNumRows(); ++i) {
+        if (verbose) std::cout << "Drawing row " << i << '\n';
+        int rowParity = i%2;
+        int rowVertices = 2 * (subject->getNumRows() + 1 + rowParity);
+        locationStripElementBuffer[i].bind();
+        glDrawElements(GL_TRIANGLE_STRIP, rowVertices, GL_UNSIGNED_SHORT, 0);
+        locationStripElementBuffer[i].release();
+    }
     locationVertexBuffer.release();
-    locationStripElementBuffer[0].release();
     //TODO: End of test render
     
     glDisableVertexAttribArray(0);

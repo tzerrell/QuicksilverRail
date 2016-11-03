@@ -14,8 +14,8 @@
 #include "board.h"
 
 board::board() 
-        : rows(1)   //TODO: initialize these in a sensible way
-        , columns(3)
+        : rows(3)   //TODO: initialize these in a sensible way
+        , columns(4)
 {
 
 }

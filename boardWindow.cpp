@@ -31,7 +31,7 @@ boardWindow::boardWindow(QWindow* parent)
         , subject(nullptr)
         , animating(false)
         , context(0)
-        , view(-20,-30,40,40)    //TODO: Choose an appropriate default view
+        , view(-20,-30,60,40)    //TODO: Choose an appropriate default view
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)
         , verbose(true)
@@ -98,7 +98,7 @@ void boardWindow::render() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
     
-    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLE_STRIP, 7, GL_UNSIGNED_SHORT, 0);
     locationVertexBuffer.release();
     locationStripElementBuffer[0].release();
     //TODO: End of test render
@@ -259,6 +259,9 @@ bool boardWindow::constructGLBuffers() {
                     stripStartIndices.push_back(currIndex);
                 }
                 ++currIndex;
+                //there are 2 vertices added per quad, so do it again
+                vertexIndices.push_back(currIndex);
+                ++currIndex;
             }
         }
         stripStartIndices.push_back(currIndex);
@@ -280,6 +283,16 @@ bool boardWindow::constructGLBuffers() {
                 * (stripStartIndices[i+1] - stripStartIndices[i]));
         currBuffer.release();
         locationStripElementBuffer.push_back(currBuffer);
+        
+        if(verbose) {
+            std::cout << "locationStripElementBuffer[" << i << "] contains "
+                    << stripStartIndices[i+1] - stripStartIndices[i]
+                    << " indices: ";
+            for (int j = stripStartIndices[i]; j < stripStartIndices[i+1]; ++j) {
+                std::cout << vertexIndices[j] << " ";
+            }
+            std::cout << '\n';
+        }
     }
     
     //TODO: Same thing for connectionVertexBuffer

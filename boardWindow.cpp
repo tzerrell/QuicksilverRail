@@ -64,7 +64,7 @@ void boardWindow::testRender() {
         
         constructTestBuffers();
         //TODO constructGLBuffers();
-        glClearColor(0.7f,0.7f,0.7f,1.0f);
+        glClearColor(0.4f,0.7f,0.7f,1.0f);
     }
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -97,10 +97,11 @@ void boardWindow::render() {
     if (uninitialized) {
         if (verbose) std::cout << "Initializing boardWindow.\n";
         initializeOpenGLFunctions();
-        
+                
         //other OpenGL initialization code goes here
         updateShaders("generic.vertexshader", "generic.fragmentshader");    //TODO: adjust to allow custom filenames
-        constructGLBuffers();
+        //TODO constructGLBuffers();
+        constructTestBuffers();
         glClearColor(0.7f,0.7f,0.7f,1.0f);
     }
     
@@ -115,7 +116,7 @@ void boardWindow::render() {
     //TODO: render scene
     //TODO: do this in a real way
     locationVertexBuffer.bind();
-    locationStripElementBuffer[0].bind();
+    //TODOlocationStripElementBuffer[0].bind();
     
     int TODOoffset = 0;
     
@@ -125,7 +126,7 @@ void boardWindow::render() {
             3, sizeof(GLfloat /*TODO*/));
     
     locationVertexBuffer.bind();
-    locationStripElementBuffer[0].bind();
+    //TODOlocationStripElementBuffer[0].bind();
     
     //TODO
     glEnableVertexAttribArray(0);
@@ -160,7 +161,7 @@ bool boardWindow::event(QEvent *event)
 void boardWindow::exposeEvent(QExposeEvent *event)
 {
     Q_UNUSED(event);
-    if (isExposed()) testRender();
+    if (isExposed()) render(); //testRender(); //TODOrender();
 }
 
 void boardWindow::renderLater() {
@@ -246,14 +247,44 @@ bool boardWindow::createShaderProgram() {
 bool boardWindow::constructTestBuffers() {
     std::vector<GLfloat> vertexCoords;
     if (verbose) std::cout << "Constructing test buffers.\n";
-    vertexCoords.push_back(-0.5); vertexCoords.push_back(-0.5);
-    vertexCoords.push_back( 0.5); vertexCoords.push_back(-0.5);
-    vertexCoords.push_back( 0.0); vertexCoords.push_back( 1.0);
+    
+    /* Simple test form ... 
+    vertexCoords.push_back(-0.5); vertexCoords.push_back(-0.5); vertexCoords.push_back( 0.0);
+    vertexCoords.push_back( 0.5); vertexCoords.push_back(-0.5); vertexCoords.push_back( 0.0);
+    vertexCoords.push_back( 0.0); vertexCoords.push_back( 1.0); vertexCoords.push_back( 0.0);
+    /**/
+    //TODO: Main form simplified ...
+    /**/
+    for (int i = 0; i < 1; ++i) {
+        int rowParity = i%2;
+        for (int j = 0; j < 3 + 1 + rowParity; ++j) {
+            //upper left coord
+            vertexCoords.push_back(((float)j - 1.0 - (rowParity)/2.0));
+            vertexCoords.push_back(((float)i - 1.0));
+            vertexCoords.push_back(0.0);
+            if (verbose) {
+                std::cout << "(" << ((float)j - 1.0 - (rowParity)/2.0) << ","
+                        << ((float)i - 1.0) << ","
+                        << 0.0 << ")\n";
+            }
+            
+            //lower left coord
+            vertexCoords.push_back(((float)j - 1.0 - (rowParity)/2.0));
+            vertexCoords.push_back(((float)i + 1.0));
+            vertexCoords.push_back(0.0);
+            if (verbose) {
+                std::cout << "(" << ((float)j - 1.0 - (rowParity)/2.0) << ","
+                        << ((float)i + 1.0) << ","
+                        << 0.0 << ")\n";
+            }
+        }
+    }
     
     locationVertexBuffer.create();
     locationVertexBuffer.bind();
     locationVertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
     locationVertexBuffer.allocate(&vertexCoords[0], 6*sizeof(vertexCoords[0]));
+    locationVertexBuffer.release();
     
     return true;
 }

@@ -31,7 +31,7 @@ boardWindow::boardWindow(QWindow* parent)
         , subject(nullptr)
         , animating(false)
         , context(0)
-        , view(-10,-10,50,50)    //TODO: Choose an appropriate default view
+        , view(-20,-20,50,50)    //TODO: Choose an appropriate default view
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)
         , verbose(true)
@@ -44,40 +44,6 @@ boardWindow::boardWindow(QWindow* parent)
 boardWindow::~boardWindow() {
     delete subject;
     if (context) delete context;
-}
-
-void boardWindow::testRender() {
-    if (!isExposed()) return;
-    
-    bool uninitialized = false;
-    if (!context) {
-        context = new QOpenGLContext(this); //TODO: is deleting in dtor right?
-        context->setFormat(requestedFormat());
-        context->create();
-        
-        uninitialized = true;
-    }
-    context->makeCurrent(this);
-    if (uninitialized) {
-        if (verbose) std::cout << "Initializing boardWindow for testing.\n";
-        initializeOpenGLFunctions();
-        
-        constructTestBuffers();
-        //TODO constructGLBuffers();
-        glClearColor(0.4f,0.7f,0.7f,1.0f);
-    }
-    
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    locationVertexBuffer.bind();
-    
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDisableVertexAttribArray(0);
-    
-    locationVertexBuffer.release();
-    
-    context->swapBuffers(this);
 }
 
 void boardWindow::render() {
@@ -104,9 +70,7 @@ void boardWindow::render() {
         updateShaders("generic.vertexshader", "generic.fragmentshader");    //TODO: adjust to allow custom filenames
         projMatrixHandle = glGetUniformLocation(shaderProgram.programId(), "projectionMat");
         
-        //TODO 
         constructGLBuffers();
-        //constructTestBuffers();
         
         glClearColor(0.7f,0.7f,0.7f,1.0f);
     }
@@ -139,7 +103,6 @@ void boardWindow::render() {
     locationStripElementBuffer[0].release();
     //TODO: End of test render
     
-    //TODO
     glDisableVertexAttribArray(0);
     
     context->swapBuffers(this);
@@ -243,72 +206,6 @@ bool boardWindow::createShaderProgram() {
         std::cerr << "Unable to bind shader program to context.\n";
         return false;
     }
-    return true;
-}
-
-bool boardWindow::constructTestBuffers() {
-    std::vector<GLfloat> vertexCoords;
-    if (verbose) std::cout << "Constructing test buffers.\n";
-
-    //TODO: Main form simplified ...
-    for (int i = 0; i < 1; ++i) {
-        int rowParity = i%2;
-        for (int j = 0; j < 3 + 1 + rowParity; ++j) {
-            //upper left coord
-            vertexCoords.push_back(((float)j - 2.0 - (rowParity)/2.0));
-            vertexCoords.push_back(((float)i - 1.0));
-            vertexCoords.push_back(0.0);
-            if (verbose) {
-                std::cout << "(" << ((float)j - 1.0 - (rowParity)/2.0) << ","
-                        << ((float)i - 1.0) << ","
-                        << 0.0 << ")\n";
-            }
-            
-            //lower left coord
-            vertexCoords.push_back(((float)j - 2.0 - (rowParity)/2.0));
-            vertexCoords.push_back(((float)i + 1.0));
-            vertexCoords.push_back(0.0);
-            if (verbose) {
-                std::cout << "(" << ((float)j - 1.0 - (rowParity)/2.0) << ","
-                        << ((float)i + 1.0) << ","
-                        << 0.0 << ")\n";
-            }
-        }
-    }
-    
-    locationVertexBuffer.create();
-    locationVertexBuffer.bind();
-    locationVertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    locationVertexBuffer.allocate(&vertexCoords[0], 6*sizeof(vertexCoords[0]));
-    locationVertexBuffer.release();
-    
-    //Main element buffer form simplified
-    std::vector<GLushort> vertexIndices;
-    std::vector<GLushort> stripStartIndices;
-    GLushort currIndex = 0;
-    for (int i = 0; i < subject->getNumRows(); ++i) {
-        int rowParity = i%2;
-        for (int j = 0; j < subject->getNumCols() + 1 + rowParity; ++j) {
-            vertexIndices.push_back(currIndex);
-            if (j == 0) {
-                stripStartIndices.push_back(currIndex);
-            }
-            ++currIndex;
-        }
-    }
-    stripStartIndices.push_back(currIndex);
-    for (int i = 0; i < subject->getNumRows(); ++i) {
-        QOpenGLBuffer currBuffer(QOpenGLBuffer::IndexBuffer);
-        currBuffer.create();
-        currBuffer.bind();
-        currBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-        currBuffer.allocate(&vertexIndices[stripStartIndices[i]] 
-                , sizeof(vertexIndices[0])
-                * (stripStartIndices[i+1] - stripStartIndices[i]));
-        currBuffer.release();
-        locationStripElementBuffer.push_back(currBuffer);
-    }
-    
     return true;
 }
 

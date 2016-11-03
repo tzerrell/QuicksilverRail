@@ -41,7 +41,6 @@ public:
     
     bool updateShaders(std::string vertShaderFile, std::string fragShaderFile);
 public slots:
-    void testRender();
     void render();
     void renderLater();
 protected:
@@ -49,7 +48,6 @@ protected:
     void exposeEvent(QExposeEvent *event) Q_DECL_OVERRIDE;
     
     bool constructGLBuffers();
-    bool constructTestBuffers();
 private:
     board* subject;
     bool animating;

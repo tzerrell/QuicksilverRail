@@ -116,17 +116,17 @@ void boardWindow::render() {
     //TODO: render scene
     //TODO: do this in a real way
     locationVertexBuffer.bind();
-    //TODOlocationStripElementBuffer[0].bind();
+    //locationStripElementBuffer[0].bind(); //TODO: Adding this breaks it
     
-    int TODOoffset = 0;
     
-    int vertPositionHandle = shaderProgram.attributeLocation("TODOposition"); //TODO
+    
+    int vertPositionHandle = shaderProgram.attributeLocation("position"); //TODO
     shaderProgram.enableAttributeArray(vertPositionHandle);
-    shaderProgram.setAttributeBuffer(vertPositionHandle, GL_FLOAT, TODOoffset, 
+    shaderProgram.setAttributeBuffer(vertPositionHandle, GL_FLOAT, 0, 
             3, sizeof(GLfloat /*TODO*/));
     
     locationVertexBuffer.bind();
-    //TODOlocationStripElementBuffer[0].bind();
+    locationStripElementBuffer[0].bind();
     
     //TODO
     glEnableVertexAttribArray(0);
@@ -285,6 +285,33 @@ bool boardWindow::constructTestBuffers() {
     locationVertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
     locationVertexBuffer.allocate(&vertexCoords[0], 6*sizeof(vertexCoords[0]));
     locationVertexBuffer.release();
+    
+    //Main element buffer form simplified
+    std::vector<GLushort> vertexIndices;
+    std::vector<GLushort> stripStartIndices;
+    GLushort currIndex = 0;
+    for (int i = 0; i < subject->getNumRows(); ++i) {
+        int rowParity = i%2;
+        for (int j = 0; j < subject->getNumCols() + 1 + rowParity; ++j) {
+            vertexIndices.push_back(currIndex);
+            if (j == 0) {
+                stripStartIndices.push_back(currIndex);
+            }
+            ++currIndex;
+        }
+    }
+    stripStartIndices.push_back(currIndex);
+    for (int i = 0; i < subject->getNumRows(); ++i) {
+        QOpenGLBuffer currBuffer;
+        currBuffer.create();
+        currBuffer.bind();
+        currBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+        currBuffer.allocate(&vertexIndices[stripStartIndices[i]] 
+                , sizeof(vertexIndices[0])
+                * (stripStartIndices[i+1] - stripStartIndices[i]));
+        currBuffer.release();
+        locationStripElementBuffer.push_back(currBuffer);
+    }
     
     return true;
 }

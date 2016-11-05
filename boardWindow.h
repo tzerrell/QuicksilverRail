@@ -59,9 +59,9 @@ private:
     GLuint projMatrixHandle;
     
     QOpenGLBuffer locationVertexBuffer;
-    std::vector<QOpenGLBuffer> locationStripElementBuffer;
+    QOpenGLBuffer locationIndexBuffer;
     QOpenGLBuffer connectionVertexBuffer;
-    std::vector<QOpenGLBuffer> connectionStripElementBuffer;
+    QOpenGLBuffer connectionIndexBuffer;
     
     //Board graphical parameters. Things like how far apart vertices are
     const GLfloat locHorizSpacing;

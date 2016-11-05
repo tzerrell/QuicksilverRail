@@ -31,10 +31,12 @@ boardWindow::boardWindow(QWindow* parent)
         , subject(nullptr)
         , animating(false)
         , context(0)
-        , view(-20,-30,96,72)    //TODO: Choose an appropriate default view
+        //, view(-20,-30,96,72)    //TODO: Choose an appropriate default view
+        , view(-40, -60, 192, 144)
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)
         , verbose(true)
+        , locationIndexBuffer(QOpenGLBuffer::IndexBuffer)
 {
     subject = new board;    //TODO: do this in a reasonable way ...
     surfaceFormat.setSamples(4);
@@ -100,14 +102,11 @@ void boardWindow::render() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
     
-    for (int i = 0; i < subject->getNumRows(); ++i) {
-        if (verbose) std::cout << "Drawing row " << i << '\n';
-        int rowParity = i%2;
-        int rowVertices = 2 * (subject->getNumRows() + 1 + rowParity);
-        locationStripElementBuffer[i].bind();
-        glDrawElements(GL_TRIANGLE_STRIP, rowVertices, GL_UNSIGNED_SHORT, 0);
-        locationStripElementBuffer[i].release();
-    }
+    //TODO: Implement drawing each quad separately
+    int numQuads = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
+    locationIndexBuffer.bind();
+    glDrawElements(GL_TRIANGLES, numQuads * 6, GL_UNSIGNED_SHORT, 0);
+    locationIndexBuffer.release();
     locationVertexBuffer.release();
     //TODO: End of test render
     
@@ -218,20 +217,12 @@ bool boardWindow::constructGLBuffers() {
          */
         for (int i = 0; i < subject->getNumRows(); ++i) {
             int rowParity = i%2;
-            for (int j = 0; j < subject->getNumCols() + 1 + rowParity; ++j) {
+            for (int j = 0; j < subject->getNumCols() + rowParity; ++j) {
                 //The formulas for these coordinates have two parts: the part
                 //with the i or j puts the center in the right place; the other
                 //term moves to where the vertex should be relative to the
                 //center. Note that rowParity is because every other row is
                 //shifted 50% in order to make a hex grid.
-                
-                //lower left coord
-                GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
-                GLfloat LLy = (i - 1.0) * locVertSpacing - locHorizSpacing/2.0;
-                GLfloat LLz = 0.0;
-                vertexCoords.push_back(LLx);
-                vertexCoords.push_back(LLy);
-                vertexCoords.push_back(LLz);
 
                 //upper left coord
                 GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
@@ -241,10 +232,36 @@ bool boardWindow::constructGLBuffers() {
                 vertexCoords.push_back(ULy);
                 vertexCoords.push_back(ULz);
                 
+                //lower left coord
+                GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
+                GLfloat LLy = (i - 1.0) * locVertSpacing - locHorizSpacing/2.0;
+                GLfloat LLz = 0.0;
+                vertexCoords.push_back(LLx);
+                vertexCoords.push_back(LLy);
+                vertexCoords.push_back(LLz);
+
+                //upper right coord
+                GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0;
+                GLfloat URy = (i - 1.0) * locVertSpacing + locHorizSpacing/2.0;
+                GLfloat URz = 0.0;
+                vertexCoords.push_back(ULx);
+                vertexCoords.push_back(ULy);
+                vertexCoords.push_back(ULz);
+                
+                //lower right coord
+                GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0;
+                GLfloat LRy = (i - 1.0) * locVertSpacing - locHorizSpacing/2.0;
+                GLfloat LRz = 0.0;
+                vertexCoords.push_back(LLx);
+                vertexCoords.push_back(LLy);
+                vertexCoords.push_back(LLz);
+                
                 if (verbose) {
                     std::cout << "Adding vertices (" << LLx << ", " << LLy
-                            << ", " << LLz << ") and (" << ULx << ", " << ULy
-                            << ", " << ULz << ")\n";
+                            << ", " << LLz << "), (" << ULx << ", " << ULy
+                            << ", " << ULz << "), (" << LRx << ", " << LRy
+                            << ", " << LRz << "), (" << URx << ", " << URy
+                            << ", " << URz << ")\n";
                 }
             }
         }
@@ -260,25 +277,31 @@ bool boardWindow::constructGLBuffers() {
     locationVertexBuffer.allocate(&vertexCoords[0], vertexCoords.size()*sizeof(vertexCoords[0]));
     locationVertexBuffer.release();
     
-    //construct an element buffer for each strip of quads
+    //construct an element buffer for all the quads
     std::vector<GLushort> vertexIndices;
-    std::vector<GLushort> stripStartIndices;
     GLushort currIndex = 0;
     try {
+        if (verbose) std::cout << "Writing vertex indices: ";
         for (int i = 0; i < subject->getNumRows(); ++i) {
             int rowParity = i%2;
-            for (int j = 0; j < subject->getNumCols() + 1 + rowParity; ++j) {
-                vertexIndices.push_back(currIndex);
-                if (j == 0) {
-                    stripStartIndices.push_back(currIndex);
+            if (verbose) std::cout << "i = " << i;
+            for (int j = 0; j < subject->getNumCols() + rowParity; ++j) {
+                if (verbose) std::cout << "\nj = " << j << " of " << subject->getNumCols() + rowParity << ":";
+                for (int twice = 0; twice < 2; ++twice) {
+                    if (verbose) {
+                        std::cout << currIndex << ' ' << currIndex + 1 << ' '
+                                << currIndex + 2 << ' ';
+                    }
+                    vertexIndices.push_back(currIndex);
+                    vertexIndices.push_back(currIndex + 1);
+                    vertexIndices.push_back(currIndex + 2);
+                    ++currIndex;
                 }
                 ++currIndex;
-                //there are 2 vertices added per quad, so do it again
-                vertexIndices.push_back(currIndex);
                 ++currIndex;
             }
+            if (verbose) std::cout << '\n';
         }
-        stripStartIndices.push_back(currIndex);
     }
     catch (const std::bad_alloc& ex) {
         std::cerr << "Bad allocation in constructGLBuffers. The board"
@@ -286,27 +309,25 @@ bool boardWindow::constructGLBuffers() {
         std::cerr << "Warning: Partial construction of GLBuffers.\n";
         return false;
     }
-    
-    for (int i = 0; i < subject->getNumRows(); ++i) {
-        QOpenGLBuffer currBuffer(QOpenGLBuffer::IndexBuffer);
-        currBuffer.create();
-        currBuffer.bind();
-        currBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-        currBuffer.allocate(&vertexIndices[stripStartIndices[i]] 
-                , sizeof(vertexIndices[0])
-                * (stripStartIndices[i+1] - stripStartIndices[i]));
-        currBuffer.release();
-        locationStripElementBuffer.push_back(currBuffer);
+     
+    //Note: locationIndexBuffer was constructed as an index buffer
+    locationIndexBuffer.create();
+    locationIndexBuffer.bind();
+    locationIndexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    int numQuads = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
+    locationIndexBuffer.allocate(&vertexIndices[0] 
+            , sizeof(vertexIndices[0]) * 6 * numQuads);
+    locationIndexBuffer.release();
         
-        if(verbose) {
-            std::cout << "locationStripElementBuffer[" << i << "] contains "
-                    << stripStartIndices[i+1] - stripStartIndices[i]
-                    << " indices: ";
-            for (int j = stripStartIndices[i]; j < stripStartIndices[i+1]; ++j) {
-                std::cout << vertexIndices[j] << " ";
-            }
-            std::cout << '\n';
+    if(verbose) {
+        std::cout << "locationIndexBuffer contains "
+                << 6*numQuads
+                << " indices: ";
+        for (int j = 0; j < 6*numQuads; ++j) {
+            std::cout << vertexIndices[j] << " ";
         }
+        std::cout << '\n';
+        std::cout.flush();
     }
     
     //TODO: Same thing for connectionVertexBuffer

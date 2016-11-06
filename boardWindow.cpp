@@ -244,17 +244,17 @@ bool boardWindow::constructGLBuffers() {
                 GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0;
                 GLfloat URy = (i - 1.0) * locVertSpacing + locHorizSpacing/2.0;
                 GLfloat URz = 0.0;
-                vertexCoords.push_back(ULx);
-                vertexCoords.push_back(ULy);
-                vertexCoords.push_back(ULz);
+                vertexCoords.push_back(URx);
+                vertexCoords.push_back(URy);
+                vertexCoords.push_back(URz);
                 
                 //lower right coord
                 GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0;
                 GLfloat LRy = (i - 1.0) * locVertSpacing - locHorizSpacing/2.0;
                 GLfloat LRz = 0.0;
-                vertexCoords.push_back(LLx);
-                vertexCoords.push_back(LLy);
-                vertexCoords.push_back(LLz);
+                vertexCoords.push_back(LRx);
+                vertexCoords.push_back(LRy);
+                vertexCoords.push_back(LRz);
                 
                 if (verbose) {
                     std::cout << "Adding vertices (" << LLx << ", " << LLy

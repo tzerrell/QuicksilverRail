@@ -60,6 +60,7 @@
       </qt>
       <compileType>
         <ccTool>
+          <standard>11</standard>
           <incDir>
             <pElem>C:/Program Files (Unprotected)/boost/boost_1_62_0</pElem>
           </incDir>

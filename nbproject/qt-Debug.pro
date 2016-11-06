@@ -22,3 +22,6 @@ QMAKE_CXX = g++
 DEFINES += 
 INCLUDEPATH += "/C/Program Files (Unprotected)/boost/boost_1_62_0" 
 LIBS += 
+equals(QT_MAJOR_VERSION, 4) {
+QMAKE_CXXFLAGS += -std=c++14
+}

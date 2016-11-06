@@ -16,6 +16,8 @@
 #ifndef BOARDWINDOW_H
 #define BOARDWINDOW_H
 
+#include <vector>
+
 #include <QtGui/QWindow>
 #include <QtGui/QOpenGLFunctions>
 #include <QtGui/QOpenGLBuffer>

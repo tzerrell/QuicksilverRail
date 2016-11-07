@@ -553,6 +553,8 @@ moc_boardWindow.cpp: C:/Qt/5.7/mingw53_32/include/QtGui/QWindow \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qmatrix4x4.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qquaternion.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qgenericmatrix.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLDebugLogger \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopengldebug.h \
 		boardWindow.h \
 		C:/Qt/5.7/mingw53_32/bin/moc.exe
 	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -I'C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/nbproject' -I'/C/Program Files (Unprotected)/boost/boost_1_62_0' -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtCore -I. boardWindow.h -o moc_boardWindow.cpp
@@ -684,6 +686,7 @@ build/Debug/MinGW_Qt-Windows/boardWindow.o: boardWindow.cpp C:/Qt/5.7/mingw53_32
 		C:/Qt/5.7/mingw53_32/include/QtGui/qregion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qline.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qpainterpath.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QtDebug \
 		board.h \
 		direction.h \
 		terrain.h \
@@ -703,7 +706,9 @@ build/Debug/MinGW_Qt-Windows/boardWindow.o: boardWindow.cpp C:/Qt/5.7/mingw53_32
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglbuffer.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLShaderProgram \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglshaderprogram.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qvector2d.h
+		C:/Qt/5.7/mingw53_32/include/QtGui/qvector2d.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLDebugLogger \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopengldebug.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/Debug/MinGW_Qt-Windows/boardWindow.o boardWindow.cpp
 
 build/Debug/MinGW_Qt-Windows/connection.o: connection.cpp connection.h
@@ -948,6 +953,8 @@ build/Debug/MinGW_Qt-Windows/main.o: main.cpp C:/Qt/5.7/mingw53_32/include/QtWid
 		C:/Qt/5.7/mingw53_32/include/QtGui/qmatrix4x4.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qquaternion.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qgenericmatrix.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLDebugLogger \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopengldebug.h \
 		board.h \
 		direction.h \
 		terrain.h \

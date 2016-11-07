@@ -17,6 +17,7 @@
 #include <QtGui/QOpenGLContext>
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QOpenGLTexture>
+#include <QtDebug>
 
 #include <iostream>
 #include <fstream>
@@ -47,6 +48,7 @@ boardWindow::boardWindow(QWindow* parent)
 boardWindow::~boardWindow() {
     delete subject;
     if (context) delete context;
+    if (debugLogger) delete debugLogger;
 }
 
 void boardWindow::initGL() {
@@ -59,14 +61,29 @@ void boardWindow::initGL() {
     glClearColor(0.7f,0.7f,0.7f,1.0f);
 }
 
+void boardWindow::printDebugLog() {
+    std::cout << "Printing any OpenGL Debug messages.\n";
+    qDebug() << "Test TODO Qt Debug Message\n";
+    const QList<QOpenGLDebugMessage> messages = debugLogger->loggedMessages();
+    for (const QOpenGLDebugMessage &message : messages)
+        qDebug() << message;
+}
+
 void boardWindow::render() {
     if (!isExposed()) return;
     
     bool uninitialized = false;
     if (!context) {
         context = new QOpenGLContext(this); //TODO: is deleting in dtor right?
-        context->setFormat(requestedFormat());
+        debugLogger = new QOpenGLDebugLogger(); //TODO: is deleting in dtor right?
+        if (!debugLogger->initialize())
+            std::cerr << "Unable to initialize OpenGL Debug Logger.\n";
+        QSurfaceFormat format(QSurfaceFormat::defaultFormat());
+        format.setAlphaBufferSize(8);
+        format.setOption(QSurfaceFormat::DebugContext);
+        context->setFormat(format);
         context->create();
+        debugLogger->startLogging();
         
         //We would use this if we had VAOs, but we're using OpenGL 2 so we don't
         //glGenVertexArrays(1, &vertexArrayID);
@@ -103,10 +120,24 @@ void boardWindow::render() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
     
+    QImage texTODO2;
+    texTODO2.load(":/terrMountains.png");
+    texTODO2 = texTODO2.mirrored();
+    
+    GLuint texTODO2ID;
+    glGenTextures(1, &texTODO2ID);
+    glBindTexture(GL_TEXTURE_2D, texTODO2ID);
+    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, texTODO2.width(), texTODO2.height()
+            , 0, GL_RGB, GL_UNSIGNED_BYTE, texTODO2.bits());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    
     QOpenGLTexture texTODOTemp(QImage(":/terrMountains.png").mirrored());
     texTODOTemp.setMinificationFilter(QOpenGLTexture::Linear);
     texTODOTemp.setMagnificationFilter(QOpenGLTexture::Linear);
     texTODOTemp.bind(2);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2,2,GL_UNSIGNED_BYTE, GL_FALSE, 0, (void*)0);
     
     int texUVHandle = shaderProgram.attributeLocation("UV");
     shaderProgram.enableAttributeArray(texUVHandle);
@@ -123,7 +154,11 @@ void boardWindow::render() {
     locationVertexBuffer.release();
     //TODO: End of test render
     
+    glDisableVertexAttribArray(2);
+    glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
+    
+    printDebugLog();
     
     context->swapBuffers(this);
     
@@ -168,7 +203,7 @@ bool boardWindow::createShaderProgram() {
     if (!vShader.compileSourceFile(QString::fromStdString(vertexShaderFilename))) {
         std::cerr << "Unable to compile vertex shader from \""
                 << vertexShaderFilename << "\"\n";
-        std::string utf8_log = fShader.log().toUtf8().constData();
+        std::string utf8_log = vShader.log().toUtf8().constData();
         std::cerr << "GLSL compiler errors (expect " << utf8_log.size()
                 << " characters):" << utf8_log << "\n";
         return false;

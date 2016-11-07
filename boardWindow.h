@@ -22,6 +22,7 @@
 #include <QtGui/QOpenGLFunctions>
 #include <QtGui/QOpenGLBuffer>
 #include <QtGui/QOpenGLShaderProgram>
+#include <QtGui/QOpenGLDebugLogger>
 
 #include <qopengl.h>
 
@@ -57,6 +58,7 @@ private:
     bool verbose;
     QSurfaceFormat surfaceFormat;
     QOpenGLContext *context;
+    QOpenGLDebugLogger *debugLogger;
     QRectF view;
     GLuint projMatrixHandle;
     
@@ -71,6 +73,7 @@ private:
     //const GLfloat vertexIconWidth == locHorizSpacing
     
     void initGL();
+    void printDebugLog();
     
     bool createShaderProgram();     //return whether successfully created. If false, the old shader program (if any) is retained in shaderProgramID
     std::string vertexShaderFilename;

@@ -4,6 +4,5 @@ uniform sampler2D TODOTestSampler;
 
 out vec4 color;
 void main(){
-  vec3 texColor = texture( TODOTestSampler, UV ).rgb;
-  color = vec4(texColor, 1.0);
+  color = texture( TODOTestSampler, UV ).rgba;
 }

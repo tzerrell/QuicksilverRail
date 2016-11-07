@@ -131,13 +131,20 @@ void boardWindow::render() {
             , 0, GL_RGB, GL_UNSIGNED_BYTE, texTODO2.bits());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2,4,GL_UNSIGNED_BYTE, GL_FALSE, 0, (void*)0);
     
+    
+    
+    /*
     QOpenGLTexture texTODOTemp(QImage(":/terrMountains.png").mirrored());
     texTODOTemp.setMinificationFilter(QOpenGLTexture::Linear);
     texTODOTemp.setMagnificationFilter(QOpenGLTexture::Linear);
     texTODOTemp.bind(2);
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2,2,GL_UNSIGNED_BYTE, GL_FALSE, 0, (void*)0);
+    glVertexAttribPointer(2,4,GL_UNSIGNED_BYTE, GL_FALSE, 0, (void*)0);
+    */
+    
     
     int texUVHandle = shaderProgram.attributeLocation("UV");
     shaderProgram.enableAttributeArray(texUVHandle);
@@ -150,7 +157,7 @@ void boardWindow::render() {
     locationIndexBuffer.bind();
     glDrawElements(GL_TRIANGLES, numQuads * 6, GL_UNSIGNED_SHORT, 0);
     locationIndexBuffer.release();
-    texTODOTemp.release();
+    //texTODOTemp.release();
     locationVertexBuffer.release();
     //TODO: End of test render
     

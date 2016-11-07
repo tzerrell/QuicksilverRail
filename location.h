@@ -18,14 +18,16 @@
 
 #include "terrain.h"
 
+class board;
+
 class location {
 public:
     location();
     location(const location&) = delete;
     virtual ~location();
     
-    terrain getTerrain() { return ter; };
-    void setTerrain(terrain t) { ter = t; };
+    terrain getTerrain() { return terr; };
+    void setTerrain(terrain t) { terr = t; };
     QOpenGLTexture* getTexture();
     
     static void loadTexture(terrain t);  //Loads the texture for terrain t into "texture"
@@ -34,8 +36,12 @@ public:
 private:
     static void initializeDefaultTextureFilenames();    //TODO: Needs to be called before class is first used
     
+    board* parent;
     static bool defaultTextureFilenamesInitialized;
-    terrain ter;
+    terrain terr;
+    //this class is responsible for managing the memory of textures associated
+    //with terrain. When entries are added or deleted from 'texture', the memory
+    //for them is allocated/deallocated. loadTexture/unloadTexture do this.
     static std::map<terrain, QOpenGLTexture*> texture;
     static std::map<terrain, QString> textureFilename;
 };

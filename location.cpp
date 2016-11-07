@@ -27,10 +27,10 @@ location::~location() {
 }
 
 QOpenGLTexture* location::getTexture() { 
-    auto it = texture.find(ter);
+    auto it = texture.find(terr);
     if (it== texture.end()) {
-        location::loadTexture(ter);
-        it = texture.find(ter);
+        location::loadTexture(terr);
+        it = texture.find(terr);
     }
     return (*it).second;
 }

@@ -29,6 +29,8 @@
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/boardWindow.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/connection.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/delivery.cpp</itemPath>
+      <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/generic.fragmentshader</itemPath>
+      <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/generic.vertexshader</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/location.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/player.cpp</itemPath>
@@ -47,6 +49,9 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>C:\Users\tnc02_000\Documents\NetBeansProjects\Quicksilver Rail</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="4">
@@ -112,6 +117,16 @@
             flavor2="0">
       </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/engineer.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/generic.fragmentshader"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/generic.vertexshader"
             ex="false"
             tool="3"
             flavor2="0">
@@ -244,6 +259,16 @@
             flavor2="0">
       </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/engineer.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/generic.fragmentshader"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/generic.vertexshader"
             ex="false"
             tool="3"
             flavor2="0">

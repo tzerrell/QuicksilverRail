@@ -574,8 +574,8 @@ compiler_clean: compiler_rcc_clean compiler_moc_header_clean
 ####### Compile
 
 build/Debug/MinGW_Qt-Windows/board.o: board.cpp board.h \
-		terrain.h \
-		direction.h
+		direction.h \
+		terrain.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/Debug/MinGW_Qt-Windows/board.o board.cpp
 
 build/Debug/MinGW_Qt-Windows/boardWindow.o: boardWindow.cpp C:/Qt/5.7/mingw53_32/include/QtCore/QCoreApplication \
@@ -668,25 +668,15 @@ build/Debug/MinGW_Qt-Windows/boardWindow.o: boardWindow.cpp C:/Qt/5.7/mingw53_32
 		C:/Qt/5.7/mingw53_32/include/QtCore/qrect.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qmargins.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qsize.h \
-		board.h \
-		terrain.h \
-		direction.h \
-		boardWindow.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/QWindow \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qwindow.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/QEvent \
-		C:/Qt/5.7/mingw53_32/include/QtCore/QMargins \
-		C:/Qt/5.7/mingw53_32/include/QtCore/QRect \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qsurface.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qwindowdefs.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qwindowdefs_win.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qicon.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qpixmap.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qpaintdevice.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLTexture \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopengltexture.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qimage.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qcolor.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qrgb.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qrgba64.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qimage.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qpaintdevice.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qwindowdefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qwindowdefs_win.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qpixelformat.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qtransform.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qmatrix.h \
@@ -694,6 +684,18 @@ build/Debug/MinGW_Qt-Windows/boardWindow.o: boardWindow.cpp C:/Qt/5.7/mingw53_32
 		C:/Qt/5.7/mingw53_32/include/QtGui/qregion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qline.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qpainterpath.h \
+		board.h \
+		direction.h \
+		terrain.h \
+		boardWindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QWindow \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qwindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QEvent \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QMargins \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QRect \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qsurface.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qicon.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qpixmap.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qcursor.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLFunctions \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglfunctions.h \
@@ -947,8 +949,8 @@ build/Debug/MinGW_Qt-Windows/main.o: main.cpp C:/Qt/5.7/mingw53_32/include/QtWid
 		C:/Qt/5.7/mingw53_32/include/QtGui/qquaternion.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qgenericmatrix.h \
 		board.h \
-		terrain.h \
 		direction.h \
+		terrain.h \
 		player.h \
 		train.h \
 		goods.h \

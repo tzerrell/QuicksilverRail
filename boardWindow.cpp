@@ -16,6 +16,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtGui/QOpenGLContext>
 #include <QtGui/QMatrix4x4>
+#include <QtGui/QOpenGLTexture>
 
 #include <iostream>
 #include <fstream>
@@ -102,11 +103,23 @@ void boardWindow::render() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
     
-    //TODO: Implement drawing each quad separately
+    QOpenGLTexture texTODOTemp(QImage(":/terrMountains.png").mirrored());
+    texTODOTemp.setMinificationFilter(QOpenGLTexture::Linear);
+    texTODOTemp.setMagnificationFilter(QOpenGLTexture::Linear);
+    texTODOTemp.bind(2);
+    
+    int texUVHandle = shaderProgram.attributeLocation("UV");
+    shaderProgram.enableAttributeArray(texUVHandle);
+    shaderProgram.setAttributeBuffer(texUVHandle, GL_FLOAT, 0, 2,
+            sizeof(GLfloat));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
+    
     int numQuads = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
     locationIndexBuffer.bind();
     glDrawElements(GL_TRIANGLES, numQuads * 6, GL_UNSIGNED_SHORT, 0);
     locationIndexBuffer.release();
+    texTODOTemp.release();
     locationVertexBuffer.release();
     //TODO: End of test render
     
@@ -195,7 +208,9 @@ bool boardWindow::createShaderProgram() {
 
 bool boardWindow::constructGLBuffers() {
     //construct a vertex buffer for the location icon quadrilaterals
+    //also construct UV coordinates for textures for each vertex
     std::vector<GLfloat> vertexCoords;
+    std::vector<GLfloat> vertexUVs;
     if (verbose) std::cout << "Constructing locationVertexBuffer.\n";
     try {
         /* For each row, produce line of triangles like so:
@@ -231,6 +246,8 @@ bool boardWindow::constructGLBuffers() {
                 vertexCoords.push_back(ULx);
                 vertexCoords.push_back(ULy);
                 vertexCoords.push_back(ULz);
+                //TODO: confirm correct UV coords
+                vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
                 
                 //lower left coord
                 GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
@@ -239,6 +256,7 @@ bool boardWindow::constructGLBuffers() {
                 vertexCoords.push_back(LLx);
                 vertexCoords.push_back(LLy);
                 vertexCoords.push_back(LLz);
+                vertexUVs.push_back(0.0);   vertexUVs.push_back(0.0);
 
                 //upper right coord
                 GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0;
@@ -247,6 +265,7 @@ bool boardWindow::constructGLBuffers() {
                 vertexCoords.push_back(URx);
                 vertexCoords.push_back(URy);
                 vertexCoords.push_back(URz);
+                vertexUVs.push_back(1.0);   vertexUVs.push_back(1.0);
                 
                 //lower right coord
                 GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0;
@@ -255,6 +274,7 @@ bool boardWindow::constructGLBuffers() {
                 vertexCoords.push_back(LRx);
                 vertexCoords.push_back(LRy);
                 vertexCoords.push_back(LRz);
+                vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
                 
                 if (verbose) {
                     std::cout << "Adding vertices (" << LLx << ", " << LLy

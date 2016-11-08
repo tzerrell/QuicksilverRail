@@ -115,6 +115,8 @@ void boardWindow::render() {
     glUniformMatrix4fv(projMatrixHandle, 1, GL_FALSE, renderMatrix.constData());
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     //TODO: render scene
     //TODO: do this in a real way
@@ -152,14 +154,22 @@ void boardWindow::render() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
     
-    QOpenGLTexture texTODOTemp(QImage("res/terrMountains.png").mirrored());
+    QImage TODOImage;
+    if (!TODOImage.load(":/terrMountains.png")) 
+        std::cerr << "Failed to load texture image\n";
+    TODOImage = TODOImage.mirrored();
+    std::cout << TODOImage.width() << "x" << TODOImage.height() << '\n';
+    QOpenGLTexture texTODOTemp(TODOImage);
+    //texTODOTemp.setWrapMode(QOpenGLTexture::Repeat);
+    std::cout << texTODOTemp.width() << "x" << texTODOTemp.height() << '\n';
     texTODOTemp.setMinificationFilter(QOpenGLTexture::Linear);
     texTODOTemp.setMagnificationFilter(QOpenGLTexture::Linear);
     texTODOTemp.create();
     if (!texTODOTemp.isCreated()) std::cerr << "Error creating texture\n";
-    texTODOTemp.bind(0);
+    std::cout << texTODOTemp.width() << "x" << texTODOTemp.height() << '\n';
+    texTODOTemp.bind(2);
     if (!texTODOTemp.isBound()) std::cerr << "Error binding texture\n";
-    shaderProgram.setUniformValue("TODOTestSampler", 0);
+    shaderProgram.setUniformValue("TODOTestSampler", 2);
     
     int numQuads = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
     locationIndexBuffer.bind();
@@ -172,6 +182,8 @@ void boardWindow::render() {
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
+    
+    glDisable(GL_BLEND);
     
     printDebugLog();
     

@@ -67,6 +67,14 @@ void boardWindow::printDebugLog() {
     const QList<QOpenGLDebugMessage> messages = debugLogger->loggedMessages();
     for (const QOpenGLDebugMessage &message : messages)
         qDebug() << message;
+    
+    GLenum errorCode = GL_NO_ERROR;
+    do {
+        errorCode = glGetError();
+        if (errorCode != GL_NO_ERROR) {
+            std::cerr << "OpenGL Error: " << errorCode << "\n";
+        }
+    } while (errorCode != GL_NO_ERROR);
 }
 
 void boardWindow::render() {
@@ -137,19 +145,21 @@ void boardWindow::render() {
     glVertexAttribPointer(2,4,GL_UNSIGNED_BYTE, GL_FALSE, 0, (void*)0);
     */
     
-    
-    QOpenGLTexture texTODOTemp(QImage(":/terrMountains.png").mirrored());
-    texTODOTemp.setMinificationFilter(QOpenGLTexture::Linear);
-    texTODOTemp.setMagnificationFilter(QOpenGLTexture::Linear);
-    texTODOTemp.bind(2);
-    shaderProgram.setUniformValue("TODOTestSampler", 2);
-    
     int texUVHandle = shaderProgram.attributeLocation("UV");
     shaderProgram.enableAttributeArray(texUVHandle);
     shaderProgram.setAttributeBuffer(texUVHandle, GL_FLOAT, 0, 2,
             sizeof(GLfloat));
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
+    
+    QOpenGLTexture texTODOTemp(QImage("res/terrMountains.png").mirrored());
+    texTODOTemp.setMinificationFilter(QOpenGLTexture::Linear);
+    texTODOTemp.setMagnificationFilter(QOpenGLTexture::Linear);
+    texTODOTemp.create();
+    if (!texTODOTemp.isCreated()) std::cerr << "Error creating texture\n";
+    texTODOTemp.bind(0);
+    if (!texTODOTemp.isBound()) std::cerr << "Error binding texture\n";
+    shaderProgram.setUniformValue("TODOTestSampler", 0);
     
     int numQuads = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
     locationIndexBuffer.bind();

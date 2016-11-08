@@ -160,12 +160,9 @@ void boardWindow::render() {
     TODOImage = TODOImage.mirrored();
     std::cout << TODOImage.width() << "x" << TODOImage.height() << '\n';
     QOpenGLTexture texTODOTemp(TODOImage);
-    //texTODOTemp.setWrapMode(QOpenGLTexture::Repeat);
     std::cout << texTODOTemp.width() << "x" << texTODOTemp.height() << '\n';
     texTODOTemp.setMinificationFilter(QOpenGLTexture::Linear);
     texTODOTemp.setMagnificationFilter(QOpenGLTexture::Linear);
-    texTODOTemp.create();
-    if (!texTODOTemp.isCreated()) std::cerr << "Error creating texture\n";
     std::cout << texTODOTemp.width() << "x" << texTODOTemp.height() << '\n';
     texTODOTemp.bind(2);
     if (!texTODOTemp.isBound()) std::cerr << "Error binding texture\n";

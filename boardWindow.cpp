@@ -62,7 +62,7 @@ void boardWindow::initGL() {
 }
 
 void boardWindow::printDebugLog() {
-    std::cout << "Printing any OpenGL Debug messages.\n";
+    //TODO: My system appears to not support QOpenGLDebugMessages
     qDebug() << "Test TODO Qt Debug Message\n";
     const QList<QOpenGLDebugMessage> messages = debugLogger->loggedMessages();
     for (const QOpenGLDebugMessage &message : messages)
@@ -120,10 +120,12 @@ void boardWindow::render() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
     
+    /*
     QImage texTODO2;
-    texTODO2.load(":/terrMountains.png");
+    if (!texTODO2.load(":/terrMountains.png")) {
+        std::cerr << "Unable to load image ':/terrMountains.png'\n";
+    }
     texTODO2 = texTODO2.mirrored();
-    
     GLuint texTODO2ID;
     glGenTextures(1, &texTODO2ID);
     glBindTexture(GL_TEXTURE_2D, texTODO2ID);
@@ -133,18 +135,14 @@ void boardWindow::render() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2,4,GL_UNSIGNED_BYTE, GL_FALSE, 0, (void*)0);
+    */
     
     
-    
-    /*
     QOpenGLTexture texTODOTemp(QImage(":/terrMountains.png").mirrored());
     texTODOTemp.setMinificationFilter(QOpenGLTexture::Linear);
     texTODOTemp.setMagnificationFilter(QOpenGLTexture::Linear);
     texTODOTemp.bind(2);
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2,4,GL_UNSIGNED_BYTE, GL_FALSE, 0, (void*)0);
-    */
-    
+    shaderProgram.setUniformValue("TODOTestSampler", 2);
     
     int texUVHandle = shaderProgram.attributeLocation("UV");
     shaderProgram.enableAttributeArray(texUVHandle);
@@ -157,7 +155,7 @@ void boardWindow::render() {
     locationIndexBuffer.bind();
     glDrawElements(GL_TRIANGLES, numQuads * 6, GL_UNSIGNED_SHORT, 0);
     locationIndexBuffer.release();
-    //texTODOTemp.release();
+    texTODOTemp.release();
     locationVertexBuffer.release();
     //TODO: End of test render
     

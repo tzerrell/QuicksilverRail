@@ -74,5 +74,10 @@ template<> struct EnumTraits<crossing> {
     static constexpr crossing LAST_BUILDABLE = crossing::Channel;
 };
 
+namespace Enum {
+    template<typename T> std::size_t count();
+    template<> std::size_t count<terrain>();
+}
+
 #endif /* TERRAIN_H */
 

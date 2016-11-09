@@ -17,3 +17,11 @@ terrain& operator++(terrain& t) {
     t = static_cast<terrain>( static_cast<BaseType>(t) + 1 );
     return t;
 }
+
+template<> std::size_t Enum::count<terrain>() {
+    using BaseType = typename std::size_t;
+    return static_cast<BaseType>(EnumTraits<terrain>::LAST) 
+            - static_cast<BaseType>(EnumTraits<terrain>::FIRST)
+            + 1;
+}
+

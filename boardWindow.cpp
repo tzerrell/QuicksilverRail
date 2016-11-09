@@ -23,6 +23,7 @@
 #include <fstream>
 #include <sstream>
 
+#include "terrain.h"
 #include "board.h"
 
 #include "boardWindow.h"
@@ -141,20 +142,29 @@ void boardWindow::render() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
     
-    
-    terrainTexture[0]->bind(2);  //TODO: Run actual code
-    if (!terrainTexture[0]->isBound()) std::cerr << "Error binding texture\n";
-    shaderProgram.setUniformValue("TODOTestSampler", 2);
+    std::vector<int> texHandleIDs;
+    for (std::size_t i = 0; i < Enum::count<terrain>(); ++i ) {
+        std::size_t ID = 10 + i;    //Leave space for 10 entries before textures
+        terrainTexture[i]->bind(ID);
+        if (!terrainTexture[i]->isBound()) {
+            std::cerr << "Error binding texture for '"
+                    //<< typeid(static_cast<terrain>(i))
+                    << "' terrain type.\n";
+        }
+        texHandleIDs[i] = ID;
+    }
+    shaderProgram.setUniformValueArray("TODOTestSampler", &texHandleIDs[0], Enum::count<terrain>());
     
     int numQuads = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
     locationIndexBuffer.bind();
     glDrawElements(GL_TRIANGLES, numQuads * 6, GL_UNSIGNED_SHORT, 0);
     locationIndexBuffer.release();
-    terrainTexture[0]->release();
+    for (std::size_t i = 0; i < Enum::count<terrain>(); ++i ) {
+        terrainTexture[i]->release();
+    }
     locationVertexBuffer.release();
     //TODO: End of test render
     
-    glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
     

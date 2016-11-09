@@ -27,6 +27,7 @@
 #include <qopengl.h>
 
 class board;
+class QOpenGLTexture;
 
 class boardWindow : public QWindow, protected QOpenGLFunctions {
     Q_OBJECT
@@ -61,6 +62,7 @@ private:
     QOpenGLDebugLogger *debugLogger;
     QRectF view;
     GLuint projMatrixHandle;
+    std::vector<QOpenGLTexture*> terrainTexture;
     
     QOpenGLBuffer locationVertexBuffer;
     QOpenGLBuffer locationUVBuffer;
@@ -75,6 +77,7 @@ private:
     //const GLfloat vertexIconWidth == locHorizSpacing
     
     void initGL();
+    void loadTerrainTextures();
     void printDebugLog();
     
     bool createShaderProgram();     //return whether successfully created. If false, the old shader program (if any) is retained in shaderProgramID

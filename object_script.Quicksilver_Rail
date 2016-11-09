@@ -5,6 +5,7 @@ INPUT(
 ./build/Debug/MinGW_Qt-Windows/delivery.o
 ./build/Debug/MinGW_Qt-Windows/location.o
 ./build/Debug/MinGW_Qt-Windows/player.o
+./build/Debug/MinGW_Qt-Windows/terrain.o
 ./build/Debug/MinGW_Qt-Windows/track.o
 ./build/Debug/MinGW_Qt-Windows/train.o
 ./build/Debug/MinGW_Qt-Windows/main.o

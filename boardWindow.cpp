@@ -49,12 +49,16 @@ boardWindow::~boardWindow() {
     delete subject;
     if (context) delete context;
     if (debugLogger) delete debugLogger;
+    for (auto tex : terrainTexture) {
+        delete tex;
+    }
 }
 
 void boardWindow::initGL() {
     updateShaders("generic.vertexshader", "generic.fragmentshader");    //TODO: adjust to allow custom filenames
     projMatrixHandle = glGetUniformLocation(shaderProgram.programId(), "projectionMat");
     constructGLBuffers();
+    loadTerrainTextures();
     //TODO: Once I have objects at different heights, enable depth testing
     //glEnable(GL_DEPTH_TEST);
     //glDepthFunc(GL_LESS);
@@ -124,27 +128,10 @@ void boardWindow::render() {
     int vertPositionHandle = shaderProgram.attributeLocation("position");
     shaderProgram.enableAttributeArray(vertPositionHandle);
     shaderProgram.setAttributeBuffer(vertPositionHandle, GL_FLOAT, 0, 
-            3, sizeof(GLfloat /*TODO*/));
+            3, sizeof(GLfloat));
     
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
-    
-    /*
-    QImage texTODO2;
-    if (!texTODO2.load(":/terrMountains.png")) {
-        std::cerr << "Unable to load image ':/terrMountains.png'\n";
-    }
-    texTODO2 = texTODO2.mirrored();
-    GLuint texTODO2ID;
-    glGenTextures(1, &texTODO2ID);
-    glBindTexture(GL_TEXTURE_2D, texTODO2ID);
-    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, texTODO2.width(), texTODO2.height()
-            , 0, GL_RGB, GL_UNSIGNED_BYTE, texTODO2.bits());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2,4,GL_UNSIGNED_BYTE, GL_FALSE, 0, (void*)0);
-    */
     
     locationUVBuffer.bind();
     int texUVHandle = shaderProgram.attributeLocation("UV");
@@ -154,22 +141,16 @@ void boardWindow::render() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
     
-    QImage TODOImage;
-    if (!TODOImage.load(":/terrMountains.png")) 
-        std::cerr << "Failed to load texture image\n";
-    QOpenGLTexture texTODOTemp(TODOImage);
-    texTODOTemp.setMinificationFilter(QOpenGLTexture::Linear);
-    texTODOTemp.setMagnificationFilter(QOpenGLTexture::Linear);
-    texTODOTemp.generateMipMaps();
-    texTODOTemp.bind(2);
-    if (!texTODOTemp.isBound()) std::cerr << "Error binding texture\n";
+    
+    terrainTexture[0]->bind(2);  //TODO: Run actual code
+    if (!terrainTexture[0]->isBound()) std::cerr << "Error binding texture\n";
     shaderProgram.setUniformValue("TODOTestSampler", 2);
     
     int numQuads = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
     locationIndexBuffer.bind();
     glDrawElements(GL_TRIANGLES, numQuads * 6, GL_UNSIGNED_SHORT, 0);
     locationIndexBuffer.release();
-    texTODOTemp.release();
+    terrainTexture[0]->release();
     locationVertexBuffer.release();
     //TODO: End of test render
     
@@ -416,3 +397,21 @@ bool boardWindow::constructGLBuffers() {
     
     return true;
 }
+
+void boardWindow::loadTerrainTextures() {
+    QImage image;
+    for (terrain t = EnumTraits<terrain>::FIRST;
+            t != EnumTraits<terrain>::LOGICAL_LAST;
+            ++t) {
+        std::string filename(":/terrMountains.png");    //TODO: look this up from appropriate table
+        if (!image.load(filename.c_str())) {
+            std::cerr << "Failed to load texture image '" << filename << "'\n";
+        }
+        QOpenGLTexture* tex = new QOpenGLTexture(image);
+        terrainTexture.push_back(tex);
+        terrainTexture.back()->setMinificationFilter(QOpenGLTexture::Linear);
+        terrainTexture.back()->setMagnificationFilter(QOpenGLTexture::Linear);
+        terrainTexture.back()->generateMipMaps();    //TODO: Eventually pre-generate these
+    }
+}
+

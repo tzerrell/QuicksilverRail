@@ -432,6 +432,7 @@ qrc_images.cpp: images.qrc \
 		C:/Qt/5.7/mingw53_32/bin/rcc.exe \
 		res/terrMountains.png \
 		res/terrSwamp.png \
+		res/terrMountains.bmp \
 		res/terrPlains.png
 	'C:\Qt\5.7\mingw53_32\bin\rcc.exe' -name images images.qrc -o qrc_images.cpp
 

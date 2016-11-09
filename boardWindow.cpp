@@ -155,7 +155,7 @@ void boardWindow::render() {
     glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
     
     QImage TODOImage;
-    if (!TODOImage.load(":/terrMountains.png")) 
+    if (!TODOImage.load(":/terrBMPTest.bmp")) 
         std::cerr << "Failed to load texture image\n";
     TODOImage = TODOImage.mirrored();
     std::cout << TODOImage.width() << "x" << TODOImage.height() << '\n';
@@ -163,6 +163,7 @@ void boardWindow::render() {
     std::cout << texTODOTemp.width() << "x" << texTODOTemp.height() << '\n';
     texTODOTemp.setMinificationFilter(QOpenGLTexture::Linear);
     texTODOTemp.setMagnificationFilter(QOpenGLTexture::Linear);
+    texTODOTemp.generateMipMaps();
     std::cout << texTODOTemp.width() << "x" << texTODOTemp.height() << '\n';
     texTODOTemp.bind(2);
     if (!texTODOTemp.isBound()) std::cerr << "Error binding texture\n";

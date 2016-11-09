@@ -5,5 +5,6 @@
         <file alias="terrMountains.png">res/terrMountains.png</file>
         <file alias="terrPlains.png">res/terrPlains.png</file>
         <file alias="terrSwamp.png">res/terrSwamp.png</file>
+        <file alias="terrBMPTest.bmp">res/terrMountains.bmp</file>
     </qresource>
 </RCC>

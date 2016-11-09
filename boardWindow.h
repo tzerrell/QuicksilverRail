@@ -63,8 +63,10 @@ private:
     GLuint projMatrixHandle;
     
     QOpenGLBuffer locationVertexBuffer;
+    QOpenGLBuffer locationUVBuffer;
     QOpenGLBuffer locationIndexBuffer;
     QOpenGLBuffer connectionVertexBuffer;
+    QOpenGLBuffer connectionUVBuffer;
     QOpenGLBuffer connectionIndexBuffer;
     
     //Board graphical parameters. Things like how far apart vertices are

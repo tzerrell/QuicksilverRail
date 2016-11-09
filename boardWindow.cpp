@@ -33,8 +33,8 @@ boardWindow::boardWindow(QWindow* parent)
         , subject(nullptr)
         , animating(false)
         , context(0)
-        //, view(-20,-30,96,72)    //TODO: Choose an appropriate default view
-        , view(-40, -60, 192, 144)
+        , view(-20,-30,96,72)    //TODO: Choose an appropriate default view
+        //, view(-40, -60, 192, 144)
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)
         , verbose(true)
@@ -121,7 +121,6 @@ void boardWindow::render() {
     //TODO: render scene
     //TODO: do this in a real way
     locationVertexBuffer.bind();
-    
     int vertPositionHandle = shaderProgram.attributeLocation("position");
     shaderProgram.enableAttributeArray(vertPositionHandle);
     shaderProgram.setAttributeBuffer(vertPositionHandle, GL_FLOAT, 0, 
@@ -147,6 +146,7 @@ void boardWindow::render() {
     glVertexAttribPointer(2,4,GL_UNSIGNED_BYTE, GL_FALSE, 0, (void*)0);
     */
     
+    locationUVBuffer.bind();
     int texUVHandle = shaderProgram.attributeLocation("UV");
     shaderProgram.enableAttributeArray(texUVHandle);
     shaderProgram.setAttributeBuffer(texUVHandle, GL_FLOAT, 0, 2,
@@ -155,16 +155,12 @@ void boardWindow::render() {
     glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
     
     QImage TODOImage;
-    if (!TODOImage.load(":/terrBMPTest.bmp")) 
+    if (!TODOImage.load(":/terrMountains.png")) 
         std::cerr << "Failed to load texture image\n";
-    TODOImage = TODOImage.mirrored();
-    std::cout << TODOImage.width() << "x" << TODOImage.height() << '\n';
     QOpenGLTexture texTODOTemp(TODOImage);
-    std::cout << texTODOTemp.width() << "x" << texTODOTemp.height() << '\n';
     texTODOTemp.setMinificationFilter(QOpenGLTexture::Linear);
     texTODOTemp.setMagnificationFilter(QOpenGLTexture::Linear);
     texTODOTemp.generateMipMaps();
-    std::cout << texTODOTemp.width() << "x" << texTODOTemp.height() << '\n';
     texTODOTemp.bind(2);
     if (!texTODOTemp.isBound()) std::cerr << "Error binding texture\n";
     shaderProgram.setUniformValue("TODOTestSampler", 2);
@@ -356,6 +352,12 @@ bool boardWindow::constructGLBuffers() {
     locationVertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
     locationVertexBuffer.allocate(&vertexCoords[0], vertexCoords.size()*sizeof(vertexCoords[0]));
     locationVertexBuffer.release();
+    
+    locationUVBuffer.create();
+    locationUVBuffer.bind();
+    locationUVBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    locationUVBuffer.allocate(&vertexUVs[0], vertexUVs.size()*sizeof(vertexUVs[0]));
+    locationUVBuffer.release();
     
     //construct an element buffer for all the quads
     std::vector<GLushort> vertexIndices;

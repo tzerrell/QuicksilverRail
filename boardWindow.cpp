@@ -316,7 +316,7 @@ bool boardWindow::constructGLBuffers() {
                 vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
                 
                 if (verbose) {
-                    std::cout << "Adding vertices (" << LLx << ", " << LLy
+                    std::cout << "\tAdding vertices (" << LLx << ", " << LLy
                             << ", " << LLz << "), (" << ULx << ", " << ULy
                             << ", " << ULz << "), (" << LRx << ", " << LRy
                             << ", " << LRz << "), (" << URx << ", " << URy
@@ -326,7 +326,7 @@ bool boardWindow::constructGLBuffers() {
         }
     }
     catch (const std::bad_alloc& ex) {
-        std::cerr << "Bad allocation in constructVertexBuffers. The board"
+        std::cerr << "\tBad allocation in constructVertexBuffers. The board"
                 << " is too large. Location vertex buffer not constructed.\n";
         return false;
     }
@@ -343,15 +343,16 @@ bool boardWindow::constructGLBuffers() {
     locationUVBuffer.release();
     
     //construct an element buffer for all the quads
+    if (verbose) std::cout << "Constructing locationIndexBuffer.\n";
     std::vector<GLushort> vertexIndices;
     GLushort currIndex = 0;
     try {
-        if (verbose) std::cout << "Writing vertex indices: ";
+        if (verbose) std::cout << "\tWriting vertex indices:\n";
         for (int i = 0; i < subject->getNumRows(); ++i) {
             int rowParity = i%2;
-            if (verbose) std::cout << "i = " << i;
+            if (verbose) std::cout << "\ti = " << i;
             for (int j = 0; j < subject->getNumCols() + rowParity; ++j) {
-                if (verbose) std::cout << "\nj = " << j << " of " << subject->getNumCols() + rowParity << ":";
+                if (verbose) std::cout << "\n\t\tj = " << j << " of " << subject->getNumCols() + rowParity << ":\t";
                 for (int twice = 0; twice < 2; ++twice) {
                     if (verbose) {
                         std::cout << currIndex << ' ' << currIndex + 1 << ' '
@@ -369,7 +370,7 @@ bool boardWindow::constructGLBuffers() {
         }
     }
     catch (const std::bad_alloc& ex) {
-        std::cerr << "Bad allocation in constructGLBuffers. The board"
+        std::cerr << "\tBad allocation in constructGLBuffers. The board"
                 << " is too large. Location element buffers not constructed.\n";
         std::cerr << "Warning: Partial construction of GLBuffers.\n";
         return false;
@@ -385,7 +386,7 @@ bool boardWindow::constructGLBuffers() {
     locationIndexBuffer.release();
         
     if(verbose) {
-        std::cout << "locationIndexBuffer contains "
+        std::cout << "\tlocationIndexBuffer contains "
                 << 6*numQuads
                 << " indices: ";
         for (int j = 0; j < 6*numQuads; ++j) {

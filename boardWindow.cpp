@@ -142,6 +142,7 @@ void boardWindow::render() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
     
+    std::cout << terrainTexture.size() << " is the terrTex number\n"; std::cout.flush(); //TODO
     std::vector<int> texHandleIDs;
     for (std::size_t i = 0; i < Enum::count<terrain>(); ++i ) {
         std::size_t ID = 10 + i;    //Leave space for 10 entries before textures
@@ -151,8 +152,9 @@ void boardWindow::render() {
                     //<< typeid(static_cast<terrain>(i))
                     << "' terrain type.\n";
         }
-        texHandleIDs[i] = ID;
+        texHandleIDs.push_back(ID);
     }
+    std::cout << texHandleIDs.size() << " is the handle ID number\n"; std::cout.flush(); //TODO
     shaderProgram.setUniformValueArray("TODOTestSampler", &texHandleIDs[0], Enum::count<terrain>());
     
     int numQuads = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;

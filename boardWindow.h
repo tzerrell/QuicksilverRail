@@ -23,11 +23,11 @@
 #include <QtGui/QOpenGLBuffer>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QOpenGLDebugLogger>
+#include <QtGui/QOpenGLTexture>
 
 #include <qopengl.h>
 
 class board;
-class QOpenGLTexture;
 
 class boardWindow : public QWindow, protected QOpenGLFunctions {
     Q_OBJECT
@@ -62,7 +62,7 @@ private:
     QOpenGLDebugLogger *debugLogger;
     QRectF view;
     GLuint projMatrixHandle;
-    std::vector<QOpenGLTexture*> terrainTexture;
+    QOpenGLTexture terrainTextureAtlas;
     
     QOpenGLBuffer locationVertexBuffer;
     QOpenGLBuffer locationUVBuffer;

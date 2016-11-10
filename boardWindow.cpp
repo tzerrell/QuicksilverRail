@@ -39,6 +39,7 @@ boardWindow::boardWindow(QWindow* parent)
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)
         , verbose(true)
+        , terrainTextureAtlas(QOpenGLTexture::Target2DArray)
         , locationIndexBuffer(QOpenGLBuffer::IndexBuffer)
 {
     subject = new board;    //TODO: do this in a reasonable way ...
@@ -50,9 +51,6 @@ boardWindow::~boardWindow() {
     delete subject;
     if (context) delete context;
     if (debugLogger) delete debugLogger;
-    for (auto tex : terrainTexture) {
-        delete tex;
-    }
 }
 
 void boardWindow::initGL() {
@@ -142,28 +140,20 @@ void boardWindow::render() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
     
-    std::cout << terrainTexture.size() << " is the terrTex number\n"; std::cout.flush(); //TODO
-    std::vector<int> texHandleIDs;
-    for (std::size_t i = 0; i < Enum::count<terrain>(); ++i ) {
-        std::size_t ID = 10 + i;    //Leave space for 10 entries before textures
-        terrainTexture[i]->bind(ID);
-        if (!terrainTexture[i]->isBound()) {
-            std::cerr << "Error binding texture for '"
-                    //<< typeid(static_cast<terrain>(i))
-                    << "' terrain type.\n";
-        }
-        texHandleIDs.push_back(ID);
+    std::vector<int> texHandleIDs;  //TODO: Want this?
+    terrainTextureAtlas.bind(13); //TODO
+    if (!terrainTextureAtlas.isBound()) {
+        std::cerr << "Error binding terrain texture atlas.\n";
     }
-    std::cout << texHandleIDs.size() << " is the handle ID number\n"; std::cout.flush(); //TODO
-    shaderProgram.setUniformValueArray("TODOTestSampler", &texHandleIDs[0], Enum::count<terrain>());
+    int TODOTempUnifValArray[1] = { 13 };
+    shaderProgram.setUniformValueArray("TODOTestSampler", TODOTempUnifValArray, 1);
+    //shaderProgram.setUniformValueArray("TODOTestSampler", &texHandleIDs[0], Enum::count<terrain>());
     
     int numQuads = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
     locationIndexBuffer.bind();
     glDrawElements(GL_TRIANGLES, numQuads * 6, GL_UNSIGNED_SHORT, 0);
     locationIndexBuffer.release();
-    for (std::size_t i = 0; i < Enum::count<terrain>(); ++i ) {
-        terrainTexture[i]->release();
-    }
+    terrainTextureAtlas.release();
     locationVertexBuffer.release();
     //TODO: End of test render
     
@@ -412,18 +402,23 @@ bool boardWindow::constructGLBuffers() {
 
 void boardWindow::loadTerrainTextures() {
     QImage image;
-    for (terrain t = EnumTraits<terrain>::FIRST;
-            t != EnumTraits<terrain>::LOGICAL_LAST;
-            ++t) {
-        std::string filename(":/terrMountains.png");    //TODO: look this up from appropriate table
-        if (!image.load(filename.c_str())) {
-            std::cerr << "Failed to load texture image '" << filename << "'\n";
-        }
-        QOpenGLTexture* tex = new QOpenGLTexture(image);
-        terrainTexture.push_back(tex);
-        terrainTexture.back()->setMinificationFilter(QOpenGLTexture::Linear);
-        terrainTexture.back()->setMagnificationFilter(QOpenGLTexture::Linear);
-        terrainTexture.back()->generateMipMaps();    //TODO: Eventually pre-generate these
+    //std::string filename(":/terrainAtlas.png"); //TODO: This is better
+    std::string filename(":/terrMountains.png");
+    if (!image.load(filename.c_str())) {
+        std::cerr << "Failed to load texture image '" << filename << "'\n";
+    }
+    terrainTextureAtlas.setData(image);
+    terrainTextureAtlas.setMinificationFilter(QOpenGLTexture::Linear);
+    terrainTextureAtlas.setMagnificationFilter(QOpenGLTexture::Linear);
+    terrainTextureAtlas.generateMipMaps();    //TODO: Eventually pre-generate these
+    //TODO: Debug info
+    if (verbose) {
+        std::cout << "Loaded texture from file '" << filename << "' with the"
+                << " following properties:\n";
+        std::cout << "\tDepth: " << terrainTextureAtlas.depth() << "\n";
+        std::cout << "\tHeight: " << terrainTextureAtlas.height() << '\n';
+        std::cout << "\tWidth: " << terrainTextureAtlas.width() << '\n';
+        std::cout << "\tLayers: " << terrainTextureAtlas.layers() << '\n';
     }
 }
 

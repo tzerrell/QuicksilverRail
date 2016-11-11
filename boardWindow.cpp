@@ -428,15 +428,24 @@ void boardWindow::loadTerrainTextures() {
     QOpenGLPixelTransferOptions transferOptions;
     transferOptions.setAlignment(1);
     
-    //First setup the default terrain texture (plains)
-    filename = ":/terrPlains.png";
+    //First setup the default terrain texture
+    try {
+        filename = terrainTextureFilenames.at(static_cast<terrain>(0));
+    }
+    catch (std::out_of_range ex) {
+        std::cerr << "Warning: No texture image filename for terrain type "
+                << static_cast<int>(0) << "\n";
+        std::cerr << "This is the default terrain, which must have a filename "
+                << "to load terrain textures. Aborting load.\n";
+        return;
+    }
     if (!image.load(filename.c_str())) {
         std::cerr << "Failed to load texture image '" << filename << "'\n";
         std::cerr << "This was the default terrain texture; aborting terrain"
                 << " texture construction.\n";
         return;
     }
-    glImage = image.convertToFormat(QImage::Format_RGBA8888); //TODO: Move elsewhere
+    glImage = image.convertToFormat(QImage::Format_RGBA8888);
     
     //Based on Qt source code for setData(QImage)
     if (context->isOpenGLES() && context->format().majorVersion() < 3)
@@ -454,8 +463,8 @@ void boardWindow::loadTerrainTextures() {
             filename = terrainTextureFilenames.at(t);
         }
         catch (std::out_of_range ex) {
-            //std::cerr << "Warning: No texture image filename for terrain type "
-            //        << t << "\n"; //TODO
+            std::cerr << "Warning: No texture image filename for terrain type "
+                    << static_cast<int>(t) << "\n";
             continue;
         }
         if (!image.load(filename.c_str())) {
@@ -468,9 +477,8 @@ void boardWindow::loadTerrainTextures() {
     
     //TODO: Debug info
     if (verbose) {
-        std::cout << "Loaded texture from file '" << filename << "' with the"
+        std::cout << "Loaded terrain textures with the"
                 << " following properties:\n";
-        std::cout << "\tDepth: " << terrainTextureAtlas.depth() << "\n";
         std::cout << "\tHeight: " << terrainTextureAtlas.height() << '\n';
         std::cout << "\tWidth: " << terrainTextureAtlas.width() << '\n';
         std::cout << "\tLayers: " << terrainTextureAtlas.layers() << '\n';

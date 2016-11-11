@@ -80,6 +80,7 @@ private:
     void loadTerrainTextures();
     void printDebugLog();
     
+    //Shaders
     bool createShaderProgram();     //return whether successfully created. If false, the old shader program (if any) is retained in shaderProgramID
     std::string vertexShaderFilename;
     std::string fragmentShaderFilename;

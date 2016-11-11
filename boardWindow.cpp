@@ -404,39 +404,42 @@ bool boardWindow::constructGLBuffers() {
 
 void boardWindow::loadTerrainTextures() {
     QImage image;
-    //std::string filename(":/terrainAtlas.png"); //TODO: This is better
-    std::string filename(":/terrMountains.png");
-    std::string TODOAltFilename(":/terrSwamp.png");
-    QImage TODOAltImage;
-    TODOAltImage.load(TODOAltFilename.c_str());
+    QImage glImage;
+    std::string filename;
+    terrainTextureAtlas.setLayers(Enum::count<terrain>());
+    QOpenGLPixelTransferOptions transferOptions;
+    transferOptions.setAlignment(1);
+    
+    //First setup the default terrain texture (plains)
+    filename = ":/terrPlains.png";
     if (!image.load(filename.c_str())) {
         std::cerr << "Failed to load texture image '" << filename << "'\n";
+        std::cerr << "This was the default terrain texture; aborting terrain"
+                << " texture construction.\n";
+        return;
     }
-    terrainTextureAtlas.setLayers(Enum::count<terrain>());
-    //terrainTextureAtlas.setData(image);
+    glImage = image.convertToFormat(QImage::Format_RGBA8888); //TODO: Move elsewhere
     
-    //TODO: Based on Qt source code
+    //Based on Qt source code for setData(QImage)
     if (context->isOpenGLES() && context->format().majorVersion() < 3)
         terrainTextureAtlas.setFormat(QOpenGLTexture::RGBAFormat);
     else
         terrainTextureAtlas.setFormat(QOpenGLTexture::RGBA8_UNorm);
-
     terrainTextureAtlas.setSize(image.width(), image.height());
     terrainTextureAtlas.setMipLevels(terrainTextureAtlas.maximumMipLevels());
     terrainTextureAtlas.allocateStorage(QOpenGLTexture::RGBA, QOpenGLTexture::UInt8);
-
-    // Upload pixel data and generate mipmaps
-    QImage glImage = image.convertToFormat(QImage::Format_RGBA8888); //TODO: Move elsewhere
-    QOpenGLPixelTransferOptions uploadOptions;
-    uploadOptions.setAlignment(1);
-    terrainTextureAtlas.setData(0, 0, QOpenGLTexture::RGBA, QOpenGLTexture::UInt8, glImage.constBits(), &uploadOptions);
+    terrainTextureAtlas.setData(0, 0, QOpenGLTexture::RGBA, QOpenGLTexture::UInt8, glImage.constBits(), &transferOptions);
     
-    //TODO: don't duplicate like this
-    glImage = TODOAltImage.convertToFormat(QImage::Format_RGBA8888);
-    uploadOptions.setAlignment(1);
-    terrainTextureAtlas.setData(0, 1, QOpenGLTexture::RGBA, QOpenGLTexture::UInt8, glImage.constBits(), &uploadOptions);
+    for (int i = 1; i < terrainTextureAtlas.layers(); ++i) {
+        filename = ":/terrMountains.png"; //TODO
+        if (!image.load(filename.c_str())) {
+            std::cerr << "Failed to load texture image '" << filename << "'\n";
+        }
+        glImage = image.convertToFormat(QImage::Format_RGBA8888);
+        terrainTextureAtlas.setData(0, i, QOpenGLTexture::RGBA, QOpenGLTexture::UInt8,
+                glImage.constBits(), &transferOptions);
+    }
     
-
     //TODO: Debug info
     if (verbose) {
         std::cout << "Loaded texture from file '" << filename << "' with the"

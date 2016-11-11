@@ -430,6 +430,12 @@ void boardWindow::loadTerrainTextures() {
     QOpenGLPixelTransferOptions uploadOptions;
     uploadOptions.setAlignment(1);
     terrainTextureAtlas.setData(0, 0, QOpenGLTexture::RGBA, QOpenGLTexture::UInt8, glImage.constBits(), &uploadOptions);
+    
+    //TODO: don't duplicate like this
+    glImage = TODOAltImage.convertToFormat(QImage::Format_RGBA8888);
+    uploadOptions.setAlignment(1);
+    terrainTextureAtlas.setData(0, 1, QOpenGLTexture::RGBA, QOpenGLTexture::UInt8, glImage.constBits(), &uploadOptions);
+    
 
     //TODO: Debug info
     if (verbose) {

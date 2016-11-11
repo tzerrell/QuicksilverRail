@@ -46,6 +46,11 @@ boardWindow::boardWindow(QWindow* parent)
     subject = new board;    //TODO: do this in a reasonable way ...
     surfaceFormat.setSamples(4);
     setSurfaceType(QWindow::OpenGLSurface);
+    
+    std::string texFilenames("");
+    std::stringstream fnamestr(texFilenames);
+    fnamestr << ":/terrPlains.png\n:/terrMountains.png\n:/terrSwamp.png";   //TODO
+    loadTerrainTextureFilenames(fnamestr);
 }
 
 boardWindow::~boardWindow() {
@@ -402,6 +407,19 @@ bool boardWindow::constructGLBuffers() {
     return true;
 }
 
+void boardWindow::loadTerrainTextureFilenames(std::istream& in) {
+    //TODO: Note that the file names must be given in the same order as the enum
+    using dictPair = std::pair<terrain, std::string>;
+    for (terrain t = EnumTraits<terrain>::FIRST;
+            t != EnumTraits<terrain>::LOGICAL_LAST;
+            ++t) {
+        std::string line;
+        if (!std::getline(in, line))
+            return; //No more input, all available texture filenames set
+        terrainTextureFilenames.insert(dictPair(t, line));
+    }
+}
+
 void boardWindow::loadTerrainTextures() {
     QImage image;
     QImage glImage;
@@ -431,7 +449,15 @@ void boardWindow::loadTerrainTextures() {
     terrainTextureAtlas.setData(0, 0, QOpenGLTexture::RGBA, QOpenGLTexture::UInt8, glImage.constBits(), &transferOptions);
     
     for (int i = 1; i < terrainTextureAtlas.layers(); ++i) {
-        filename = ":/terrMountains.png"; //TODO
+        terrain t = static_cast<terrain>(i);
+        try {
+            filename = terrainTextureFilenames.at(t);
+        }
+        catch (std::out_of_range ex) {
+            //std::cerr << "Warning: No texture image filename for terrain type "
+            //        << t << "\n"; //TODO
+            continue;
+        }
         if (!image.load(filename.c_str())) {
             std::cerr << "Failed to load texture image '" << filename << "'\n";
         }

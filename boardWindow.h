@@ -17,6 +17,8 @@
 #define BOARDWINDOW_H
 
 #include <vector>
+#include <map>
+#include <string>
 
 #include <QtGui/QWindow>
 #include <QtGui/QOpenGLFunctions>
@@ -28,6 +30,7 @@
 #include <qopengl.h>
 
 class board;
+enum class terrain;
 
 class boardWindow : public QWindow, protected QOpenGLFunctions {
     Q_OBJECT
@@ -70,6 +73,7 @@ private:
     QOpenGLBuffer connectionVertexBuffer;
     QOpenGLBuffer connectionUVBuffer;
     QOpenGLBuffer connectionIndexBuffer;
+    std::map<terrain, std::string> terrainTextureFilenames;
     
     //Board graphical parameters. Things like how far apart vertices are
     const GLfloat locHorizSpacing;
@@ -77,6 +81,7 @@ private:
     //const GLfloat vertexIconWidth == locHorizSpacing
     
     void initGL();
+    void loadTerrainTextureFilenames(std::istream& in);
     void loadTerrainTextures();
     void printDebugLog();
     

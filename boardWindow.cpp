@@ -17,6 +17,7 @@
 #include <QtGui/QOpenGLContext>
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QOpenGLTexture>
+#include <QtGui/QOpenGLPixelTransferOptions>
 #include <QtDebug>
 
 #include <iostream>
@@ -405,13 +406,31 @@ void boardWindow::loadTerrainTextures() {
     QImage image;
     //std::string filename(":/terrainAtlas.png"); //TODO: This is better
     std::string filename(":/terrMountains.png");
+    std::string TODOAltFilename(":/terrSwamp.png");
+    QImage TODOAltImage;
+    TODOAltImage.load(TODOAltFilename.c_str());
     if (!image.load(filename.c_str())) {
         std::cerr << "Failed to load texture image '" << filename << "'\n";
     }
-    terrainTextureAtlas.setData(image);
-    terrainTextureAtlas.setMinificationFilter(QOpenGLTexture::Linear);
-    terrainTextureAtlas.setMagnificationFilter(QOpenGLTexture::Linear);
-    terrainTextureAtlas.generateMipMaps();    //TODO: Eventually pre-generate these
+    terrainTextureAtlas.setLayers(Enum::count<terrain>());
+    //terrainTextureAtlas.setData(image);
+    
+    //TODO: Based on Qt source code
+    if (context->isOpenGLES() && context->format().majorVersion() < 3)
+        terrainTextureAtlas.setFormat(QOpenGLTexture::RGBAFormat);
+    else
+        terrainTextureAtlas.setFormat(QOpenGLTexture::RGBA8_UNorm);
+
+    terrainTextureAtlas.setSize(image.width(), image.height());
+    terrainTextureAtlas.setMipLevels(terrainTextureAtlas.maximumMipLevels());
+    terrainTextureAtlas.allocateStorage(QOpenGLTexture::RGBA, QOpenGLTexture::UInt8);
+
+    // Upload pixel data and generate mipmaps
+    QImage glImage = image.convertToFormat(QImage::Format_RGBA8888); //TODO: Move elsewhere
+    QOpenGLPixelTransferOptions uploadOptions;
+    uploadOptions.setAlignment(1);
+    terrainTextureAtlas.setData(0, 0, QOpenGLTexture::RGBA, QOpenGLTexture::UInt8, glImage.constBits(), &uploadOptions);
+
     //TODO: Debug info
     if (verbose) {
         std::cout << "Loaded texture from file '" << filename << "' with the"

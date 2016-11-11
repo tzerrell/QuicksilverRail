@@ -692,6 +692,9 @@ build/Debug/MinGW_Qt-Windows/boardWindow.o: boardWindow.cpp C:/Qt/5.7/mingw53_32
 		C:/Qt/5.7/mingw53_32/include/QtGui/qregion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qline.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qpainterpath.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLPixelTransferOptions \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglpixeltransferoptions.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QSharedDataPointer \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QtDebug \
 		terrain.h \
 		board.h \

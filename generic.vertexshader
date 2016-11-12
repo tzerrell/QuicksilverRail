@@ -1,8 +1,10 @@
 #version 330
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 vertexUV;
+layout(location = 2) in uint terrain;
 
 out vec2 UV;
+flat out uint terr;
 
 uniform mat4 projectionMat;
 
@@ -11,5 +13,6 @@ void main() {
   gl_Position.w = 1.0;
   gl_Position = projectionMat * gl_Position;
 
+  terr = terrain;
   UV = vertexUV;
 }

@@ -52,25 +52,28 @@
 #define BOARD_H
 
 #include <boost/multi_array.hpp>
+#include <iostream>
+
 #include "direction.h"
 #include "terrain.h"
 
 class location;
-class city;
 class track;
 class player;
 
 class board {
 public:
     board();
+    explicit board(int height, int width);
+    explicit board(std::istream& in);
     board(const board& orig);
     virtual ~board();
     
-    location* getLocation(int x, int y);
+    location* getLocation(int x, int y, bool logicalCoords = false);
     void setLocationTerrain(int x, int y, terrain t);
-    crossing getCrossing(int x, int y, direction d);
+    crossing* getCrossing(int x, int y, direction d);
     void setCrossing(int x, int y, direction d, crossing c);
-    track getTrack(int x, int y, direction d);
+    track* getTrack(int x, int y, direction d);
     void setTrack(int x, int y, direction d, track t);
     void resize(int height, int width);
     int getNumRows() { return rows; };
@@ -78,7 +81,10 @@ public:
 private:
     int rows;
     int columns;    //Note: counts full zig-zag cols; & not half-col at end
-    boost::multi_array<int, 2> landData; //contains terrain on vertices, and
+    int xOffset;    //How much x differs from the internal col index
+    int yOffset;    //How much y differs from the internal row index    //TODO: Important, must be even
+    boost::multi_array<location, 2> loc;
+    //boost::multi_array<int, 2> landData; //contains terrain on vertices, and
                                          //rails on edges, see diagrams above
 };
 

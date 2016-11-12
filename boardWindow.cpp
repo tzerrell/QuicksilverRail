@@ -28,6 +28,7 @@
 #include "board.h"
 
 #include "boardWindow.h"
+#include "location.h"
 #include <qopengl.h>
 
 boardWindow::boardWindow(QWindow* parent)
@@ -60,6 +61,11 @@ boardWindow::~boardWindow() {
 }
 
 void boardWindow::initGL() {
+    //TODO: debug code
+    subject->setLocationTerrain(1,1, static_cast<terrain>(1));
+    //TODO: end debug
+    
+    
     updateShaders("generic.vertexshader", "generic.fragmentshader");    //TODO: adjust to allow custom filenames
     projMatrixHandle = glGetUniformLocation(shaderProgram.programId(), "projectionMat");
     constructGLBuffers();
@@ -127,7 +133,7 @@ void boardWindow::render() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    //TODO: render scene
+    //Render scene
     //TODO: do this in a real way
     locationVertexBuffer.bind();
     int vertPositionHandle = shaderProgram.attributeLocation("position");
@@ -145,6 +151,14 @@ void boardWindow::render() {
             sizeof(GLfloat));
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
+    
+    locationTerrainTypeBuffer.bind();
+    int texTerrTypeHandle = shaderProgram.attributeLocation("terrain");
+    shaderProgram.enableAttributeArray(texTerrTypeHandle);
+    shaderProgram.setAttributeBuffer(texTerrTypeHandle, GL_UNSIGNED_INT, 0, 1,
+            sizeof(GLuint));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2,1,GL_UNSIGNED_INT, GL_FALSE, 0, (void*)0);
     
     std::vector<int> texHandleIDs;  //TODO: Want this?
     terrainTextureAtlas.bind(13); //TODO
@@ -351,6 +365,7 @@ bool boardWindow::constructGLBuffers() {
     //construct an element buffer for all the quads
     if (verbose) std::cout << "Constructing locationIndexBuffer.\n";
     std::vector<GLushort> vertexIndices;
+    std::vector<GLuint> terrainTypeIndices;
     GLushort currIndex = 0;
     try {
         if (verbose) std::cout << "\tWriting vertex indices:\n";
@@ -359,14 +374,18 @@ bool boardWindow::constructGLBuffers() {
             if (verbose) std::cout << "\ti = " << i;
             for (int j = 0; j < subject->getNumCols() + rowParity; ++j) {
                 if (verbose) std::cout << "\n\t\tj = " << j << " of " << subject->getNumCols() + rowParity << ":\t";
+                GLuint terrainIndex = static_cast<GLuint>(subject->getLocation(j,i,true)->getTerrain());
                 for (int twice = 0; twice < 2; ++twice) {
                     if (verbose) {
                         std::cout << currIndex << ' ' << currIndex + 1 << ' '
                                 << currIndex + 2 << ' ';
                     }
                     vertexIndices.push_back(currIndex);
+                    terrainTypeIndices.push_back(terrainIndex);
                     vertexIndices.push_back(currIndex + 1);
+                    terrainTypeIndices.push_back(terrainIndex);
                     vertexIndices.push_back(currIndex + 2);
+                    terrainTypeIndices.push_back(terrainIndex);
                     ++currIndex;
                 }
                 ++currIndex;
@@ -390,13 +409,20 @@ bool boardWindow::constructGLBuffers() {
     locationIndexBuffer.allocate(&vertexIndices[0] 
             , sizeof(vertexIndices[0]) * 6 * numQuads);
     locationIndexBuffer.release();
+    
+    locationTerrainTypeBuffer.create();
+    locationTerrainTypeBuffer.bind();
+    locationTerrainTypeBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    locationTerrainTypeBuffer.allocate(&terrainTypeIndices[0]
+            , sizeof(terrainTypeIndices[0]) * 6 * numQuads);
+    locationTerrainTypeBuffer.release();
         
     if(verbose) {
         std::cout << "\tlocationIndexBuffer contains "
                 << 6*numQuads
-                << " indices: ";
+                << " indices (with corresponding terrain indices): ";
         for (int j = 0; j < 6*numQuads; ++j) {
-            std::cout << vertexIndices[j] << " ";
+            std::cout << vertexIndices[j] << ":" << terrainTypeIndices[j] << " ";
         }
         std::cout << '\n';
         std::cout.flush();

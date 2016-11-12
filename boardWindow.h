@@ -69,6 +69,7 @@ private:
     
     QOpenGLBuffer locationVertexBuffer;
     QOpenGLBuffer locationUVBuffer;
+    QOpenGLBuffer locationTerrainTypeBuffer;
     QOpenGLBuffer locationIndexBuffer;
     QOpenGLBuffer connectionVertexBuffer;
     QOpenGLBuffer connectionUVBuffer;

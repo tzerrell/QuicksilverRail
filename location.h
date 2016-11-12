@@ -14,36 +14,38 @@
 #ifndef LOCATION_H
 #define LOCATION_H
 
+#include <map>
+
 #include <QtGui/QOpenGLTexture>
 
 #include "terrain.h"
 
+enum class direction;
+enum class good;
 class board;
+class connection;
+class settlement;
 
 class location {
 public:
     location();
-    location(const location&) = delete;
+    location(const location& orig);
     virtual ~location();
     
-    terrain getTerrain() { return terr; };
-    void setTerrain(terrain t) { terr = t; };
-    QOpenGLTexture* getTexture();
+    terrain getTerrain() { return terr; }
+    void setTerrain(terrain t) { terr = t; }
+    connection* getConnection(direction towardDir);
+    void setConnection(direction towardDir);
+    location* getNeighbor(direction towardDir);
     
-    static void loadTexture(terrain t);  //Loads the texture for terrain t into "texture"
-    static void unloadTexture(terrain t); //Unloads the texture for terrain t from "texture"
-    static void changeTextureFile(terrain t, QString newFilename);
+    void setPosition(int newX, int newY) { x = newX; y = newY; }
 private:
-    static void initializeDefaultTextureFilenames();    //TODO: Needs to be called before class is first used
-    
     board* parent;
-    static bool defaultTextureFilenamesInitialized;
+    int x;  int y;
     terrain terr;
-    //this class is responsible for managing the memory of textures associated
-    //with terrain. When entries are added or deleted from 'texture', the memory
-    //for them is allocated/deallocated. loadTexture/unloadTexture do this.
-    static std::map<terrain, QOpenGLTexture*> texture;
-    static std::map<terrain, QString> textureFilename;
+    std::map<direction, connection> edges;
+    std::vector<good> availableGoods;   //TODO: may be the wrong way to store this. Bitfield?
+    settlement* localSettlement;
 };
 
 #endif /* LOCATION_H */

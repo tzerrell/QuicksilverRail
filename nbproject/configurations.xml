@@ -13,6 +13,7 @@
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/goods.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/location.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/player.h</itemPath>
+      <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/settlement.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/terrain.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/track.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/train.h</itemPath>
@@ -34,6 +35,7 @@
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/location.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/player.cpp</itemPath>
+      <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/settlement.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/terrain.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/track.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/train.cpp</itemPath>
@@ -158,6 +160,16 @@
             flavor2="0">
       </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/player.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/settlement.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/settlement.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -305,6 +317,16 @@
             flavor2="0">
       </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/player.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/settlement.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/settlement.h"
             ex="false"
             tool="3"
             flavor2="0">

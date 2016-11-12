@@ -1,8 +1,9 @@
 #version 330
 in vec2 UV;
+flat in uint terr;
 uniform sampler2DArray TODOTestSampler;
 
 out vec4 color;
 void main(){
-  color = texture( TODOTestSampler, vec3(UV,0) ).rgba;
+  color = texture( TODOTestSampler, vec3(UV,terr) ).rgba;
 }

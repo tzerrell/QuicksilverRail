@@ -12,72 +12,64 @@
  */
 
 #include "location.h"
+#include "connection.h"
+#include "board.h"
+#include "direction.h"
 #include <QtGui/QOpenGLTexture>
 
-std::map<terrain, QOpenGLTexture*> location::texture;
-std::map<terrain, QString> location::textureFilename;
-bool location::defaultTextureFilenamesInitialized = false;
+location::location()
+        : parent(nullptr)
+        , x(0)
+        , y(0)
+        , terr(EnumTraits<terrain>::FIRST)
+        , localSettlement(nullptr)
+{
+    
+}
 
-location::location() {
-    if (!defaultTextureFilenamesInitialized)
-        initializeDefaultTextureFilenames();
+location::location(const location& orig) {
+    parent = orig.parent;
+    x = orig.x; y = orig.y;
+    terr = orig.terr;
+    if (!edges.empty())
+        std::cerr << "Warning: Copying location with non-empty edges. This "
+                << "connection information will be lost.\n";
+    availableGoods = orig.availableGoods;
+    localSettlement = orig.localSettlement;
 }
 
 location::~location() {
 }
 
-QOpenGLTexture* location::getTexture() { 
-    auto it = texture.find(terr);
-    if (it== texture.end()) {
-        location::loadTexture(terr);
-        it = texture.find(terr);
+location* location::getNeighbor(direction towardDir) {
+    int nbX = x; int nbY = y;
+    switch(towardDir) {
+        case (direction::E):
+            nbX++;
+            break;
+        case (direction::NE):
+            if (y % 2 == 0)
+                nbX++;
+            nbY++;
+            break;
+        case (direction::NW):
+            if (y % 2 == 1)
+                nbX--;
+            nbY++;
+            break;
+        case (direction::W):
+            nbX--;
+            break;
+        case (direction::SW):
+            if (y % 2 == 1)
+                nbX--;
+            nbY--;
+            break;
+        case (direction::SE):
+            if (y % 2 == 0)
+                nbX++;
+            nbY--;
+            break;
     }
-    return (*it).second;
-}
-
-void location::loadTexture(terrain t) {
-    //Note: the new and delete in this function correspond to each other. Since
-    //texture is static, we don't need to deal with deletion in the dtor. The
-    //only place other than here that this could be deleted is in unloadTexture
-    
-    auto it = texture.find(t);
-    if (it != texture.end()) {
-        delete (*it).second;
-        texture.erase(it);
-    }
-    
-    QOpenGLTexture* newTexture = new QOpenGLTexture(QImage(location::textureFilename[t]).mirrored());
-    newTexture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-    newTexture->setMagnificationFilter(QOpenGLTexture::Linear);
-    texture[t] = newTexture;
-}
-
-void location::unloadTexture(terrain t) {
-    //This delete corresponds to the new of loadTexture
-    
-    auto it = texture.find(t);
-    if (it != texture.end()) {
-        delete (*it).second;
-        texture.erase(it);
-    }
-}
-
-void location::changeTextureFile(terrain t, QString newFilename) {
-    textureFilename[t] = newFilename;
-}
-
-void location::initializeDefaultTextureFilenames() {
-    //TODO: This is just the first thing that came to mind; change
-    textureFilename[terrain::City] = "res/terrCity.png";
-    textureFilename[terrain::Desert] = "res/terrDesert.png";
-    textureFilename[terrain::Forest] = "res/terrForest.png";
-    textureFilename[terrain::Hills] = "res/terrHills.png";
-    textureFilename[terrain::Jungle] = "res/terrJungle.png";
-    textureFilename[terrain::Mountains] = "res/terrMountains.png";
-    textureFilename[terrain::Plains] = "res/terrPlains.png";
-    textureFilename[terrain::Port] = "res/terrPort.png";
-    textureFilename[terrain::Swamp] = "res/terrSwamp.png";
-    textureFilename[terrain::Town] = "res/terrTown.png";
-    
-    defaultTextureFilenamesInitialized = true;
+    return parent->getLocation(nbX, nbY);
 }

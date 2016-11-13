@@ -48,6 +48,7 @@ boardWindow::boardWindow(QWindow* parent)
     surfaceFormat.setSamples(4);
     setSurfaceType(QWindow::OpenGLSurface);
     
+    //TODO: Make this less ad hoc
     std::string texFilenames("");
     std::stringstream fnamestr(texFilenames);
     fnamestr << ":/terrPlains.png\n:/terrMountains.png\n:/terrSwamp.png";   //TODO
@@ -78,11 +79,13 @@ void boardWindow::initGL() {
 }
 
 void boardWindow::printDebugLog() {
-    //TODO: My system appears to not support QOpenGLDebugMessages
-    qDebug() << "Test TODO Qt Debug Message\n";
+    //Note: My system appears to not support QOpenGLDebugMessages
+    qDebug() << "Test Qt Debug Message\n";
     const QList<QOpenGLDebugMessage> messages = debugLogger->loggedMessages();
     for (const QOpenGLDebugMessage &message : messages)
         qDebug() << message;
+    
+    //TODO: Make this either above -or- below, not both.
     
     GLenum errorCode = GL_NO_ERROR;
     do {
@@ -162,14 +165,12 @@ void boardWindow::render() {
     glVertexAttribPointer(2,1,GL_FLOAT, GL_FALSE, 0, (void*)0);
     
     
-    std::vector<int> texHandleIDs;  //TODO: Want this?
-    terrainTextureAtlas.bind(13); //TODO
+    terrainTextureAtlas.bind(3);
     if (!terrainTextureAtlas.isBound()) {
         std::cerr << "Error binding terrain texture atlas.\n";
     }
-    int TODOTempUnifValArray[1] = { 13 };
-    shaderProgram.setUniformValueArray("TODOTestSampler", TODOTempUnifValArray, 1);
-    //shaderProgram.setUniformValueArray("TODOTestSampler", &texHandleIDs[0], Enum::count<terrain>());
+    int terrainTextureHandle[1] = { 3 };
+    shaderProgram.setUniformValueArray("terrainTextures", terrainTextureHandle, 1);
     
     int numQuads = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
     locationIndexBuffer.bind();

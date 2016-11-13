@@ -54,7 +54,7 @@ location* board::getLocation(int x, int y, bool logicalCoords) {
                             //or the global world coordinates (x,y) (false)
         xIndex -= xOffset;
         yIndex -= yOffset;
-    }   // x/y and rows/cols don't match here (and elsewhere?) TODO: Fix as needed
+    }
     if (xIndex < 0 || xIndex > getNumCols() 
             || yIndex < 0 || yIndex >= getNumRows()
             || (yIndex % 2 == 0 && xIndex == getNumCols()))

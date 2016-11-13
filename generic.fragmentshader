@@ -1,10 +1,10 @@
 #version 330
 in vec2 UV;
 flat in float terr;
-uniform sampler2DArray TODOTestSampler;
+uniform sampler2DArray terrainTextures;
 
 out vec4 color;
 void main(){
   uint terrainIndex = uint(terr);
-  color = texture( TODOTestSampler, vec3(UV,terrainIndex) ).rgba;
+  color = texture( terrainTextures, vec3(UV,terrainIndex) ).rgba;
 }

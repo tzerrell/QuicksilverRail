@@ -55,11 +55,24 @@ location* board::getLocation(int x, int y, bool logicalCoords) {
         xIndex -= xOffset;
         yIndex -= yOffset;
     }
+    if (!isOnBoard(xIndex, yIndex, true))
+        throw std::out_of_range("Requested location from board::getLocation is not on this board.");    //TODO: Improve?
+    return &(loc[xIndex][yIndex]);
+}
+
+bool board::isOnBoard(int x, int y, bool logicalCoords) {
+    int xIndex = x;
+    int yIndex = y;
+    if (!logicalCoords) {   //logicalCoords indicates whether to use the coords of the boards loc array (true)
+                            //or the global world coordinates (x,y) (false)
+        xIndex -= xOffset;
+        yIndex -= yOffset;
+    }
     if (xIndex < 0 || xIndex > getNumCols() 
             || yIndex < 0 || yIndex >= getNumRows()
             || (yIndex % 2 == 0 && xIndex == getNumCols()))
-        throw std::out_of_range("Requested location from board::getLocation is not on this board.");    //TODO: Improve?
-    return &(loc[xIndex][yIndex]);
+        return false;
+    return true;
 }
 
 void board::setLocationTerrain(int x, int y, terrain t) {

@@ -14,13 +14,23 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+#include "connectionEnums.h"
+
+class player;
+
 class connection {
 public:
     connection();
-    connection(const connection& orig);
+    connection(crossing_t c, track_t t = track_t::none, player* p = nullptr);
+    connection(const connection&) = delete;
+    connection(connection&& source);
     virtual ~connection();
+    
+    void reset(crossing_t c, track_t t, player* p);
 private:
-
+    crossing_t crossing;
+    track_t track;
+    player* owner;
 };
 
 #endif /* CONNECTION_H */

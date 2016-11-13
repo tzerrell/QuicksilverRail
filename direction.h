@@ -23,5 +23,7 @@ enum class direction {
     SE
 };
 
+direction operator-(const direction& in);
+
 #endif /* DIRECTION_H */
 

@@ -13,12 +13,35 @@
 
 #include "connection.h"
 
-connection::connection() {
+connection::connection()
+        : crossing(crossing_t::water)
+        , track(track_t::none)
+        , owner(nullptr)
+{
 }
 
-connection::connection(const connection& orig) {
+connection::connection(crossing_t c, track_t t, player* p)
+        : crossing(c)
+        , track(t)
+        , owner(p)
+{
+    
+}
+
+connection::connection(connection&& source)
+        : crossing(source.crossing)
+        , track (source.track)
+        , owner (source.owner)
+{
+    
 }
 
 connection::~connection() {
+}
+
+void connection::reset(crossing_t c, track_t t, player* p) {
+    crossing = c;
+    track = t;
+    owner = p;
 }
 

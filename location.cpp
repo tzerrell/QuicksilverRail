@@ -41,35 +41,77 @@ location::location(const location& orig) {
 location::~location() {
 }
 
-location* location::getNeighbor(direction towardDir) {
-    int nbX = x; int nbY = y;
-    switch(towardDir) {
+
+void location::setConnection(direction towardDir, crossing_t crossing, 
+        track_t t, player* trackOwner,
+        bool overwrite) {
+    if (!neighborExists(towardDir))
+        throw std::out_of_range("Attempted to connect to off-board vertex.");
+    switch (towardDir) {
         case (direction::E):
-            nbX++;
+        case (direction::NE):
+        case (direction::NW):
+            if (edges.find(towardDir) == edges.end()) {
+                edges.insert(std::pair<direction, connection>(towardDir,
+                        connection(crossing, t, trackOwner)));
+            } else {
+                if (!overwrite) {
+                    std::cerr << "Warning: location::setConnection called with "
+                            << "overwrite == false for a connection that "
+                            << "already exists. No connection created.\n";
+                    return;
+                }
+                //else overwrite
+                edges[towardDir].reset(crossing, t, trackOwner);
+            }
+        case (direction::W):
+        case (direction::SW):
+        case (direction::SE):
+            getNeighbor(towardDir)->setConnection(-towardDir, crossing, t, 
+                    trackOwner, overwrite);
+    }
+}
+
+location::coordinate location::positionToward(direction dir) {
+    coordinate ret;
+    ret.x = x; ret.y = y;
+    switch(dir) {
+        case (direction::E):
+            ret.x++;
             break;
         case (direction::NE):
             if (y % 2 == 0)
-                nbX++;
-            nbY++;
+                ret.x++;
+            ret.y++;
             break;
         case (direction::NW):
             if (y % 2 == 1)
-                nbX--;
-            nbY++;
+                ret.x--;
+            ret.y++;
             break;
         case (direction::W):
-            nbX--;
+            ret.x--;
             break;
         case (direction::SW):
             if (y % 2 == 1)
-                nbX--;
-            nbY--;
+                ret.x--;
+            ret.y--;
             break;
         case (direction::SE):
             if (y % 2 == 0)
-                nbX++;
-            nbY--;
+                ret.x++;
+            ret.y--;
             break;
     }
-    return parent->getLocation(nbX, nbY);
+    return ret;
+}
+
+bool location::neighborExists(direction towardDir) {
+    coordinate coord = positionToward(towardDir);
+    return parent->isOnBoard(coord.x, coord.y);
+}
+
+location* location::getNeighbor(direction towardDir) {
+    coordinate coord = positionToward(towardDir);
+    return parent->getLocation(coord.x, coord.y);
 }

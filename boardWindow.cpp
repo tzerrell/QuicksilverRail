@@ -155,10 +155,11 @@ void boardWindow::render() {
     locationTerrainTypeBuffer.bind();
     int texTerrTypeHandle = shaderProgram.attributeLocation("terrain");
     shaderProgram.enableAttributeArray(texTerrTypeHandle);
-    shaderProgram.setAttributeBuffer(texTerrTypeHandle, GL_UNSIGNED_INT, 0, 1,
-            sizeof(GLuint));
+    shaderProgram.setAttributeBuffer(texTerrTypeHandle, GL_FLOAT, 0, 1,
+            sizeof(GLfloat));
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2,1,GL_UNSIGNED_INT, GL_FALSE, 0, (void*)0);
+    glVertexAttribPointer(2,1,GL_FLOAT, GL_FALSE, 0, (void*)0);
+    
     
     std::vector<int> texHandleIDs;  //TODO: Want this?
     terrainTextureAtlas.bind(13); //TODO
@@ -365,7 +366,7 @@ bool boardWindow::constructGLBuffers() {
     //construct an element buffer for all the quads
     if (verbose) std::cout << "Constructing locationIndexBuffer.\n";
     std::vector<GLushort> vertexIndices;
-    std::vector<GLuint> terrainTypeIndices;
+    std::vector<GLfloat> terrainTypeIndices;    //these are integer indices, but stored in a float to be passed to GLSL
     GLushort currIndex = 0;
     try {
         if (verbose) std::cout << "\tWriting vertex indices:\n";
@@ -374,7 +375,7 @@ bool boardWindow::constructGLBuffers() {
             if (verbose) std::cout << "\ti = " << i;
             for (int j = 0; j < subject->getNumCols() + rowParity; ++j) {
                 if (verbose) std::cout << "\n\t\tj = " << j << " of " << subject->getNumCols() + rowParity << ":\t";
-                GLuint terrainIndex = static_cast<GLuint>(subject->getLocation(j,i,true)->getTerrain());
+                GLfloat terrainIndex = static_cast<GLfloat>(subject->getLocation(j,i,true)->getTerrain());
                 for (int twice = 0; twice < 2; ++twice) {
                     if (verbose) {
                         std::cout << currIndex << ' ' << currIndex + 1 << ' '

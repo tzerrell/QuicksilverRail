@@ -178,8 +178,8 @@ void boardWindow::render() {
     locationIndexBuffer.release();
     terrainTextureAtlas.release();
     locationVertexBuffer.release();
-    //TODO: End of test render
     
+    glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
     
@@ -312,7 +312,6 @@ bool boardWindow::constructGLBuffers() {
                 vertexCoords.push_back(ULx);
                 vertexCoords.push_back(ULy);
                 vertexCoords.push_back(ULz);
-                //TODO: confirm correct UV coords
                 vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
                 terrainTypeIndices.push_back(terrainIndex);
                 
@@ -508,7 +507,6 @@ void boardWindow::loadTerrainTextures() {
                 glImage.constBits(), &transferOptions);
     }
     
-    //TODO: Debug info
     if (verbose) {
         std::cout << "Loaded terrain textures with the"
                 << " following properties:\n";

@@ -63,6 +63,7 @@ boardWindow::~boardWindow() {
 void boardWindow::initGL() {
     //TODO: debug code
     subject->setLocationTerrain(1,1, static_cast<terrain>(1));
+    subject->setLocationTerrain(2,3, static_cast<terrain>(2));
     //TODO: end debug
     
     
@@ -271,6 +272,7 @@ bool boardWindow::constructGLBuffers() {
     //also construct UV coordinates for textures for each vertex
     std::vector<GLfloat> vertexCoords;
     std::vector<GLfloat> vertexUVs;
+    std::vector<GLfloat> terrainTypeIndices;    //these are integer indices, but stored in a float to be passed to GLSL
     if (verbose) std::cout << "Constructing locationVertexBuffer.\n";
     try {
         /* For each row, produce line of triangles like so:
@@ -298,6 +300,9 @@ bool boardWindow::constructGLBuffers() {
                 //term moves to where the vertex should be relative to the
                 //center. Note that rowParity is because every other row is
                 //shifted 50% in order to make a hex grid.
+                
+                //Each vertex of this quad has the same terrain texture
+                GLfloat terrainIndex = static_cast<GLfloat>(subject->getLocation(j,i,true)->getTerrain());
 
                 //upper left coord
                 GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
@@ -308,6 +313,7 @@ bool boardWindow::constructGLBuffers() {
                 vertexCoords.push_back(ULz);
                 //TODO: confirm correct UV coords
                 vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
+                terrainTypeIndices.push_back(terrainIndex);
                 
                 //lower left coord
                 GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
@@ -317,6 +323,7 @@ bool boardWindow::constructGLBuffers() {
                 vertexCoords.push_back(LLy);
                 vertexCoords.push_back(LLz);
                 vertexUVs.push_back(0.0);   vertexUVs.push_back(0.0);
+                terrainTypeIndices.push_back(terrainIndex);
 
                 //upper right coord
                 GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0;
@@ -326,6 +333,7 @@ bool boardWindow::constructGLBuffers() {
                 vertexCoords.push_back(URy);
                 vertexCoords.push_back(URz);
                 vertexUVs.push_back(1.0);   vertexUVs.push_back(1.0);
+                terrainTypeIndices.push_back(terrainIndex);
                 
                 //lower right coord
                 GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0;
@@ -335,13 +343,15 @@ bool boardWindow::constructGLBuffers() {
                 vertexCoords.push_back(LRy);
                 vertexCoords.push_back(LRz);
                 vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
+                terrainTypeIndices.push_back(terrainIndex);
                 
                 if (verbose) {
                     std::cout << "\tAdding vertices (" << LLx << ", " << LLy
                             << ", " << LLz << "), (" << ULx << ", " << ULy
                             << ", " << ULz << "), (" << LRx << ", " << LRy
                             << ", " << LRz << "), (" << URx << ", " << URy
-                            << ", " << URz << ")\n";
+                            << ", " << URz << "); textureID:" << terrainIndex
+                            << "\n";
                 }
             }
         }
@@ -363,10 +373,16 @@ bool boardWindow::constructGLBuffers() {
     locationUVBuffer.allocate(&vertexUVs[0], vertexUVs.size()*sizeof(vertexUVs[0]));
     locationUVBuffer.release();
     
+    locationTerrainTypeBuffer.create();
+    locationTerrainTypeBuffer.bind();
+    locationTerrainTypeBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    locationTerrainTypeBuffer.allocate(&terrainTypeIndices[0]
+            , terrainTypeIndices.size() * sizeof(terrainTypeIndices[0]));
+    locationTerrainTypeBuffer.release();
+    
     //construct an element buffer for all the quads
     if (verbose) std::cout << "Constructing locationIndexBuffer.\n";
     std::vector<GLushort> vertexIndices;
-    std::vector<GLfloat> terrainTypeIndices;    //these are integer indices, but stored in a float to be passed to GLSL
     GLushort currIndex = 0;
     try {
         if (verbose) std::cout << "\tWriting vertex indices:\n";
@@ -382,11 +398,8 @@ bool boardWindow::constructGLBuffers() {
                                 << currIndex + 2 << ' ';
                     }
                     vertexIndices.push_back(currIndex);
-                    terrainTypeIndices.push_back(terrainIndex);
                     vertexIndices.push_back(currIndex + 1);
-                    terrainTypeIndices.push_back(terrainIndex);
                     vertexIndices.push_back(currIndex + 2);
-                    terrainTypeIndices.push_back(terrainIndex);
                     ++currIndex;
                 }
                 ++currIndex;
@@ -410,13 +423,6 @@ bool boardWindow::constructGLBuffers() {
     locationIndexBuffer.allocate(&vertexIndices[0] 
             , sizeof(vertexIndices[0]) * 6 * numQuads);
     locationIndexBuffer.release();
-    
-    locationTerrainTypeBuffer.create();
-    locationTerrainTypeBuffer.bind();
-    locationTerrainTypeBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    locationTerrainTypeBuffer.allocate(&terrainTypeIndices[0]
-            , sizeof(terrainTypeIndices[0]) * 6 * numQuads);
-    locationTerrainTypeBuffer.release();
         
     if(verbose) {
         std::cout << "\tlocationIndexBuffer contains "

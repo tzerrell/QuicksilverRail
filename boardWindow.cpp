@@ -350,8 +350,8 @@ bool boardWindow::constructGLBuffers() {
                             << ", " << LLz << "), (" << ULx << ", " << ULy
                             << ", " << ULz << "), (" << LRx << ", " << LRy
                             << ", " << LRz << "), (" << URx << ", " << URy
-                            << ", " << URz << "); textureID:" << terrainIndex
-                            << "\n";
+                            << ", " << URz << "),\twith textureID: " << terrainIndex
+                            << ";\n";
                 }
             }
         }
@@ -391,7 +391,6 @@ bool boardWindow::constructGLBuffers() {
             if (verbose) std::cout << "\ti = " << i;
             for (int j = 0; j < subject->getNumCols() + rowParity; ++j) {
                 if (verbose) std::cout << "\n\t\tj = " << j << " of " << subject->getNumCols() + rowParity << ":\t";
-                GLfloat terrainIndex = static_cast<GLfloat>(subject->getLocation(j,i,true)->getTerrain());
                 for (int twice = 0; twice < 2; ++twice) {
                     if (verbose) {
                         std::cout << currIndex << ' ' << currIndex + 1 << ' '
@@ -429,7 +428,7 @@ bool boardWindow::constructGLBuffers() {
                 << 6*numQuads
                 << " indices (with corresponding terrain indices): ";
         for (int j = 0; j < 6*numQuads; ++j) {
-            std::cout << vertexIndices[j] << ":" << terrainTypeIndices[j] << " ";
+            std::cout << vertexIndices[j] << ":" << terrainTypeIndices[vertexIndices[j]] << " ";
         }
         std::cout << '\n';
         std::cout.flush();

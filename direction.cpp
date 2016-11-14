@@ -25,3 +25,19 @@ direction operator-(const direction& in) {
     }
     throw (std::out_of_range("Invalid direction passed to unary minus."));
 }
+
+direction operator++(direction& dir) {
+    if (dir == direction::SE)
+        dir = direction::E;
+    else
+        dir = static_cast<direction>(static_cast<int>(dir) + 1);
+    return dir;
+}
+
+direction operator--(direction& dir) {
+    if (dir == direction::E)
+        dir = direction::SE;
+    else
+        dir = static_cast<direction>(static_cast<int>(dir) - 1);
+    return dir;
+}

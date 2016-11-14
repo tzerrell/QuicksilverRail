@@ -73,13 +73,9 @@ private:
     QOpenGLBuffer locationIndexBuffer;
     QOpenGLBuffer connectionVertexBuffer;
     QOpenGLBuffer connectionUVBuffer;
+    QOpenGLBuffer connectionDashSlashBuffer;
     QOpenGLBuffer connectionIndexBuffer;
     std::map<terrain, std::string> terrainTextureFilenames;
-    
-    //Board graphical parameters. Things like how far apart vertices are
-    const GLfloat locHorizSpacing;
-    const GLfloat locVertSpacing;
-    //const GLfloat vertexIconWidth == locHorizSpacing
     
     void initGL();
     void loadTerrainTextureFilenames(std::istream& in);
@@ -91,6 +87,19 @@ private:
     std::string vertexShaderFilename;
     std::string fragmentShaderFilename;
     QOpenGLShaderProgram shaderProgram;
+    
+    /*
+     * Graphical parameters
+     */
+    // Things like how far apart vertices are
+    const GLfloat locHorizSpacing;
+    const GLfloat locVertSpacing;
+    //const GLfloat vertexIconWidth == locHorizSpacing
+    //how far the connection quads extend beyond their endpoints
+    const GLfloat connSlashOverwidth;
+    const GLfloat connSlashOverheight;
+    const GLfloat connDashOverwidth;
+    const GLfloat connDashHeight;
 };
 
 #endif /* BOARDWINDOW_H */

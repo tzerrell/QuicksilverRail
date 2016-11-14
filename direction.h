@@ -15,6 +15,7 @@
 #define DIRECTION_H
 
 enum class direction {
+    //  /!\ NOTE: important for ++/-- operators that this order is preserved
     E,
     NE,
     NW,
@@ -24,6 +25,8 @@ enum class direction {
 };
 
 direction operator-(const direction& in);
+direction operator++(direction& dir);   //next dir in positive orientation, i.e. counterclockwise
+direction operator--(direction& dir);   //next dir in negative orientation, i.e. clockwise
 
 #endif /* DIRECTION_H */
 

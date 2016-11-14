@@ -40,9 +40,14 @@ boardWindow::boardWindow(QWindow* parent)
         //, view(-40, -60, 192, 144)
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)
+        , connSlashOverwidth(locHorizSpacing * 0.16f)
+        , connSlashOverheight(locVertSpacing * 0.33f)
+        , connDashOverwidth(locHorizSpacing * 0.33f)
+        , connDashHeight(locHorizSpacing)
         , verbose(true)
         , terrainTextureAtlas(QOpenGLTexture::Target2DArray)
         , locationIndexBuffer(QOpenGLBuffer::IndexBuffer)
+        , connectionIndexBuffer(QOpenGLBuffer::IndexBuffer)
 {
     subject = new board;    //TODO: do this in a reasonable way ...
     surfaceFormat.setSamples(4);
@@ -391,7 +396,7 @@ bool boardWindow::constructGLBuffers() {
             if (verbose) std::cout << "\ti = " << i;
             for (int j = 0; j < subject->getNumCols() + rowParity; ++j) {
                 if (verbose) std::cout << "\n\t\tj = " << j << " of " << subject->getNumCols() + rowParity << ":\t";
-                for (int twice = 0; twice < 2; ++twice) {
+                for (int twice = 0; twice < 2; ++twice) {   //two triangles make a quad
                     if (verbose) {
                         std::cout << currIndex << ' ' << currIndex + 1 << ' '
                                 << currIndex + 2 << ' ';
@@ -434,7 +439,251 @@ bool boardWindow::constructGLBuffers() {
         std::cout.flush();
     }
     
-    //TODO: Same thing for connectionVertexBuffer
+    
+    //Same thing for connectionVertexBuffer
+    //TODO: add conditions for these to only draw with appropriate colors and
+    //when rail exists
+    vertexCoords.clear();
+    vertexUVs.clear();
+    std::vector<GLfloat> isSlashIndex;    //these are integer indices, but stored in a float to be passed to GLSL
+    if (verbose) std::cout << "Constructing connectionVertexBuffer.\n";
+    try {
+        for (int i = 0; i < subject->getNumRows(); ++i) {
+            int rowParity = i%2;
+            for (int j = 0; j < subject->getNumCols() + rowParity; ++j) {
+                //The formulas for these coordinates have two parts: the part
+                //with the i or j puts the center in the right place; the other
+                //term moves to where the vertex should be relative to the
+                //center. Note that rowParity is because every other row is
+                //shifted 50% in order to make a hex grid.
+                
+                //Each vertex of this quad has the same isSlash index (the quad is either a dash or a slash)
+                GLfloat isSlash;
+                
+                //NW first
+                if(subject->getLocation(j,i,true)->neighborExists(direction::NW)) {
+                    isSlash = 1.0;
+                    //upper left coord
+                    GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 2.0 - connSlashOverwidth;
+                    GLfloat ULy = (i - 1.0) * locVertSpacing + locVertSpacing + connSlashOverheight;
+                    GLfloat ULz = 0.0;
+                    vertexCoords.push_back(ULx);
+                    vertexCoords.push_back(ULy);
+                    vertexCoords.push_back(ULz);
+                    //the first UV is inverted for all of these b/c slash is horizontally flipped from what texture has for NW
+                    vertexUVs.push_back(1.0);   vertexUVs.push_back(1.0);
+                    isSlashIndex.push_back(isSlash);
+
+                    //lower left coord
+                    GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 2.0 - connSlashOverwidth;
+                    GLfloat LLy = (i - 1.0) * locVertSpacing - connSlashOverheight;
+                    GLfloat LLz = 0.0;
+                    vertexCoords.push_back(LLx);
+                    vertexCoords.push_back(LLy);
+                    vertexCoords.push_back(LLz);
+                    vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
+                    isSlashIndex.push_back(isSlash);
+
+                    //upper right coord
+                    GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + connSlashOverwidth;
+                    GLfloat URy = (i - 1.0) * locVertSpacing + locVertSpacing + connSlashOverheight;
+                    GLfloat URz = 0.0;
+                    vertexCoords.push_back(URx);
+                    vertexCoords.push_back(URy);
+                    vertexCoords.push_back(URz);
+                    vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
+                    isSlashIndex.push_back(isSlash);
+
+                    //lower right coord
+                    GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + connSlashOverwidth;
+                    GLfloat LRy = (i - 1.0) * locVertSpacing - connSlashOverheight;
+                    GLfloat LRz = 0.0;
+                    vertexCoords.push_back(LRx);
+                    vertexCoords.push_back(LRy);
+                    vertexCoords.push_back(LRz);
+                    vertexUVs.push_back(0.0);   vertexUVs.push_back(0.0);
+                    isSlashIndex.push_back(isSlash);
+                }
+                
+                //NE second
+                if(subject->getLocation(j,i,true)->neighborExists(direction::NE)) {
+                    isSlash = 1.0;
+                    //upper left coord
+                    GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - connSlashOverwidth;
+                    GLfloat ULy = (i - 1.0) * locVertSpacing + locVertSpacing + connSlashOverheight;
+                    GLfloat ULz = 0.0;
+                    vertexCoords.push_back(ULx);
+                    vertexCoords.push_back(ULy);
+                    vertexCoords.push_back(ULz);
+                    vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
+                    isSlashIndex.push_back(isSlash);
+
+                    //lower left coord
+                    GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - connSlashOverwidth;
+                    GLfloat LLy = (i - 1.0) * locVertSpacing - connSlashOverheight;
+                    GLfloat LLz = 0.0;
+                    vertexCoords.push_back(LLx);
+                    vertexCoords.push_back(LLy);
+                    vertexCoords.push_back(LLz);
+                    vertexUVs.push_back(0.0);   vertexUVs.push_back(0.0);
+                    isSlashIndex.push_back(isSlash);
+
+                    //upper right coord
+                    GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 2.0 + connSlashOverwidth;
+                    GLfloat URy = (i - 1.0) * locVertSpacing + locVertSpacing + connSlashOverheight;
+                    GLfloat URz = 0.0;
+                    vertexCoords.push_back(URx);
+                    vertexCoords.push_back(URy);
+                    vertexCoords.push_back(URz);
+                    vertexUVs.push_back(1.0);   vertexUVs.push_back(1.0);
+                    isSlashIndex.push_back(isSlash);
+
+                    //lower right coord
+                    GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0 + connSlashOverwidth;
+                    GLfloat LRy = (i - 1.0) * locVertSpacing - connSlashOverheight;
+                    GLfloat LRz = 0.0;
+                    vertexCoords.push_back(LRx);
+                    vertexCoords.push_back(LRy);
+                    vertexCoords.push_back(LRz);
+                    vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
+                    isSlashIndex.push_back(isSlash);
+                }
+                
+                //E third
+                if(subject->getLocation(j,i,true)->neighborExists(direction::E)) {
+                    isSlash = 0.0;
+                    //upper left coord
+                    GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - connDashOverwidth;
+                    GLfloat ULy = (i - 1.0) * locVertSpacing + connDashHeight;
+                    GLfloat ULz = 0.0;
+                    vertexCoords.push_back(ULx);
+                    vertexCoords.push_back(ULy);
+                    vertexCoords.push_back(ULz);
+                    vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
+                    isSlashIndex.push_back(isSlash);
+
+                    //lower left coord
+                    GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - connDashOverwidth;
+                    GLfloat LLy = (i - 1.0) * locVertSpacing - connDashHeight;
+                    GLfloat LLz = 0.0;
+                    vertexCoords.push_back(LLx);
+                    vertexCoords.push_back(LLy);
+                    vertexCoords.push_back(LLz);
+                    vertexUVs.push_back(0.0);   vertexUVs.push_back(0.0);
+                    isSlashIndex.push_back(isSlash);
+
+                    //upper right coord
+                    GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing + connSlashOverwidth;
+                    GLfloat URy = (i - 1.0) * locVertSpacing + connDashHeight;
+                    GLfloat URz = 0.0;
+                    vertexCoords.push_back(URx);
+                    vertexCoords.push_back(URy);
+                    vertexCoords.push_back(URz);
+                    vertexUVs.push_back(1.0);   vertexUVs.push_back(1.0);
+                    isSlashIndex.push_back(isSlash);
+
+                    //lower right coord
+                    GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing + connSlashOverwidth;
+                    GLfloat LRy = (i - 1.0) * locVertSpacing - connDashHeight;
+                    GLfloat LRz = 0.0;
+                    vertexCoords.push_back(LRx);
+                    vertexCoords.push_back(LRy);
+                    vertexCoords.push_back(LRz);
+                    vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
+                    isSlashIndex.push_back(isSlash);
+                }
+                
+                if (verbose) {
+                    std::cout << "\tAdding connection textures from vertex ("
+                            << j << "," << i << ")\n";
+                }
+            }
+        }
+    }
+    catch (const std::bad_alloc& ex) {
+        std::cerr << "\tBad allocation in connectionVertexBuffer. The board"
+                << " is too large. Connection vertex buffer not constructed.\n";
+        std::cerr << "Warning: Partial construction of GLBuffers.\n";
+        return false;
+    }
+    
+    connectionVertexBuffer.create();
+    connectionVertexBuffer.bind();
+    connectionVertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    connectionVertexBuffer.allocate(&vertexCoords[0], vertexCoords.size()*sizeof(vertexCoords[0]));
+    connectionVertexBuffer.release();
+    
+    connectionUVBuffer.create();
+    connectionUVBuffer.bind();
+    connectionUVBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    connectionUVBuffer.allocate(&vertexUVs[0], vertexUVs.size()*sizeof(vertexUVs[0]));
+    connectionUVBuffer.release();
+    
+    connectionDashSlashBuffer.create();
+    connectionDashSlashBuffer.bind();
+    connectionDashSlashBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    connectionDashSlashBuffer.allocate(&isSlashIndex[0]
+            , isSlashIndex.size() * sizeof(isSlashIndex[0]));
+    connectionDashSlashBuffer.release();
+    
+    //TODO: Vertex indices for connections
+    //TODO: Adjust from here
+    //construct an element buffer for all the quads
+    if (verbose) std::cout << "Constructing connectionIndexBuffer.\n";
+    vertexIndices.empty();
+    GLushort currIndex = 0;
+    try {
+        if (verbose) std::cout << "\tWriting connection vertex indices:\n";
+        for (int i = 0; i < subject->getNumRows(); ++i) {
+            int rowParity = i%2;
+            if (verbose) std::cout << "\ti = " << i;
+            for (int j = 0; j < subject->getNumCols() + rowParity; ++j) {
+                if (verbose) std::cout << "\n\t\tj = " << j << " of " << subject->getNumCols() + rowParity << ":\t";
+                for (direction dir = direction::E; dir != direction::W; ++dir) {
+                    if (!subject->getLocation(j,i,true)->neighborExists(dir))
+                        continue;   //Skip if there's no neighbor in this direction
+                    for (int twice = 0; twice < 2; ++twice) {   //quads have 2 triangles
+                        if (verbose) {
+                            std::cout << currIndex << ' ' << currIndex + 1 << ' '
+                                    << currIndex + 2 << ' ';
+                        }
+                        vertexIndices.push_back(currIndex);
+                        vertexIndices.push_back(currIndex + 1);
+                        vertexIndices.push_back(currIndex + 2);
+                        ++currIndex;
+                    }
+                    ++currIndex;
+                    ++currIndex;
+                }
+            }
+            if (verbose) std::cout << '\n';
+        }
+    }
+    catch (const std::bad_alloc& ex) {
+        std::cerr << "\tBad allocation in constructGLBuffers. The board"
+                << " is too large. Location element buffers not constructed.\n";
+        std::cerr << "Warning: Partial construction of GLBuffers.\n";
+        return false;
+    }
+     
+    //Note: connectionIndexBuffer was constructed as an index buffer
+    connectionIndexBuffer.create();
+    connectionIndexBuffer.bind();
+    connectionIndexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    connectionIndexBuffer.allocate(&vertexIndices[0] 
+            , sizeof(vertexIndices[0]) * vertexIndices.size());
+    connectionIndexBuffer.release();
+        
+    if(verbose) {
+        std::cout << "\tlocationIndexBuffer contains "
+                << vertexIndices.size();
+                << " indices: ";
+        for (int j = 0; j < 6*numQuads; ++j) {
+            std::cout << vertexIndices[j] << " ";
+        }
+        std::cout << '\n';
+        std::cout.flush();
+    }
     
     return true;
 }

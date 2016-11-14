@@ -23,7 +23,11 @@ board::board()
         , xOffset(0)
         , yOffset(0)
 {
-
+    for (int i = 0; i < columns + 1; ++i) {
+        for (int j = 0; j < rows; ++j) {
+            loc[i][j].setParent(this);
+        }
+    }
 }
 
 board::board(int height, int width)
@@ -33,7 +37,11 @@ board::board(int height, int width)
         , xOffset(0)
         , yOffset(0)
 {
-    
+    for (int i = 0; i < columns + 1; ++i) {
+        for (int j = 0; j < rows; ++j) {
+            loc[i][j].setParent(this);
+        }
+    }
 }
 
 

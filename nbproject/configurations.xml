@@ -31,6 +31,7 @@
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/connection.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/delivery.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/direction.cpp</itemPath>
+      <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/fixedColor.fragmentshader</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/generic.fragmentshader</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/generic.vertexshader</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/location.cpp</itemPath>
@@ -130,6 +131,11 @@
             flavor2="0">
       </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/engineer.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/fixedColor.fragmentshader"
             ex="false"
             tool="3"
             flavor2="0">
@@ -287,6 +293,11 @@
             flavor2="0">
       </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/engineer.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/fixedColor.fragmentshader"
             ex="false"
             tool="3"
             flavor2="0">

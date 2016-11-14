@@ -34,6 +34,7 @@ public:
     location(const location& orig);
     virtual ~location();
     
+    void setParent(board* p) { parent = p; }
     terrain getTerrain() { return terr; }
     void setTerrain(terrain t) { terr = t; }
     connection* getConnection(direction towardDir);

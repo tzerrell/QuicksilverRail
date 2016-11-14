@@ -73,7 +73,8 @@ void boardWindow::initGL() {
     //TODO: end debug
     
     
-    updateShaders("generic.vertexshader", "generic.fragmentshader");    //TODO: adjust to allow custom filenames
+    updateShaders("generic.vertexshader", "generic.fragmentshader", &shaderProgram);    //TODO: adjust to allow custom filenames
+    updateShaders("generic.vertexshader", "fixedColor.fragmentshader", &fixedColorShaderProgram);
     projMatrixHandle = glGetUniformLocation(shaderProgram.programId(), "projectionMat");
     constructGLBuffers();
     loadTerrainTextures();
@@ -143,13 +144,12 @@ void boardWindow::render() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     //Render scene
-    //TODO: do this in a real way
+    //Locations
     locationVertexBuffer.bind();
     int vertPositionHandle = shaderProgram.attributeLocation("position");
     shaderProgram.enableAttributeArray(vertPositionHandle);
     shaderProgram.setAttributeBuffer(vertPositionHandle, GL_FLOAT, 0, 
             3, sizeof(GLfloat));
-    
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
     
@@ -169,7 +169,6 @@ void boardWindow::render() {
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2,1,GL_FLOAT, GL_FALSE, 0, (void*)0);
     
-    
     terrainTextureAtlas.bind(3);
     if (!terrainTextureAtlas.isBound()) {
         std::cerr << "Error binding terrain texture atlas.\n";
@@ -183,6 +182,46 @@ void boardWindow::render() {
     locationIndexBuffer.release();
     terrainTextureAtlas.release();
     locationVertexBuffer.release();
+    
+    glDisableVertexAttribArray(2);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(0);
+    
+    //Connections
+    connectionVertexBuffer.bind();
+    vertPositionHandle = fixedColorShaderProgram.attributeLocation("position");
+    fixedColorShaderProgram.enableAttributeArray(vertPositionHandle);
+    fixedColorShaderProgram.setAttributeBuffer(vertPositionHandle, GL_FLOAT, 0, 
+            3, sizeof(GLfloat));
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
+    
+    connectionUVBuffer.bind();
+    texUVHandle = fixedColorShaderProgram.attributeLocation("UV");
+    fixedColorShaderProgram.enableAttributeArray(texUVHandle);
+    fixedColorShaderProgram.setAttributeBuffer(texUVHandle, GL_FLOAT, 0, 2,
+            sizeof(GLfloat));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
+    
+    connectionDashSlashBuffer.bind();
+    texTerrTypeHandle = fixedColorShaderProgram.attributeLocation("terrain");
+    fixedColorShaderProgram.enableAttributeArray(texTerrTypeHandle);
+    fixedColorShaderProgram.setAttributeBuffer(texTerrTypeHandle, GL_FLOAT, 0, 1,
+            sizeof(GLfloat));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2,1,GL_FLOAT, GL_FALSE, 0, (void*)0);
+    
+    //TODO: Need textures here
+    
+    int numVerts = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
+    numQuads = numVerts * 3 - 2 * subject->getNumCols() - subject->getNumRows()
+            - 2 * (subject->getNumRows()/2);
+    connectionIndexBuffer.bind();
+    glDrawElements(GL_TRIANGLES, numQuads * 6, GL_UNSIGNED_SHORT, 0);
+    connectionIndexBuffer.release();
+    //TODO ... terrainTextureAtlas.release();
+    connectionVertexBuffer.release();
     
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
@@ -223,13 +262,15 @@ void boardWindow::renderLater() {
     }
 }
 
-bool boardWindow::updateShaders(std::string vertShaderFile, std::string fragShaderFile) {
+bool boardWindow::updateShaders(std::string vertShaderFile,
+        std::string fragShaderFile,
+        QOpenGLShaderProgram* prog) {
     vertexShaderFilename = vertShaderFile;
     fragmentShaderFilename = fragShaderFile;
-    return createShaderProgram();
+    return createShaderProgram(prog);
 }
 
-bool boardWindow::createShaderProgram() {
+bool boardWindow::createShaderProgram(QOpenGLShaderProgram* prog) {
     QOpenGLShader vShader(QOpenGLShader::Vertex);
     QOpenGLShader fShader(QOpenGLShader::Fragment);
     if (!vShader.compileSourceFile(QString::fromStdString(vertexShaderFilename))) {
@@ -248,25 +289,25 @@ bool boardWindow::createShaderProgram() {
         return false;
     }
     
-    if (!shaderProgram.addShader(&vShader)) {
+    if (!prog->addShader(&vShader)) {
         std::cerr << "Unable to add vertex shader to shader program.\n";
-        std::string utf8_log = shaderProgram.log().toUtf8().constData();
+        std::string utf8_log = prog->log().toUtf8().constData();
         std::cerr << "OpenGL errors:" << utf8_log << "\n";
         return false;
     }
-    if (!shaderProgram.addShader(&fShader)) {
+    if (!prog->addShader(&fShader)) {
         std::cerr << "Unable to add fragment shader to shader program.\n";
-        std::string utf8_log = shaderProgram.log().toUtf8().constData();
+        std::string utf8_log = prog->log().toUtf8().constData();
         std::cerr << "OpenGL errors:" << utf8_log << "\n";
         return false;
     }
-    if (!shaderProgram.link()) {
+    if (!prog->link()) {
         std::cerr << "Unable to link shader program.\n";
-        std::string utf8_log = shaderProgram.log().toUtf8().constData();
+        std::string utf8_log = prog->log().toUtf8().constData();
         std::cerr << "GLSL Linker errors:" << utf8_log << "\n";
         return false;
     }
-    if (!shaderProgram.bind()) {
+    if (!prog->bind()) {
         std::cerr << "Unable to bind shader program to context.\n";
         return false;
     }
@@ -627,11 +668,10 @@ bool boardWindow::constructGLBuffers() {
     connectionDashSlashBuffer.release();
     
     //TODO: Vertex indices for connections
-    //TODO: Adjust from here
     //construct an element buffer for all the quads
     if (verbose) std::cout << "Constructing connectionIndexBuffer.\n";
-    vertexIndices.empty();
-    GLushort currIndex = 0;
+    vertexIndices.clear();
+    currIndex = 0;
     try {
         if (verbose) std::cout << "\tWriting connection vertex indices:\n";
         for (int i = 0; i < subject->getNumRows(); ++i) {
@@ -676,7 +716,7 @@ bool boardWindow::constructGLBuffers() {
         
     if(verbose) {
         std::cout << "\tlocationIndexBuffer contains "
-                << vertexIndices.size();
+                << vertexIndices.size()
                 << " indices: ";
         for (int j = 0; j < 6*numQuads; ++j) {
             std::cout << vertexIndices[j] << " ";

@@ -437,10 +437,12 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_images.cpp
 qrc_images.cpp: images.qrc \
 		C:/Qt/5.7/mingw53_32/bin/rcc.exe \
+		res/connSlash.png \
 		res/terrMountains.png \
 		res/terrSwamp.png \
 		res/terrMountains.bmp \
-		res/terrPlains.png
+		res/terrPlains.png \
+		res/connDash.png
 	'C:\Qt\5.7\mingw53_32\bin\rcc.exe' -name images images.qrc -o qrc_images.cpp
 
 compiler_moc_header_make_all: moc_boardWindow.cpp

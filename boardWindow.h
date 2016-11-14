@@ -46,7 +46,8 @@ public:
         if (animating) renderLater();
     };
     
-    bool updateShaders(std::string vertShaderFile, std::string fragShaderFile);
+    bool updateShaders(std::string vertShaderFile, std::string fragShaderFile,
+            QOpenGLShaderProgram* prog);
 public slots:
     void render();
     void renderLater();
@@ -83,10 +84,11 @@ private:
     void printDebugLog();
     
     //Shaders
-    bool createShaderProgram();     //return whether successfully created. If false, the old shader program (if any) is retained in shaderProgramID
+    bool createShaderProgram(QOpenGLShaderProgram* prog);     //return whether successfully created. If false, the old shader program (if any) is retained in the shader program
     std::string vertexShaderFilename;
     std::string fragmentShaderFilename;
     QOpenGLShaderProgram shaderProgram;
+    QOpenGLShaderProgram fixedColorShaderProgram;
     
     /*
      * Graphical parameters

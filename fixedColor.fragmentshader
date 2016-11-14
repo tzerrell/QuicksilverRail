@@ -1,0 +1,11 @@
+#version 330
+in vec2 UV;
+flat in float terr;
+uniform sampler2DArray tex;
+
+out vec4 color;
+void main(){
+  uint textureIndex = uint(terr);
+  color = texture( tex, vec3(UV,textureIndex) ).rgba;   //TODO: Revamp for player color
+}
+

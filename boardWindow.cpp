@@ -745,10 +745,10 @@ bool boardWindow::constructGLBuffers() {
     connectionIndexBuffer.release();
         
     if(verbose) {
-        std::cout << "\tlocationIndexBuffer contains "
+        std::cout << "\tconnectionIndexBuffer contains "
                 << vertexIndices.size()
                 << " indices: ";
-        for (int j = 0; j < 6*numQuads; ++j) {
+        for (int j = 0; j < vertexIndices.size(); ++j) {
             std::cout << vertexIndices[j] << " ";
         }
         std::cout << '\n';
@@ -771,68 +771,96 @@ void boardWindow::loadTerrainTextureFilenames(std::istream& in) {
     }
 }
 
-void boardWindow::loadTerrainTextures() {
-    QImage image;
-    QImage glImage;
+void boardWindow::initializeTextureAtlas(QOpenGLTexture& atlas,
+        std::size_t layers,
+        std::function<std::string(int)> getFilenameFunc)
+        //std::string (*getFilenameFunc)(int) ) //This function should throw std::out_of_range if passed an int w/out a corresponding filename
+{
+    QImage fileLoadImage;
+    QImage GLFormatImage;
     std::string filename;
-    terrainTextureAtlas.setLayers(Enum::count<terrain>());
-    connectionTextureAtlas.setLayers(2);    //TODO: Not a magic number, and will have more textures in this atlas later
+    atlas.setLayers(layers);
     QOpenGLPixelTransferOptions transferOptions;
     transferOptions.setAlignment(1);
     
-    //First setup the default terrain texture
+    //The texture at index 0 is the default and *must* exist; other layers can
+    //be initialized now or later (or never)
     try {
-        filename = terrainTextureFilenames.at(static_cast<terrain>(0));
+        filename = getFilenameFunc(0);
     }
     catch (std::out_of_range ex) {
-        std::cerr << "Warning: No texture image filename for terrain type "
-                << static_cast<int>(0) << "\n";
-        std::cerr << "This is the default terrain, which must have a filename "
-                << "to load terrain textures. Aborting load.\n";
+        std::cerr << "Warning: No filename for default texture for a texture "
+                << "atlas. Aborting texture load.\n";
         return;
     }
-    if (!image.load(filename.c_str())) {
+    if (!fileLoadImage.load(filename.c_str())) {
         std::cerr << "Failed to load texture image '" << filename << "'\n";
-        std::cerr << "This was the default terrain texture; aborting terrain"
-                << " texture construction.\n";
+        std::cerr << "This was the default texture of an atlas; aborting "
+                << " construction of this atlas.\n";
         return;
     }
-    glImage = image.convertToFormat(QImage::Format_RGBA8888);
+    GLFormatImage = fileLoadImage.convertToFormat(QImage::Format_RGBA8888);
     
     //Based on Qt source code for setData(QImage)
     if (context->isOpenGLES() && context->format().majorVersion() < 3)
-        terrainTextureAtlas.setFormat(QOpenGLTexture::RGBAFormat);
+        atlas.setFormat(QOpenGLTexture::RGBAFormat);
     else
-        terrainTextureAtlas.setFormat(QOpenGLTexture::RGBA8_UNorm);
-    terrainTextureAtlas.setSize(image.width(), image.height());
-    terrainTextureAtlas.setMipLevels(terrainTextureAtlas.maximumMipLevels());
-    terrainTextureAtlas.allocateStorage(QOpenGLTexture::RGBA, QOpenGLTexture::UInt8);
-    terrainTextureAtlas.setData(0, 0, QOpenGLTexture::RGBA, QOpenGLTexture::UInt8, glImage.constBits(), &transferOptions);
+        atlas.setFormat(QOpenGLTexture::RGBA8_UNorm);
+    atlas.setSize(GLFormatImage.width(), GLFormatImage.height());
+    atlas.setMipLevels(atlas.maximumMipLevels());
+    atlas.allocateStorage(QOpenGLTexture::RGBA, QOpenGLTexture::UInt8);
+    atlas.setData(0, 0, QOpenGLTexture::RGBA, QOpenGLTexture::UInt8, 
+            GLFormatImage.constBits(), &transferOptions);
     
-    for (int i = 1; i < terrainTextureAtlas.layers(); ++i) {
-        terrain t = static_cast<terrain>(i);
+    for (int i = 1; i < atlas.layers(); ++i) {
         try {
-            filename = terrainTextureFilenames.at(t);
+            filename = getFilenameFunc(i);
         }
         catch (std::out_of_range ex) {
-            std::cerr << "Warning: No texture image filename for terrain type "
-                    << static_cast<int>(t) << "\n";
+            std::cerr << "Warning: No texture image filename for atlas layer "
+                    << i << "\n";
             continue;
         }
-        if (!image.load(filename.c_str())) {
+        if (!fileLoadImage.load(filename.c_str())) {
             std::cerr << "Failed to load texture image '" << filename << "'\n";
         }
-        glImage = image.convertToFormat(QImage::Format_RGBA8888);
-        terrainTextureAtlas.setData(0, i, QOpenGLTexture::RGBA, QOpenGLTexture::UInt8,
-                glImage.constBits(), &transferOptions);
+        GLFormatImage = fileLoadImage.convertToFormat(QImage::Format_RGBA8888);
+        atlas.setData(0, i, QOpenGLTexture::RGBA, QOpenGLTexture::UInt8,
+                GLFormatImage.constBits(), &transferOptions);
     }
     
     if (verbose) {
-        std::cout << "Loaded terrain textures with the"
-                << " following properties:\n";
-        std::cout << "\tHeight: " << terrainTextureAtlas.height() << '\n';
-        std::cout << "\tWidth: " << terrainTextureAtlas.width() << '\n';
-        std::cout << "\tLayers: " << terrainTextureAtlas.layers() << '\n';
+        std::cout << "Loaded texture atlas with the"
+                << " following properties:\t";
+        std::cout << "Height: " << atlas.height() << '\t';
+        std::cout << "Width: " << atlas.width() << '\t';
+        std::cout << "Layers: " << atlas.layers() << '\n';
     }
+}
+
+void boardWindow::loadTerrainTextures() {
+    std::function<std::string(int)> getTerrainTexFilenameFromIndex = [this](int i) -> std::string {
+        return terrainTextureFilenames.at(static_cast<terrain>(i));
+    };
+    
+    //TODO: Next func is temporary
+    std::function<std::string(int)> getConnectionTexFilenameFromIndex = [](int i) -> std::string {
+        std::string name;
+        if (i == 0) { name = ":/connSlash.png"; return name; }
+        if (i == 1) { name = ":/connDash.png"; return name; }
+        throw (new std::out_of_range(
+                std::string("No filename for index ") + std::to_string(i) + '\n'
+                ));
+    };
+    
+    initializeTextureAtlas(terrainTextureAtlas,
+            Enum::count<terrain>(),
+            getTerrainTexFilenameFromIndex
+            );
+
+    initializeTextureAtlas(connectionTextureAtlas,
+            2,
+            getConnectionTexFilenameFromIndex
+            );
 }
 

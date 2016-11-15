@@ -19,6 +19,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <functional>
 
 #include <QtGui/QWindow>
 #include <QtGui/QOpenGLFunctions>
@@ -85,6 +86,8 @@ private:
     void initGL();
     void loadTerrainTextureFilenames(std::istream& in);
     void loadTerrainTextures();
+    void initializeTextureAtlas(QOpenGLTexture& atlas, std::size_t layers, 
+            std::function<std::string(int)> getFilenameFunc);
     void printDebugLog();
     
     //Shaders

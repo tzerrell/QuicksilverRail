@@ -61,6 +61,9 @@ private:
     bool animating;
     bool updatePending;
     bool verbose;
+    int zoomLevel;  //Number of degrees of scrolling above/below neutral; controls zoomFactor
+    double zoomFactor;
+    double zoomFactorFromLevel(int level);
     QSurfaceFormat surfaceFormat;
     QOpenGLContext *context;
     QOpenGLDebugLogger *debugLogger;

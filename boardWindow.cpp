@@ -20,6 +20,7 @@
 #include <QtGui/QOpenGLPixelTransferOptions>
 #include <QtDebug>
 #include <QtGui/QResizeEvent>
+#include <QtGui/QWheelEvent>
 
 #include <iostream>
 #include <fstream>
@@ -38,7 +39,8 @@ boardWindow::boardWindow(QWindow* parent)
         , animating(false)
         , context(0)
         , view(-20,-30,96,72)    //TODO: Choose an appropriate default view
-        //, view(-40, -60, 192, 144)
+        , zoomLevel(0)
+        , zoomFactor(0.5)
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)
         , connSlashOverwidth(locHorizSpacing * 0.16f)
@@ -241,18 +243,31 @@ bool boardWindow::event(QEvent *event)
 {
     //TODO: Add events here
     switch (event->type()) {
+        case QEvent::Wheel:
+            zoomLevel += ((QWheelEvent*)event)->angleDelta().y();
+            zoomFactor = zoomFactorFromLevel(zoomLevel);
+            view.setWidth(zoomFactor * this->width());
+            view.setHeight(zoomFactor * this->height());
+            return true;
         case QEvent::UpdateRequest:
             updatePending = false;
             render();   //TODO: Can switch render function here for testing
             return true;
         case QEvent::Resize:
-            view.setWidth(((QResizeEvent*)event)->size().width());
-            view.setHeight(((QResizeEvent*)event)->size().height());
-            render();
+            view.setWidth(zoomFactor * ((QResizeEvent*)event)->size().width());
+            view.setHeight(zoomFactor * ((QResizeEvent*)event)->size().height());
+            render();   //TODO: I thought this would fix flickering on resize, but it doesn't. Look for other solutions.
             return QWindow::event(event);
         default:
             return QWindow::event(event);
     }
+}
+
+double boardWindow::zoomFactorFromLevel(int level) {
+    if (level < 0) 
+        return (200 - level)/200.0;
+    else
+        return 200.0/(200 + level);
 }
 
 void boardWindow::exposeEvent(QExposeEvent *event)

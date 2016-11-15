@@ -230,7 +230,8 @@ void boardWindow::render() {
     numQuads = numVerts * 3 - 2 * subject->getNumCols() - subject->getNumRows()
             - 2 * (subject->getNumRows()/2);
     connectionIndexBuffer.bind();
-    glDrawElements(GL_TRIANGLES, numQuads * 6, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES, numQuads * 6, 
+            GL_UNSIGNED_SHORT, 0);
     connectionIndexBuffer.release();
     connectionTextureAtlas.release();
     connectionVertexBuffer.release();
@@ -542,7 +543,8 @@ bool boardWindow::constructGLBuffers() {
                     vertexCoords.push_back(ULy);
                     vertexCoords.push_back(ULz);
                     //the first UV is inverted for all of these b/c slash is horizontally flipped from what texture has for NW
-                    vertexUVs.push_back(1.0);   vertexUVs.push_back(1.0);
+                    //TODO: These are reflipped, possibly due to coordinate system mismatch?
+                    vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
                     isSlashIndex.push_back(isSlash);
 
                     //lower left coord
@@ -552,7 +554,7 @@ bool boardWindow::constructGLBuffers() {
                     vertexCoords.push_back(LLx);
                     vertexCoords.push_back(LLy);
                     vertexCoords.push_back(LLz);
-                    vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
+                    vertexUVs.push_back(0.0);   vertexUVs.push_back(0.0);
                     isSlashIndex.push_back(isSlash);
 
                     //upper right coord
@@ -562,7 +564,7 @@ bool boardWindow::constructGLBuffers() {
                     vertexCoords.push_back(URx);
                     vertexCoords.push_back(URy);
                     vertexCoords.push_back(URz);
-                    vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
+                    vertexUVs.push_back(1.0);   vertexUVs.push_back(1.0);
                     isSlashIndex.push_back(isSlash);
 
                     //lower right coord
@@ -572,7 +574,7 @@ bool boardWindow::constructGLBuffers() {
                     vertexCoords.push_back(LRx);
                     vertexCoords.push_back(LRy);
                     vertexCoords.push_back(LRz);
-                    vertexUVs.push_back(0.0);   vertexUVs.push_back(0.0);
+                    vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
                     isSlashIndex.push_back(isSlash);
                 }
                 
@@ -586,7 +588,8 @@ bool boardWindow::constructGLBuffers() {
                     vertexCoords.push_back(ULx);
                     vertexCoords.push_back(ULy);
                     vertexCoords.push_back(ULz);
-                    vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
+                    //TODO: These are reflipped, possibly due to coordinate system mismatch?
+                    vertexUVs.push_back(1.0);   vertexUVs.push_back(1.0);
                     isSlashIndex.push_back(isSlash);
 
                     //lower left coord
@@ -596,7 +599,7 @@ bool boardWindow::constructGLBuffers() {
                     vertexCoords.push_back(LLx);
                     vertexCoords.push_back(LLy);
                     vertexCoords.push_back(LLz);
-                    vertexUVs.push_back(0.0);   vertexUVs.push_back(0.0);
+                    vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
                     isSlashIndex.push_back(isSlash);
 
                     //upper right coord
@@ -606,7 +609,7 @@ bool boardWindow::constructGLBuffers() {
                     vertexCoords.push_back(URx);
                     vertexCoords.push_back(URy);
                     vertexCoords.push_back(URz);
-                    vertexUVs.push_back(1.0);   vertexUVs.push_back(1.0);
+                    vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
                     isSlashIndex.push_back(isSlash);
 
                     //lower right coord
@@ -616,7 +619,7 @@ bool boardWindow::constructGLBuffers() {
                     vertexCoords.push_back(LRx);
                     vertexCoords.push_back(LRy);
                     vertexCoords.push_back(LRz);
-                    vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
+                    vertexUVs.push_back(0.0);   vertexUVs.push_back(0.0);
                     isSlashIndex.push_back(isSlash);
                 }
                 
@@ -846,8 +849,8 @@ void boardWindow::loadTerrainTextures() {
     //TODO: Next func is temporary
     std::function<std::string(int)> getConnectionTexFilenameFromIndex = [](int i) -> std::string {
         std::string name;
-        if (i == 0) { name = ":/connSlash.png"; return name; }
-        if (i == 1) { name = ":/connDash.png"; return name; }
+        if (i == 0) { name = ":/connDash.png"; return name; }
+        if (i == 1) { name = ":/connSlash.png"; return name; }
         throw (new std::out_of_range(
                 std::string("No filename for index ") + std::to_string(i) + '\n'
                 ));

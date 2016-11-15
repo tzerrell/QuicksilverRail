@@ -17,15 +17,16 @@
 #include "location.h"
 
 board::board() 
-        : rows(5)   //TODO: initialize these in a sensible way
+        : rows(7)   //TODO: initialize these in a sensible way
         , columns(4)
-        , loc(boost::extents[4 + 1][5])
-        , xOffset(0)
+        , loc(boost::extents[4 + 1][7])
+        , xOffset(0)    //e.g. if origin (logical (0,0)) of board is at global (3,0), use xOffset = 3
         , yOffset(0)
 {
     for (int i = 0; i < columns + 1; ++i) {
         for (int j = 0; j < rows; ++j) {
             loc[i][j].setParent(this);
+            loc[i][j].setPosition(i + xOffset, j + yOffset);
         }
     }
 }

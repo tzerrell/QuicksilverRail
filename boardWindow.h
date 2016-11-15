@@ -70,6 +70,7 @@ private:
     QRectF view;
     GLuint projMatrixHandle;
     QOpenGLTexture terrainTextureAtlas;
+    QOpenGLTexture connectionTextureAtlas;
     
     QOpenGLBuffer locationVertexBuffer;
     QOpenGLBuffer locationUVBuffer;

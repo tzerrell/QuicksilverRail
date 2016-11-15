@@ -49,6 +49,7 @@ boardWindow::boardWindow(QWindow* parent)
         , connDashHeight(locHorizSpacing)
         , verbose(true)
         , terrainTextureAtlas(QOpenGLTexture::Target2DArray)
+        , connectionTextureAtlas(QOpenGLTexture::Target2DArray)
         , locationIndexBuffer(QOpenGLBuffer::IndexBuffer)
         , connectionIndexBuffer(QOpenGLBuffer::IndexBuffer)
 {
@@ -216,6 +217,14 @@ void boardWindow::render() {
     glVertexAttribPointer(2,1,GL_FLOAT, GL_FALSE, 0, (void*)0);
     
     //TODO: Need textures here
+    //TODO: Using fake textures
+    connectionTextureAtlas.bind(3);
+    if (!connectionTextureAtlas.isBound()) {
+        std::cerr << "Error binding terrain texture atlas.\n";
+    }
+    terrainTextureHandle[0] = 3;
+    shaderProgram.setUniformValueArray("terrainTextures", terrainTextureHandle, 1);
+    //TODO: End of fake textures
     
     int numVerts = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
     numQuads = numVerts * 3 - 2 * subject->getNumCols() - subject->getNumRows()
@@ -223,7 +232,7 @@ void boardWindow::render() {
     connectionIndexBuffer.bind();
     glDrawElements(GL_TRIANGLES, numQuads * 6, GL_UNSIGNED_SHORT, 0);
     connectionIndexBuffer.release();
-    //TODO ... terrainTextureAtlas.release();
+    connectionTextureAtlas.release();
     connectionVertexBuffer.release();
     
     glDisableVertexAttribArray(2);
@@ -767,6 +776,7 @@ void boardWindow::loadTerrainTextures() {
     QImage glImage;
     std::string filename;
     terrainTextureAtlas.setLayers(Enum::count<terrain>());
+    connectionTextureAtlas.setLayers(2);    //TODO: Not a magic number, and will have more textures in this atlas later
     QOpenGLPixelTransferOptions transferOptions;
     transferOptions.setAlignment(1);
     

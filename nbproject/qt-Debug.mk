@@ -784,6 +784,15 @@ build/Debug/MinGW_Qt-Windows/boardWindow.o: boardWindow.cpp C:/Qt/5.7/mingw53_32
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglpixeltransferoptions.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QSharedDataPointer \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QtDebug \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QResizeEvent \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qevent.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qkeysequence.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qurl.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qurlquery.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qfile.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qfiledevice.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qvector2d.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qtouchdevice.h \
 		terrain.h \
 		board.h \
 		direction.h \
@@ -803,7 +812,6 @@ build/Debug/MinGW_Qt-Windows/boardWindow.o: boardWindow.cpp C:/Qt/5.7/mingw53_32
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglbuffer.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLShaderProgram \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglshaderprogram.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qvector2d.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLDebugLogger \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopengldebug.h \
 		location.h \

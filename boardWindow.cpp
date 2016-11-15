@@ -19,6 +19,7 @@
 #include <QtGui/QOpenGLTexture>
 #include <QtGui/QOpenGLPixelTransferOptions>
 #include <QtDebug>
+#include <QtGui/QResizeEvent>
 
 #include <iostream>
 #include <fstream>
@@ -240,12 +241,17 @@ bool boardWindow::event(QEvent *event)
 {
     //TODO: Add events here
     switch (event->type()) {
-    case QEvent::UpdateRequest:
-        updatePending = false;
-        render();   //TODO: Can switch render function here for testing
-        return true;
-    default:
-        return QWindow::event(event);
+        case QEvent::UpdateRequest:
+            updatePending = false;
+            render();   //TODO: Can switch render function here for testing
+            return true;
+        case QEvent::Resize:
+            view.setWidth(((QResizeEvent*)event)->size().width());
+            view.setHeight(((QResizeEvent*)event)->size().height());
+            render();
+            return QWindow::event(event);
+        default:
+            return QWindow::event(event);
     }
 }
 

@@ -1,4 +1,5 @@
 INPUT(
+./build/Debug/MinGW_Qt-Windows/MainGameplayWindow.o
 ./build/Debug/MinGW_Qt-Windows/board.o
 ./build/Debug/MinGW_Qt-Windows/boardWindow.o
 ./build/Debug/MinGW_Qt-Windows/connection.o

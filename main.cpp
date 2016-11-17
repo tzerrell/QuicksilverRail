@@ -23,6 +23,8 @@
 #include "player.h"
 #include "textureManager.h"
 
+#include "MainGameplayWindow.h"
+
 void initializeLogging() {
     freopen("log/error.log","w",stderr);
     freopen("log/info.log","w",stdout);
@@ -33,14 +35,19 @@ void initializeLogging() {
 int main(int argc, char *argv[]) {
     initializeLogging();
     
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
     
     // create and show your widgets here
+    MainGameplayWindow mainWin;   //MainGameplayWindow mainWin;
+    mainWin.resize(640,400);
+    mainWin.show();
+    /* TODO: Removed to test main window style
     boardWindow tempWindow;
     tempWindow.resize(640,400);
     tempWindow.show();
     
     tempWindow.setAnimating(true);
+    */
     
     return app.exec();
 }

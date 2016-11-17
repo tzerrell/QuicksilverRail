@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/MainGameplayWindow.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/board.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/boardWindow.h</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/connection.h</itemPath>
@@ -26,6 +27,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/MainGameplayWindow.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/board.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/boardWindow.cpp</itemPath>
       <itemPath>C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/connection.cpp</itemPath>
@@ -75,6 +77,16 @@
           </incDir>
         </ccTool>
       </compileType>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/MainGameplayWindow.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/MainGameplayWindow.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/board.cpp"
             ex="false"
             tool="1"
@@ -237,6 +249,16 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/MainGameplayWindow.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/MainGameplayWindow.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="C:/Users/tnc02_000/Documents/NetBeansProjects/Quicksilver Rail/board.cpp"
             ex="false"
             tool="1"

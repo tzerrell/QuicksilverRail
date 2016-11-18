@@ -27,16 +27,16 @@ MainGameplayWindow::MainGameplayWindow(QWidget* parent)
     testAct->setStatusTip(tr("A test action (TODO!)"));
     connect(testAct, &QAction::triggered, this, &MainGameplayWindow::runTestAction);
     
-    /*mainMenuBar = new QMenuBar(this);
-    fileMenu = mainMenuBar->addMenu(tr("&File"));
+    fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(testAct);
-    fileMenu->addSeparator();*/
+    fileMenu->addSeparator();
     
     mainView = new boardWindow();
+    mainView->setAnimating(true);
     centralContainer = QWidget::createWindowContainer(mainView, this);
     
-    mainView->setAnimating(true);
-    
+    centralContainer->setGeometry(0, menuBar()->height()
+            , size().width(), size().height() - menuBar()->height());
 }
 
 MainGameplayWindow::~MainGameplayWindow() {
@@ -53,7 +53,8 @@ bool MainGameplayWindow::event(QEvent *event)
     switch (event->type()) {
         case QEvent::Resize:
             centralContainer->resize(((QResizeEvent*)event)->size().width(), 
-                    ((QResizeEvent*)event)->size().height());
+                    ((QResizeEvent*)event)->size().height() 
+                    - menuBar()->height());
             return QMainWindow::event(event);
         default:
             return QMainWindow::event(event);

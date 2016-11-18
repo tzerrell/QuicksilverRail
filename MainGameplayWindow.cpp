@@ -14,6 +14,8 @@
 #include <QMenuBar>
 #include <QtGui/QResizeEvent>
 
+#include <iostream>
+
 #include "boardWindow.h"
 
 #include "MainGameplayWindow.h"
@@ -44,7 +46,7 @@ MainGameplayWindow::~MainGameplayWindow() {
 }
 
 void MainGameplayWindow::runTestAction() {
-    ; //TODO
+    std::cout << "Test Action Run!\n"; //TODO
 }
 
 bool MainGameplayWindow::event(QEvent *event)

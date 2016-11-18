@@ -36,7 +36,7 @@ MainGameplayWindow::MainGameplayWindow(QWidget* parent)
     centralContainer = QWidget::createWindowContainer(mainView, this);
     
     centralContainer->setGeometry(0, menuBar()->height()
-            , size().width(), size().height() - menuBar()->height());
+            , width(), height() - menuBar()->height());
 }
 
 MainGameplayWindow::~MainGameplayWindow() {
@@ -52,7 +52,8 @@ bool MainGameplayWindow::event(QEvent *event)
     //TODO: Add events here
     switch (event->type()) {
         case QEvent::Resize:
-            centralContainer->resize(((QResizeEvent*)event)->size().width(), 
+            centralContainer->setGeometry(0, menuBar()->height(),
+                    ((QResizeEvent*)event)->size().width(), 
                     ((QResizeEvent*)event)->size().height() 
                     - menuBar()->height());
             return QMainWindow::event(event);

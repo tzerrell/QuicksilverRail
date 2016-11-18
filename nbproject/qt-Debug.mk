@@ -693,6 +693,8 @@ build/Debug/MinGW_Qt-Windows/MainGameplayWindow.o: MainGameplayWindow.cpp C:/Qt/
 		C:/Qt/5.7/mingw53_32/include/QtGui/qicon.h \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/qaction.h \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/qactiongroup.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/QStatusBar \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qstatusbar.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QResizeEvent \
 		boardWindow.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QWindow \

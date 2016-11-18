@@ -12,6 +12,7 @@
  */
 
 #include <QMenuBar>
+#include <QStatusBar>
 #include <QtGui/QResizeEvent>
 
 #include <iostream>
@@ -37,8 +38,10 @@ MainGameplayWindow::MainGameplayWindow(QWidget* parent)
     mainView->setAnimating(true);
     centralContainer = QWidget::createWindowContainer(mainView, this);
     
-    centralContainer->setGeometry(0, menuBar()->height()
-            , width(), height() - menuBar()->height());
+    centralContainer->setGeometry(0, 
+            menuBar()->height(),
+            width(),
+            height() - menuBar()->height() - statusBar()->height() );
 }
 
 MainGameplayWindow::~MainGameplayWindow() {
@@ -54,10 +57,11 @@ bool MainGameplayWindow::event(QEvent *event)
     //TODO: Add events here
     switch (event->type()) {
         case QEvent::Resize:
-            centralContainer->setGeometry(0, menuBar()->height(),
+            centralContainer->setGeometry(0, 
+                    menuBar()->height(),
                     ((QResizeEvent*)event)->size().width(), 
                     ((QResizeEvent*)event)->size().height() 
-                    - menuBar()->height());
+                    - menuBar()->height() - statusBar()->height());
             return QMainWindow::event(event);
         default:
             return QMainWindow::event(event);

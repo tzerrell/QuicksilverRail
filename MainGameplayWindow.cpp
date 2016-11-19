@@ -43,8 +43,6 @@ MainGameplayWindow::MainGameplayWindow(QWidget* parent)
     //menuBar()->setMouseTracking(true);
     statusBar()->setMouseTracking(true);
     
-    centralContainer->setStatusTip("Test cen con"); //TODO
-    
     centralContainer->setGeometry(0, 
             menuBar()->height(),
             width(),
@@ -56,17 +54,19 @@ MainGameplayWindow::~MainGameplayWindow() {
 }
 
 void MainGameplayWindow::runTestAction() {
-    std::cout << "Test Action Run!\n"; //TODO
+    std::cout << "Test Action Run!\n"; //TODO: real actions
 }
 
 void MainGameplayWindow::mouseMoveEvent(QMouseEvent *event) {
-    QString strTODO("Test: ");
-    QString strTODOHelp;
-    strTODOHelp.setNum(event->x(), 10); strTODO.append(strTODOHelp);
-    strTODO.append(",");
-    strTODOHelp.setNum(event->y(), 10); strTODO.append(strTODOHelp);
     
-    statusBar()->showMessage(strTODO);  //TODO
+    //TODO: This is debug info; change to real status tips
+    QString internalCoords("Internal Coords: ");
+    QString strBuilder;
+    strBuilder.setNum(event->x(), 10); internalCoords.append(strBuilder);
+    internalCoords.append(",");
+    strBuilder.setNum(event->y(), 10); internalCoords.append(strBuilder);
+    
+    statusBar()->showMessage(internalCoords);
     QMainWindow::mouseMoveEvent(event);
 }
 
@@ -79,7 +79,7 @@ bool MainGameplayWindow::event(QEvent *event)
                     menuBar()->height(),
                     ((QResizeEvent*)event)->size().width(), 
                     ((QResizeEvent*)event)->size().height() 
-                    - menuBar()->height() - statusBar()->height() - 100); //TODO: remove -100 (it's debug code) // );
+                    - menuBar()->height() - statusBar()->height());
             return QMainWindow::event(event);
         default:
             return QMainWindow::event(event);

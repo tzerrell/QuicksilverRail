@@ -21,6 +21,7 @@
 #include <string>
 #include <functional>
 
+#include <QMainWindow>
 #include <QtGui/QWindow>
 #include <QtGui/QOpenGLFunctions>
 #include <QtGui/QOpenGLBuffer>
@@ -40,6 +41,7 @@ public:
     boardWindow(const boardWindow&) = delete;
     boardWindow(const boardWindow&&) = delete;
     virtual ~boardWindow();
+    void setRootWindow(QMainWindow* newRoot);
     
     void setFormat() { QWindow::setFormat(surfaceFormat); };
     void setAnimating(bool val) { 
@@ -55,9 +57,11 @@ public slots:
 protected:
     bool event(QEvent *event) Q_DECL_OVERRIDE;
     void exposeEvent(QExposeEvent *event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
     
     bool constructGLBuffers();
 private:
+    QMainWindow* rootWin;
     board* subject;
     bool animating;
     bool updatePending;

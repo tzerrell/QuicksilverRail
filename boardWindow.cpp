@@ -70,6 +70,8 @@ boardWindow::~boardWindow() {
     if (debugLogger) delete debugLogger;
 }
 
+void boardWindow::setRootWindow(QMainWindow* newRoot) {rootWin = newRoot;}
+
 void boardWindow::initGL() {
     //TODO: debug code
     subject->setLocationTerrain(1,1, static_cast<terrain>(1));
@@ -247,6 +249,12 @@ void boardWindow::render() {
     context->swapBuffers(this);
     
     if (animating) renderLater();
+}
+
+void boardWindow::mouseMoveEvent(QMouseEvent* event) {
+    QCoreApplication::sendEvent(rootWin, event);
+    
+    //QWindow::mouseMoveEvent(event);
 }
 
 bool boardWindow::event(QEvent *event)

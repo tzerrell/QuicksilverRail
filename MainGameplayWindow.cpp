@@ -37,6 +37,13 @@ MainGameplayWindow::MainGameplayWindow(QWidget* parent)
     mainView = new boardWindow();
     mainView->setAnimating(true);
     centralContainer = QWidget::createWindowContainer(mainView, this);
+    centralContainer->setMouseTracking(true);
+    mainView->setRootWindow(this);
+    setMouseTracking(true);
+    //menuBar()->setMouseTracking(true);
+    statusBar()->setMouseTracking(true);
+    
+    centralContainer->setStatusTip("Test cen con"); //TODO
     
     centralContainer->setGeometry(0, 
             menuBar()->height(),
@@ -52,6 +59,17 @@ void MainGameplayWindow::runTestAction() {
     std::cout << "Test Action Run!\n"; //TODO
 }
 
+void MainGameplayWindow::mouseMoveEvent(QMouseEvent *event) {
+    QString strTODO("Test: ");
+    QString strTODOHelp;
+    strTODOHelp.setNum(event->x(), 10); strTODO.append(strTODOHelp);
+    strTODO.append(",");
+    strTODOHelp.setNum(event->y(), 10); strTODO.append(strTODOHelp);
+    
+    statusBar()->showMessage(strTODO);  //TODO
+    QMainWindow::mouseMoveEvent(event);
+}
+
 bool MainGameplayWindow::event(QEvent *event)
 {
     //TODO: Add events here
@@ -61,7 +79,7 @@ bool MainGameplayWindow::event(QEvent *event)
                     menuBar()->height(),
                     ((QResizeEvent*)event)->size().width(), 
                     ((QResizeEvent*)event)->size().height() 
-                    - menuBar()->height() - statusBar()->height());
+                    - menuBar()->height() - statusBar()->height() - 100); //TODO: remove -100 (it's debug code) // );
             return QMainWindow::event(event);
         default:
             return QMainWindow::event(event);

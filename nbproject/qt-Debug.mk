@@ -452,12 +452,10 @@ qrc_images.cpp: images.qrc \
 compiler_moc_header_make_all: moc_boardWindow.cpp
 compiler_moc_header_clean:
 	-$(DEL_FILE) moc_boardWindow.cpp
-moc_boardWindow.cpp: C:/Qt/5.7/mingw53_32/include/QtGui/QWindow \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qwindow.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/QObject \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qobject.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qobjectdefs.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qnamespace.h \
+moc_boardWindow.cpp: C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindow \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qmainwindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qwidget.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qwindowdefs.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qglobal.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qconfig.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qfeatures.h \
@@ -480,7 +478,11 @@ moc_boardWindow.cpp: C:/Qt/5.7/mingw53_32/include/QtGui/QWindow \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qmutex.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qnumeric.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qversiontagging.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qobjectdefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qnamespace.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qobjectdefs_impl.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qwindowdefs_win.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qobject.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qstring.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qchar.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qbytearray.h \
@@ -502,39 +504,62 @@ moc_boardWindow.cpp: C:/Qt/5.7/mingw53_32/include/QtGui/QWindow \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qvarlengtharray.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qcontainerfwd.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qobject_impl.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/QEvent \
-		C:/Qt/5.7/mingw53_32/include/QtCore/QMargins \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qmargins.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/QRect \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qpaintdevice.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qrect.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qsize.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qpoint.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qsurface.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qsurfaceformat.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qwindowdefs.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qwindowdefs_win.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qicon.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qpixmap.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qpaintdevice.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qpalette.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qcolor.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qrgb.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qrgba64.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qsharedpointer.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qshareddata.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qhash.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qsharedpointer_impl.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qimage.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qpixelformat.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qtransform.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qbrush.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qvector.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qmatrix.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qpolygon.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qvector.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qregion.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qdatastream.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qiodevice.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qline.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qtransform.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qpainterpath.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qimage.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qpixelformat.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qpixmap.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qsharedpointer.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qshareddata.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qhash.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qsharedpointer_impl.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qfont.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qfontmetrics.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qfontinfo.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qsizepolicy.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qcursor.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qkeysequence.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qevent.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qvariant.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qmap.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qdebug.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qtextstream.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qlocale.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qset.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qcontiguouscache.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qurl.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qurlquery.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qfile.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qfiledevice.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qvector2d.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qtouchdevice.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qtabwidget.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qicon.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QWindow \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qwindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QObject \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QEvent \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QMargins \
+		C:/Qt/5.7/mingw53_32/include/QtCore/QRect \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qsurface.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qsurfaceformat.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLFunctions \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglfunctions.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopengl.h \
@@ -550,18 +575,10 @@ moc_boardWindow.cpp: C:/Qt/5.7/mingw53_32/include/QtGui/QWindow \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QScopedPointer \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QSurfaceFormat \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglversionfunctions.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qvariant.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qmap.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qdebug.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qtextstream.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qlocale.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qset.h \
-		C:/Qt/5.7/mingw53_32/include/QtCore/qcontiguouscache.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLBuffer \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglbuffer.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLShaderProgram \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglshaderprogram.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qvector2d.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qvector3d.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qvector4d.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qmatrix4x4.h \
@@ -697,6 +714,9 @@ build/Debug/MinGW_Qt-Windows/MainGameplayWindow.o: MainGameplayWindow.cpp C:/Qt/
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/qstatusbar.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QResizeEvent \
 		boardWindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindow \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qmainwindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qtabwidget.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QWindow \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qwindow.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QObject \
@@ -735,10 +755,7 @@ build/Debug/MinGW_Qt-Windows/MainGameplayWindow.o: MainGameplayWindow.cpp C:/Qt/
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopengltexture.h \
 		MainGameplayWindow.h \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QMenu \
-		C:/Qt/5.7/mingw53_32/include/QtWidgets/QAction \
-		C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindow \
-		C:/Qt/5.7/mingw53_32/include/QtWidgets/qmainwindow.h \
-		C:/Qt/5.7/mingw53_32/include/QtWidgets/qtabwidget.h
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/QAction
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/Debug/MinGW_Qt-Windows/MainGameplayWindow.o MainGameplayWindow.cpp
 
 build/Debug/MinGW_Qt-Windows/board.o: board.cpp board.h \
@@ -952,15 +969,25 @@ build/Debug/MinGW_Qt-Windows/boardWindow.o: boardWindow.cpp C:/Qt/5.7/mingw53_32
 		board.h \
 		direction.h \
 		boardWindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindow \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qmainwindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qwidget.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qpalette.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qbrush.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qpixmap.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qfont.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qfontmetrics.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qfontinfo.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qsizepolicy.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qcursor.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qtabwidget.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qicon.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QWindow \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qwindow.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QEvent \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QMargins \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QRect \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qsurface.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qicon.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qpixmap.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qcursor.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLFunctions \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglfunctions.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLBuffer \
@@ -1193,6 +1220,10 @@ build/Debug/MinGW_Qt-Windows/main.o: main.cpp C:/Qt/5.7/mingw53_32/include/QtWid
 		C:/Qt/5.7/mingw53_32/include/QtGui/qinputmethod.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QGuiApplication \
 		boardWindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindow \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qmainwindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qtabwidget.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qicon.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QWindow \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qwindow.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QObject \
@@ -1201,7 +1232,6 @@ build/Debug/MinGW_Qt-Windows/main.o: main.cpp C:/Qt/5.7/mingw53_32/include/QtWid
 		C:/Qt/5.7/mingw53_32/include/QtCore/QRect \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qsurface.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qsurfaceformat.h \
-		C:/Qt/5.7/mingw53_32/include/QtGui/qicon.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLFunctions \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglfunctions.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopengl.h \
@@ -1246,10 +1276,7 @@ build/Debug/MinGW_Qt-Windows/main.o: main.cpp C:/Qt/5.7/mingw53_32/include/QtWid
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/qactiongroup.h \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QMenuBar \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/qmenubar.h \
-		C:/Qt/5.7/mingw53_32/include/QtWidgets/QAction \
-		C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindow \
-		C:/Qt/5.7/mingw53_32/include/QtWidgets/qmainwindow.h \
-		C:/Qt/5.7/mingw53_32/include/QtWidgets/qtabwidget.h
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/QAction
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/Debug/MinGW_Qt-Windows/main.o main.cpp
 
 build/Debug/MinGW_Qt-Windows/qrc_images.o: qrc_images.cpp 

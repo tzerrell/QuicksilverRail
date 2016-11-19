@@ -31,6 +31,7 @@ public slots:
     void runTestAction();
 protected:
     bool event(QEvent *event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 private:
     QAction* testAct;
     QMenuBar* mainMenuBar;

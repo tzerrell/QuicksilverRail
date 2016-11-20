@@ -393,7 +393,7 @@ bool boardWindow::constructGLBuffers() {
 
                 //upper left coord
                 GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
-                GLfloat ULy = (i - 1.0) * locVertSpacing + locHorizSpacing/2.0;
+                GLfloat ULy = i * locVertSpacing + locHorizSpacing/2.0;
                 GLfloat ULz = 0.0;
                 vertexCoords.push_back(ULx);
                 vertexCoords.push_back(ULy);
@@ -403,7 +403,7 @@ bool boardWindow::constructGLBuffers() {
                 
                 //lower left coord
                 GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
-                GLfloat LLy = (i - 1.0) * locVertSpacing - locHorizSpacing/2.0;
+                GLfloat LLy = i * locVertSpacing - locHorizSpacing/2.0;
                 GLfloat LLz = 0.0;
                 vertexCoords.push_back(LLx);
                 vertexCoords.push_back(LLy);
@@ -413,7 +413,7 @@ bool boardWindow::constructGLBuffers() {
 
                 //upper right coord
                 GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0;
-                GLfloat URy = (i - 1.0) * locVertSpacing + locHorizSpacing/2.0;
+                GLfloat URy = i * locVertSpacing + locHorizSpacing/2.0;
                 GLfloat URz = 0.0;
                 vertexCoords.push_back(URx);
                 vertexCoords.push_back(URy);
@@ -423,7 +423,7 @@ bool boardWindow::constructGLBuffers() {
                 
                 //lower right coord
                 GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0;
-                GLfloat LRy = (i - 1.0) * locVertSpacing - locHorizSpacing/2.0;
+                GLfloat LRy = i * locVertSpacing - locHorizSpacing/2.0;
                 GLfloat LRz = 0.0;
                 vertexCoords.push_back(LRx);
                 vertexCoords.push_back(LRy);
@@ -548,7 +548,7 @@ bool boardWindow::constructGLBuffers() {
                     isSlash = 1.0;
                     //upper left coord
                     GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 2.0 - connSlashOverwidth;
-                    GLfloat ULy = (i - 1.0) * locVertSpacing + locVertSpacing + connSlashOverheight;
+                    GLfloat ULy = i * locVertSpacing + locVertSpacing + connSlashOverheight;
                     GLfloat ULz = 0.0;
                     vertexCoords.push_back(ULx);
                     vertexCoords.push_back(ULy);
@@ -560,7 +560,7 @@ bool boardWindow::constructGLBuffers() {
 
                     //lower left coord
                     GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 2.0 - connSlashOverwidth;
-                    GLfloat LLy = (i - 1.0) * locVertSpacing - connSlashOverheight;
+                    GLfloat LLy = i * locVertSpacing - connSlashOverheight;
                     GLfloat LLz = 0.0;
                     vertexCoords.push_back(LLx);
                     vertexCoords.push_back(LLy);
@@ -570,7 +570,7 @@ bool boardWindow::constructGLBuffers() {
 
                     //upper right coord
                     GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + connSlashOverwidth;
-                    GLfloat URy = (i - 1.0) * locVertSpacing + locVertSpacing + connSlashOverheight;
+                    GLfloat URy = i * locVertSpacing + locVertSpacing + connSlashOverheight;
                     GLfloat URz = 0.0;
                     vertexCoords.push_back(URx);
                     vertexCoords.push_back(URy);
@@ -580,7 +580,7 @@ bool boardWindow::constructGLBuffers() {
 
                     //lower right coord
                     GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + connSlashOverwidth;
-                    GLfloat LRy = (i - 1.0) * locVertSpacing - connSlashOverheight;
+                    GLfloat LRy = i * locVertSpacing - connSlashOverheight;
                     GLfloat LRz = 0.0;
                     vertexCoords.push_back(LRx);
                     vertexCoords.push_back(LRy);
@@ -594,7 +594,7 @@ bool boardWindow::constructGLBuffers() {
                     isSlash = 1.0;
                     //upper left coord
                     GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - connSlashOverwidth;
-                    GLfloat ULy = (i - 1.0) * locVertSpacing + locVertSpacing + connSlashOverheight;
+                    GLfloat ULy = i * locVertSpacing + locVertSpacing + connSlashOverheight;
                     GLfloat ULz = 0.0;
                     vertexCoords.push_back(ULx);
                     vertexCoords.push_back(ULy);
@@ -605,7 +605,7 @@ bool boardWindow::constructGLBuffers() {
 
                     //lower left coord
                     GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - connSlashOverwidth;
-                    GLfloat LLy = (i - 1.0) * locVertSpacing - connSlashOverheight;
+                    GLfloat LLy = i * locVertSpacing - connSlashOverheight;
                     GLfloat LLz = 0.0;
                     vertexCoords.push_back(LLx);
                     vertexCoords.push_back(LLy);
@@ -615,7 +615,7 @@ bool boardWindow::constructGLBuffers() {
 
                     //upper right coord
                     GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 2.0 + connSlashOverwidth;
-                    GLfloat URy = (i - 1.0) * locVertSpacing + locVertSpacing + connSlashOverheight;
+                    GLfloat URy = i * locVertSpacing + locVertSpacing + connSlashOverheight;
                     GLfloat URz = 0.0;
                     vertexCoords.push_back(URx);
                     vertexCoords.push_back(URy);
@@ -625,7 +625,7 @@ bool boardWindow::constructGLBuffers() {
 
                     //lower right coord
                     GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0 + connSlashOverwidth;
-                    GLfloat LRy = (i - 1.0) * locVertSpacing - connSlashOverheight;
+                    GLfloat LRy = i * locVertSpacing - connSlashOverheight;
                     GLfloat LRz = 0.0;
                     vertexCoords.push_back(LRx);
                     vertexCoords.push_back(LRy);
@@ -639,7 +639,7 @@ bool boardWindow::constructGLBuffers() {
                     isSlash = 0.0;
                     //upper left coord
                     GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - connDashOverwidth;
-                    GLfloat ULy = (i - 1.0) * locVertSpacing + connDashHeight;
+                    GLfloat ULy = i * locVertSpacing + connDashHeight;
                     GLfloat ULz = 0.0;
                     vertexCoords.push_back(ULx);
                     vertexCoords.push_back(ULy);
@@ -649,7 +649,7 @@ bool boardWindow::constructGLBuffers() {
 
                     //lower left coord
                     GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - connDashOverwidth;
-                    GLfloat LLy = (i - 1.0) * locVertSpacing - connDashHeight;
+                    GLfloat LLy = i * locVertSpacing - connDashHeight;
                     GLfloat LLz = 0.0;
                     vertexCoords.push_back(LLx);
                     vertexCoords.push_back(LLy);
@@ -659,7 +659,7 @@ bool boardWindow::constructGLBuffers() {
 
                     //upper right coord
                     GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing + connSlashOverwidth;
-                    GLfloat URy = (i - 1.0) * locVertSpacing + connDashHeight;
+                    GLfloat URy = i * locVertSpacing + connDashHeight;
                     GLfloat URz = 0.0;
                     vertexCoords.push_back(URx);
                     vertexCoords.push_back(URy);
@@ -669,7 +669,7 @@ bool boardWindow::constructGLBuffers() {
 
                     //lower right coord
                     GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing + connSlashOverwidth;
-                    GLfloat LRy = (i - 1.0) * locVertSpacing - connDashHeight;
+                    GLfloat LRy = i * locVertSpacing - connDashHeight;
                     GLfloat LRz = 0.0;
                     vertexCoords.push_back(LRx);
                     vertexCoords.push_back(LRy);

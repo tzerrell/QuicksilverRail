@@ -71,6 +71,14 @@ void MainGameplayWindow::mouseMoveEvent(QMouseEvent *event) {
     strBuilder.setNum(pt.i(), 10); internalCoords.append(strBuilder);
     internalCoords.append(",");
     strBuilder.setNum(pt.j(), 10); internalCoords.append(strBuilder);
+    internalCoords.append(") (l,m): (");
+    strBuilder.setNum(pt.l(), 10); internalCoords.append(strBuilder);
+    internalCoords.append(",");
+    strBuilder.setNum(pt.m(), 10); internalCoords.append(strBuilder);
+    internalCoords.append(") (s,t): (");
+    strBuilder.setNum(pt.s()); internalCoords.append(strBuilder);
+    internalCoords.append(",");
+    strBuilder.setNum(pt.t()); internalCoords.append(strBuilder);
     internalCoords.append(")");
     
     statusBar()->showMessage(internalCoords);

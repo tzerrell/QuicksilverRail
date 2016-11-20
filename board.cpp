@@ -17,6 +17,7 @@
 
 #include "board.h"
 #include "location.h"
+#include "boardWindow.h"
 
 board::board() 
         : rows(7)   //TODO: initialize these in a sensible way
@@ -70,15 +71,11 @@ board::coord::coord(int first, int second, board* own, system s)
     set(first, second, s);
 }
 
-//TODO: keep this?
-/*
-board::coord::coord(int vx, int vy, board* own,
-        QRectF view, int windowWidth, int windowHeight)
-        :owner(own)
+board::coord::coord(int vx, int vy, boardWindow* win)
+        :owner(win->getSubject())
 {
-    setFromView(vx, vy, view, windowWidth, windowHeight);
+    setFromView(vx, vy, win);
 }
-*/
 
 void board::coord::set(float first, float second, system s) {
     switch (s) {
@@ -144,6 +141,15 @@ void board::coord::setFromOrthoLattice(int i, int j, bool global) {
     
     x = i - (1/2.0) * (j % 2);
     y = j;
+}
+
+void board::coord::setFromView(int vx, int vy, boardWindow* win) {
+    QRectF view = win->getView();
+    double percentX = (vx + 0.5)/win->width();
+    double percentY = (vy + 0.5)/win->height();
+    x = percentX * (view.width()) + view.left();
+    y = percentY * (view.height()) + view.top();
+    owner = win->getSubject();
 }
 
 float board::coord::s() { return x - (y/2.0); }

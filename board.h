@@ -60,6 +60,7 @@
 class location;
 class track;
 class player;
+class boardWindow;
 
 class board {
 public:
@@ -84,15 +85,15 @@ public:
         
         coord(float first, float second, board* own, system s = system::ortho);
         coord(int first, int second, board* own, system s = system::ortho);
-        coord(int vx, int vy, board* own,
-                QRectF view, int windowWidth, int windowHeight);
-        coord() : coord(0,0, nullptr) {};
+        coord(int vx, int vy, boardWindow* win);
+        coord() : coord(0,0, (board*)nullptr) {};
         void set(float first, float second, system s);
         void set(int first, int second, system s);
         void setFromOrthogonal(float nx, float ny) { x = nx; y = ny; };
         void setFromTriangular(float s, float t) { x = s + t/2; y = t; };
         void setFromOrthoLattice(int i, int j, bool global = false);
         void setFromTriangularLattice(int l, int m) { x = l + m/2; y = m; };
+        void setFromView(int vx, int vy, boardWindow* win);
         int i();    int j();    //The orthogonal lattice coordinates of this pt
         int l();    int m();    //The triangular lattice coordinates of this pt
         float s();  float t();  //The triangular analog coordinates of this pt

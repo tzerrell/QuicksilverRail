@@ -43,6 +43,9 @@ public:
     virtual ~boardWindow();
     void setRootWindow(QMainWindow* newRoot);
     
+    board* getSubject() { return subject; };
+    QRectF getView() { return view; };
+    
     void setFormat() { QWindow::setFormat(surfaceFormat); };
     void setAnimating(bool val) { 
         animating = val;

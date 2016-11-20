@@ -857,7 +857,49 @@ build/Debug/MinGW_Qt-Windows/board.o: board.cpp C:/Qt/5.7/mingw53_32/include/QtG
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopengles2ext.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglext.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QScopedPointer \
-		connectionEnums.h
+		connectionEnums.h \
+		boardWindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindow \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qmainwindow.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qwidget.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qpalette.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qbrush.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qfont.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qfontmetrics.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qfontinfo.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qsizepolicy.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qkeysequence.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qevent.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qvariant.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qmap.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qdebug.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qtextstream.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qlocale.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qset.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qcontiguouscache.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qurl.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qurlquery.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qfile.h \
+		C:/Qt/5.7/mingw53_32/include/QtCore/qfiledevice.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qvector2d.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qtouchdevice.h \
+		C:/Qt/5.7/mingw53_32/include/QtWidgets/qtabwidget.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLFunctions \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglfunctions.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglcontext.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QSurfaceFormat \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglversionfunctions.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLBuffer \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglbuffer.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLShaderProgram \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglshaderprogram.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qvector3d.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qvector4d.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qmatrix4x4.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qquaternion.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qgenericmatrix.h \
+		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLDebugLogger \
+		C:/Qt/5.7/mingw53_32/include/QtGui/qopengldebug.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/Debug/MinGW_Qt-Windows/board.o board.cpp
 
 build/Debug/MinGW_Qt-Windows/boardWindow.o: boardWindow.cpp C:/Qt/5.7/mingw53_32/include/QtCore/QCoreApplication \

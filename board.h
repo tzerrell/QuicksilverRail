@@ -69,6 +69,35 @@ public:
     board(const board& orig);
     virtual ~board();
     
+    struct coord {
+        float x;
+        float y;
+        board* owner;
+        
+        enum class system {
+            ortho,
+            tri,
+            orthoLattice,
+            globalOrthoLattice,
+            triLattice
+        };
+        
+        coord(float first, float second, board* own, system s = system::ortho);
+        coord(int first, int second, board* own, system s = system::ortho);
+        coord(int vx, int vy, board* own,
+                QRectF view, int windowWidth, int windowHeight);
+        coord() : coord(0,0, nullptr) {};
+        void set(float first, float second, system s);
+        void set(int first, int second, system s);
+        void setFromOrthogonal(float nx, float ny) { x = nx; y = ny; };
+        void setFromTriangular(float s, float t) { x = s + t/2; y = t; };
+        void setFromOrthoLattice(int i, int j, bool global = false);
+        void setFromTriangularLattice(int l, int m) { x = l + m/2; y = m; };
+        int i();    int j();    //The orthogonal lattice coordinates of this pt
+        int l();    int m();    //The triangular lattice coordinates of this pt
+        float s();  float t();  //The triangular analog coordinates of this pt
+    };
+    
     location* getLocation(int x, int y, bool logicalCoords = false);
     void setLocationTerrain(int x, int y, terrain t);
     crossing* getCrossing(int x, int y, direction d);

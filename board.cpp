@@ -13,6 +13,8 @@
 
 #include <boost/multi_array.hpp>
 
+#include <QWindow>
+
 #include "board.h"
 #include "location.h"
 
@@ -54,6 +56,111 @@ board::board(const board& orig) {
 }
 
 board::~board() {
+}
+
+board::coord::coord(float first, float second, board* own, system s)
+        :owner(own)
+{
+    set(first, second, s);
+}
+
+board::coord::coord(int first, int second, board* own, system s)
+        :owner(own)
+{
+    set(first, second, s);
+}
+
+//TODO: keep this?
+/*
+board::coord::coord(int vx, int vy, board* own,
+        QRectF view, int windowWidth, int windowHeight)
+        :owner(own)
+{
+    setFromView(vx, vy, view, windowWidth, windowHeight);
+}
+*/
+
+void board::coord::set(float first, float second, system s) {
+    switch (s) {
+        case system::ortho:
+            setFromOrthogonal(first, second);
+            break;
+        case system::tri:
+            setFromTriangular(first, second);
+            break;
+        case system::orthoLattice:
+            std::cerr << "Warning: Setting orthogonal lattice coordinates "
+                    << "using floats\n";
+            setFromOrthoLattice(first, second);
+            break;
+        case system::globalOrthoLattice:
+            std::cerr << "Warning: Setting (global) orthogonal lattice "
+                    << "coordinates using floats\n";
+            setFromOrthoLattice(first, second, true);
+            break;
+        case system::triLattice:
+            std::cerr << "Warning: Setting triangular lattice coordinates "
+                    << "using floats\n";
+            setFromTriangularLattice(first, second);
+            break;
+        default:
+            std::cerr << "Unexpected coordinate system in board::coord::set; "
+                    << "no coordinates set.\n";
+    }
+}
+
+void board::coord::set(int first, int second, system s) {
+    switch (s) {
+        case system::ortho:
+            std::cerr << "Warning: Setting orthogonal analog coordinates "
+                    << "using ints\n";
+            setFromOrthogonal(first, second);
+            break;
+        case system::tri:
+            std::cerr << "Warning: Setting triangular analog coordinates "
+                    << "using ints\n";
+            setFromTriangular(first, second);
+            break;
+        case system::orthoLattice:
+            setFromOrthoLattice(first, second);
+            break;
+        case system::globalOrthoLattice:
+            setFromOrthoLattice(first, second, true);
+            break;
+        case system::triLattice:
+            setFromTriangularLattice(first, second);
+            break;
+        default:
+            std::cerr << "Unexpected coordinate system in board::coord::set; "
+                    << "no coordinates set.\n";
+    }
+}
+
+void board::coord::setFromOrthoLattice(int i, int j, bool global) {
+    if (global) {
+        i -= owner->xOffset;
+        j -= owner->yOffset;
+    }
+    
+    x = i - (1/2.0) * (j % 2);
+    y = j;
+}
+
+float board::coord::s() { return x - (y/2.0); }
+float board::coord::t() { return y; }
+
+int board::coord::l() {
+    return (int)(s() + 0.5);
+}
+int board::coord::m() {
+    return (int)(t() + 0.5);
+}
+
+int board::coord::i() {
+    return (m()+1)/2 + l();
+}
+int board::coord::j() {
+    return m();
 }
 
 location* board::getLocation(int x, int y, bool logicalCoords) {

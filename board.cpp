@@ -175,10 +175,22 @@ float board::coord::s() { return x - (y/2.0); }
 float board::coord::t() { return y; }
 
 int board::coord::l() {
-    return (int)(s() + 0.5);
+    float S = s();
+    float rounder;
+    if (S > 0)
+        rounder = 0.5;
+    else
+        rounder = -0.5;
+    return (int)(S + rounder);
 }
 int board::coord::m() {
-    return (int)(t() + 0.5);
+    float T = t();
+    float rounder;
+    if (T > 0)
+        rounder = 0.5;
+    else
+        rounder = -0.5;
+    return (int)(T + rounder);
 }
 
 int board::coord::i() {

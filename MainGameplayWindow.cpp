@@ -80,6 +80,10 @@ void MainGameplayWindow::mouseMoveEvent(QMouseEvent *event) {
     internalCoords.append(",");
     strBuilder.setNum(pt.t()); internalCoords.append(strBuilder);
     internalCoords.append(")");
+    if (mainView->getSubject()->isOnBoard(pt.i(), pt.j(), true))
+        internalCoords.append(", on board");
+    else
+        internalCoords.append(", off board");
     
     statusBar()->showMessage(internalCoords);
     QMainWindow::mouseMoveEvent(event);

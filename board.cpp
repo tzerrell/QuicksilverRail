@@ -59,6 +59,25 @@ board::board(const board& orig) {
 board::~board() {
 }
 
+/*
+ * board::coord represents a point on the board (which may or may not be a
+ * lattice point (i.e. a point with a location)). Various coordinate systems are
+ * useful in different circumstances, and board::coord makes it easy to switch
+ * between them.
+ * 
+ * Orthogonal coordinates have the standard basis.
+ * Triangular coordinates have the basis with the two vectors point from origin
+ * to the vertex to the east, and from origin to the vertex to the northeast.
+ * Lattice versions represent the same things, but rounded to the nearest* point
+ * in the lattice. (*Not technically nearest under Euclidean metric, but it's a
+ * reasonable enough approximation.)
+ * 
+ * Orthogonal coords are in (x,y)
+ * Triangular coords are in (s,t)
+ * Orthogonal lattice coords are in (i,j)
+ * Triangular lattice coords are in (l,m)
+ */
+
 board::coord::coord(float first, float second, board* own, system s)
         :owner(own)
 {
@@ -147,8 +166,8 @@ void board::coord::setFromView(int vx, int vy, boardWindow* win) {
     QRectF view = win->getView();
     double percentX = (vx + 0.5)/win->width();
     double percentY = (vy + 0.5)/win->height();
-    x = percentX * (view.width()) + view.left();
-    y = percentY * (view.height()) + view.top();
+    x = (percentX * (view.width()) + view.left()) / win->getHorizSpacing();
+    y = (percentY * (view.height()) + view.top()) / win->getVertSpacing();
     owner = win->getSubject();
 }
 
@@ -169,17 +188,10 @@ int board::coord::j() {
     return m();
 }
 
-location* board::getLocation(int x, int y, bool logicalCoords) {
-    int xIndex = x;
-    int yIndex = y;
-    if (!logicalCoords) {   //logicalCoords indicates whether to use the coords of the boards loc array (true)
-                            //or the global world coordinates (x,y) (false)
-        xIndex -= xOffset;
-        yIndex -= yOffset;
-    }
-    if (!isOnBoard(xIndex, yIndex, true))
+location* board::getLocation(board::coord pt) {
+    if (!isOnBoard(pt.i(), pt.j(), true))
         throw std::out_of_range("Requested location from board::getLocation is not on this board.");    //TODO: Improve?
-    return &(loc[xIndex][yIndex]);
+    return &(loc[pt.i()][pt.j()]);
 }
 
 bool board::isOnBoard(int x, int y, bool logicalCoords) {
@@ -198,5 +210,5 @@ bool board::isOnBoard(int x, int y, bool logicalCoords) {
 }
 
 void board::setLocationTerrain(int x, int y, terrain t) {
-    getLocation(x,y)->setTerrain(t);
+    getLocation(coord(x,y,this))->setTerrain(t);
 }

@@ -388,7 +388,8 @@ bool boardWindow::constructGLBuffers() {
                 //shifted 50% in order to make a hex grid.
                 
                 //Each vertex of this quad has the same terrain texture
-                GLfloat terrainIndex = static_cast<GLfloat>(subject->getLocation(j,i,true)->getTerrain());
+                GLfloat terrainIndex = static_cast<GLfloat>(subject->getLocation(
+                        board::coord(j,i,subject,board::coord::system::globalOrthoLattice))->getTerrain());
 
                 //upper left coord
                 GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
@@ -539,9 +540,11 @@ bool boardWindow::constructGLBuffers() {
                 
                 //Each vertex of this quad has the same isSlash index (the quad is either a dash or a slash)
                 GLfloat isSlash;
+                board::coord pt(j, i, subject,
+                        board::coord::system::globalOrthoLattice);
                 
                 //NW first
-                if(subject->getLocation(j,i,true)->neighborExists(direction::NW)) {
+                if(subject->getLocation(pt)->neighborExists(direction::NW)) {
                     isSlash = 1.0;
                     //upper left coord
                     GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 2.0 - connSlashOverwidth;
@@ -587,7 +590,7 @@ bool boardWindow::constructGLBuffers() {
                 }
                 
                 //NE second
-                if(subject->getLocation(j,i,true)->neighborExists(direction::NE)) {
+                if(subject->getLocation(pt)->neighborExists(direction::NE)) {
                     isSlash = 1.0;
                     //upper left coord
                     GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - connSlashOverwidth;
@@ -632,7 +635,7 @@ bool boardWindow::constructGLBuffers() {
                 }
                 
                 //E third
-                if(subject->getLocation(j,i,true)->neighborExists(direction::E)) {
+                if(subject->getLocation(pt)->neighborExists(direction::E)) {
                     isSlash = 0.0;
                     //upper left coord
                     GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - connDashOverwidth;
@@ -720,8 +723,11 @@ bool boardWindow::constructGLBuffers() {
             if (verbose) std::cout << "\ti = " << i;
             for (int j = 0; j < subject->getNumCols() + rowParity; ++j) {
                 if (verbose) std::cout << "\n\t\tj = " << j << " of " << subject->getNumCols() + rowParity << ":\t";
+                board::coord pt(j, i, subject,
+                        board::coord::system::globalOrthoLattice);
+                
                 for (direction dir = direction::E; dir != direction::W; ++dir) {
-                    if (!subject->getLocation(j,i,true)->neighborExists(dir))
+                    if (!subject->getLocation(pt)->neighborExists(dir))
                         continue;   //Skip if there's no neighbor in this direction
                     for (int twice = 0; twice < 2; ++twice) {   //quads have 2 triangles
                         if (verbose) {

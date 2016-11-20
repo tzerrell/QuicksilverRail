@@ -753,6 +753,9 @@ build/Debug/MinGW_Qt-Windows/MainGameplayWindow.o: MainGameplayWindow.cpp C:/Qt/
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopengldebug.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLTexture \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopengltexture.h \
+		board.h \
+		direction.h \
+		terrain.h \
 		MainGameplayWindow.h \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QMenu \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QAction

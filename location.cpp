@@ -113,5 +113,7 @@ bool location::neighborExists(direction towardDir) {
 
 location* location::getNeighbor(direction towardDir) {
     coordinate coord = positionToward(towardDir);
-    return parent->getLocation(coord.x, coord.y);
+    board::coord pt(coord.x, coord.y, parent,
+            board::coord::system::orthoLattice);
+    return parent->getLocation(pt);
 }

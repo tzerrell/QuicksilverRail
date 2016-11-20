@@ -18,6 +18,7 @@
 #include <iostream>
 
 #include "boardWindow.h"
+#include "board.h"
 
 #include "MainGameplayWindow.h"
 
@@ -65,6 +66,12 @@ void MainGameplayWindow::mouseMoveEvent(QMouseEvent *event) {
     strBuilder.setNum(event->x(), 10); internalCoords.append(strBuilder);
     internalCoords.append(",");
     strBuilder.setNum(event->y(), 10); internalCoords.append(strBuilder);
+    internalCoords.append("; (i,j): (");
+    board::coord pt(event->x(), event->y(), mainView);
+    strBuilder.setNum(pt.i(), 10); internalCoords.append(strBuilder);
+    internalCoords.append(",");
+    strBuilder.setNum(pt.j(), 10); internalCoords.append(strBuilder);
+    internalCoords.append(")");
     
     statusBar()->showMessage(internalCoords);
     QMainWindow::mouseMoveEvent(event);

@@ -45,6 +45,8 @@ public:
     
     board* getSubject() { return subject; };
     QRectF getView() { return view; };
+    GLfloat getVertSpacing() { return locVertSpacing; };
+    GLfloat getHorizSpacing() { return locHorizSpacing; };
     
     void setFormat() { QWindow::setFormat(surfaceFormat); };
     void setAnimating(bool val) { 

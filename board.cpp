@@ -194,29 +194,24 @@ int board::coord::m() {
 }
 
 int board::coord::i() {
-    return (m()+1)/2 + l();
+    return (int)((t()+1)/2 + s());
 }
 int board::coord::j() {
     return m();
 }
 
 location* board::getLocation(board::coord pt) {
-    if (!isOnBoard(pt.i(), pt.j(), true))
+    if (!isOnBoard(pt))
         throw std::out_of_range("Requested location from board::getLocation is not on this board.");    //TODO: Improve?
     return &(loc[pt.i()][pt.j()]);
 }
 
-bool board::isOnBoard(int x, int y, bool logicalCoords) {
-    int xIndex = x;
-    int yIndex = y;
-    if (!logicalCoords) {   //logicalCoords indicates whether to use the coords of the boards loc array (true)
-                            //or the global world coordinates (x,y) (false)
-        xIndex -= xOffset;
-        yIndex -= yOffset;
-    }
-    if (xIndex < 0 || xIndex > getNumCols() 
-            || yIndex < 0 || yIndex >= getNumRows()
-            || (yIndex % 2 == 0 && xIndex == getNumCols()))
+bool board::isOnBoard(board::coord pt) {
+    int i = pt.i();
+    int j = pt.j();
+    if (i < 0 || i > getNumCols() 
+            || j < 0 || j >= getNumRows()
+            || (j % 2 == 0 && i == getNumCols()))
         return false;
     return true;
 }

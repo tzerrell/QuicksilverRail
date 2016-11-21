@@ -543,6 +543,29 @@ bool boardWindow::constructGLBuffers() {
                 board::coord pt(j, i, subject,
                         board::coord::system::globalOrthoLattice);
                 
+                //TODO: Debug
+                std::cout << "Point (" << pt.i() << ", " << pt.j() 
+                        << ") connects to ";
+                if (subject->getLocation(pt)->neighborExists(direction::NW)) {
+                    std::cout << "NW ";
+                    board::coord dest = subject->getLocation(pt)->getNeighbor(direction::NW)->getCoord();
+                    std::cout << "(" << dest.i() << ", " << dest.j() << ") ie ";
+                    std::cout << "(" << dest.x << ", " << dest.y << ") ";
+                }
+                if (subject->getLocation(pt)->neighborExists(direction::NE)) {
+                    std::cout << "NE ";
+                    board::coord dest = subject->getLocation(pt)->getNeighbor(direction::NE)->getCoord();
+                    std::cout << "(" << dest.i() << ", " << dest.j() << ") ie ";
+                    std::cout << "(" << dest.x << ", " << dest.y << ") ";
+                }
+                if (subject->getLocation(pt)->neighborExists(direction::E)) {
+                    std::cout << "E ";
+                    board::coord dest = subject->getLocation(pt)->getNeighbor(direction::E)->getCoord();
+                    std::cout << "(" << dest.i() << ", " << dest.j() << ") ie ";
+                    std::cout << "(" << dest.x << ", " << dest.y << ") ";
+                }
+                //end debug
+                
                 //NW first
                 if(subject->getLocation(pt)->neighborExists(direction::NW)) {
                     isSlash = 1.0;

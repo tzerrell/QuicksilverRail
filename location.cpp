@@ -72,48 +72,45 @@ void location::setConnection(direction towardDir, crossing_t crossing,
     }
 }
 
-location::coordinate location::positionToward(direction dir) {
-    coordinate ret;
-    ret.x = x; ret.y = y;
+board::coord location::positionToward(direction dir) {
+    board::coord ret(x,y,parent);
     switch(dir) {
         case (direction::E):
-            ret.x++;
+            ret.x += 1;
             break;
         case (direction::NE):
             if (y % 2 == 0)
-                ret.x++;
-            ret.y++;
+                ret.x += 1;
+            ret.y += 1;
             break;
         case (direction::NW):
             if (y % 2 == 1)
-                ret.x--;
-            ret.y++;
+                ret.x -= 1;
+            ret.y += 1;
             break;
         case (direction::W):
-            ret.x--;
+            ret.x -= 1;
             break;
         case (direction::SW):
             if (y % 2 == 1)
-                ret.x--;
-            ret.y--;
+                ret.x -= 1;
+            ret.y -= 1;
             break;
         case (direction::SE):
             if (y % 2 == 0)
-                ret.x++;
-            ret.y--;
+                ret.x += 1;
+            ret.y -= 1;
             break;
+        default:
+            throw(std::out_of_range("Invalid direction in positionToward()"));
     }
     return ret;
 }
 
 bool location::neighborExists(direction towardDir) {
-    coordinate coord = positionToward(towardDir);
-    return parent->isOnBoard(coord.x, coord.y);
+    return parent->isOnBoard(positionToward(towardDir));
 }
 
 location* location::getNeighbor(direction towardDir) {
-    coordinate coord = positionToward(towardDir);
-    board::coord pt(coord.x, coord.y, parent,
-            board::coord::system::orthoLattice);
-    return parent->getLocation(pt);
+    return parent->getLocation(positionToward(towardDir));
 }

@@ -1151,11 +1151,11 @@ build/Debug/MinGW_Qt-Windows/location.o: location.cpp location.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/qline.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qpainterpath.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QScopedPointer \
+		board.h \
+		direction.h \
 		terrain.h \
 		connectionEnums.h \
-		connection.h \
-		board.h \
-		direction.h
+		connection.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/Debug/MinGW_Qt-Windows/location.o location.cpp
 
 build/Debug/MinGW_Qt-Windows/player.o: player.cpp player.h \

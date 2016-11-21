@@ -109,7 +109,7 @@ public:
     int getNumRows() { return rows; };
     int getNumCols() { return columns; };
     
-    bool isOnBoard(int x, int y, bool logicalCoords = false);
+    bool isOnBoard(coord pt);
 private:
     int rows;
     int columns;    //Note: counts full zig-zag cols; & not half-col at end

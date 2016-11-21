@@ -18,12 +18,12 @@
 
 #include <QtGui/QOpenGLTexture>
 
+#include "board.h"
 #include "terrain.h"
 #include "connectionEnums.h"
 
 enum class direction;
 enum class good;
-class board;
 class connection;
 class settlement;
 class player;
@@ -35,6 +35,7 @@ public:
     virtual ~location();
     
     void setParent(board* p) { parent = p; }
+    board::coord getCoord() { return board::coord(x, y, parent); };
     terrain getTerrain() { return terr; }
     void setTerrain(terrain t) { terr = t; }
     connection* getConnection(direction towardDir);
@@ -53,8 +54,7 @@ private:
     std::vector<good> availableGoods;   //TODO: may be the wrong way to store this. Bitfield?
     settlement* localSettlement;
     
-    struct coordinate { int x; int y; };
-    coordinate positionToward(direction dir);
+    board::coord positionToward(direction dir);
 };
 
 #endif /* LOCATION_H */

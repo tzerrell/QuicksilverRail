@@ -353,6 +353,62 @@ bool boardWindow::createShaderProgram(QOpenGLShaderProgram* prog) {
     return true;
 }
 
+void boardWindow::writeRectVertexCoordsAndUVs( std::vector<GLfloat>* coordList,
+        std::vector<GLfloat>* UVList,
+        GLfloat left, GLfloat top, GLfloat right, GLfloat bottom, 
+        GLfloat horizOverflow, GLfloat vertOverflow,
+        bool invertU, bool invertV, GLfloat z)
+{   
+    GLfloat leftU = invertU ? 1.0 : 0.0;
+    GLfloat rightU = invertU ? 0.0 : 1.0;
+    GLfloat lowerV = invertV ? 1.0 : 0.0;
+    GLfloat upperV = invertV ? 0.0 : 1.0;
+    
+    //upper left coord
+    GLfloat ULx = left - horizOverflow/2.0;
+    GLfloat ULy = top + vertOverflow/2.0;
+    GLfloat ULz = z;
+    coordList->push_back(ULx);
+    coordList->push_back(ULy);
+    coordList->push_back(ULz);
+    UVList->push_back(leftU);   UVList->push_back(upperV);
+
+    //lower left coord
+    GLfloat LLx = left - horizOverflow/2.0;
+    GLfloat LLy = bottom - vertOverflow/2.0;
+    GLfloat LLz = z;
+    coordList->push_back(LLx);
+    coordList->push_back(LLy);
+    coordList->push_back(LLz);
+    UVList->push_back(leftU);   UVList->push_back(lowerV);
+
+    //upper right coord
+    GLfloat URx = right + horizOverflow/2.0;
+    GLfloat URy = top + vertOverflow/2.0;
+    GLfloat URz = z;
+    coordList->push_back(URx);
+    coordList->push_back(URy);
+    coordList->push_back(URz);
+    UVList->push_back(rightU);   UVList->push_back(upperV);
+
+    //lower right coord
+    GLfloat LRx = right + horizOverflow/2.0;
+    GLfloat LRy = bottom - vertOverflow/2.0;
+    GLfloat LRz = z;
+    coordList->push_back(LRx);
+    coordList->push_back(LRy);
+    coordList->push_back(LRz);
+    UVList->push_back(rightU);   UVList->push_back(lowerV);
+
+    if (verbose) {
+        std::cout << "\tAdding vertices (" << LLx << ", " << LLy
+                << ", " << LLz << "), (" << ULx << ", " << ULy
+                << ", " << ULz << "), (" << LRx << ", " << LRy
+                << ", " << LRz << "), (" << URx << ", " << URy
+                << ", " << URz << "),\t";
+    }
+}
+
 bool boardWindow::constructGLBuffers() {
     //construct a vertex buffer for the location icon quadrilaterals
     //also construct UV coordinates for textures for each vertex
@@ -394,54 +450,22 @@ bool boardWindow::constructGLBuffers() {
                 //Each vertex of this quad has the same terrain texture
                 GLfloat terrainIndex = static_cast<GLfloat>(subject->getLocation(
                         board::coord(j,i,subject,board::coord::system::globalOrthoLattice))->getTerrain());
-
-                //upper left coord
-                GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
-                GLfloat ULy = i * locVertSpacing + locHorizSpacing/2.0;
-                GLfloat ULz = 0.0;
-                vertexCoords.push_back(ULx);
-                vertexCoords.push_back(ULy);
-                vertexCoords.push_back(ULz);
-                vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
-                terrainTypeIndices.push_back(terrainIndex);
                 
-                //lower left coord
-                GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing/2.0;
-                GLfloat LLy = i * locVertSpacing - locHorizSpacing/2.0;
-                GLfloat LLz = 0.0;
-                vertexCoords.push_back(LLx);
-                vertexCoords.push_back(LLy);
-                vertexCoords.push_back(LLz);
-                vertexUVs.push_back(0.0);   vertexUVs.push_back(0.0);
-                terrainTypeIndices.push_back(terrainIndex);
+                writeRectVertexCoordsAndUVs( &vertexCoords, &vertexUVs,
+                        (j - (rowParity)/2.0) * locHorizSpacing,
+                        i * locVertSpacing,
+                        (j - (rowParity)/2.0) * locHorizSpacing,
+                        i * locVertSpacing,
+                        locHorizSpacing, locHorizSpacing);
 
-                //upper right coord
-                GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0;
-                GLfloat URy = i * locVertSpacing + locHorizSpacing/2.0;
-                GLfloat URz = 0.0;
-                vertexCoords.push_back(URx);
-                vertexCoords.push_back(URy);
-                vertexCoords.push_back(URz);
-                vertexUVs.push_back(1.0);   vertexUVs.push_back(1.0);
+                //Each vertex of the quad must be assigned the terrain
                 terrainTypeIndices.push_back(terrainIndex);
-                
-                //lower right coord
-                GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0;
-                GLfloat LRy = i * locVertSpacing - locHorizSpacing/2.0;
-                GLfloat LRz = 0.0;
-                vertexCoords.push_back(LRx);
-                vertexCoords.push_back(LRy);
-                vertexCoords.push_back(LRz);
-                vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
+                terrainTypeIndices.push_back(terrainIndex);
+                terrainTypeIndices.push_back(terrainIndex);
                 terrainTypeIndices.push_back(terrainIndex);
                 
                 if (verbose) {
-                    std::cout << "\tAdding vertices (" << LLx << ", " << LLy
-                            << ", " << LLz << "), (" << ULx << ", " << ULy
-                            << ", " << ULz << "), (" << LRx << ", " << LRy
-                            << ", " << LRz << "), (" << URx << ", " << URy
-                            << ", " << URz << "),\twith textureID: " << terrainIndex
-                            << ";\n";
+                    std::cout << "with textureID: " << terrainIndex << ";\n";
                 }
             }
         }
@@ -738,7 +762,6 @@ bool boardWindow::constructGLBuffers() {
             , isSlashIndex.size() * sizeof(isSlashIndex[0]));
     connectionDashSlashBuffer.release();
     
-    //TODO: Vertex indices for connections
     //construct an element buffer for all the quads
     if (verbose) std::cout << "Constructing connectionIndexBuffer.\n";
     vertexIndices.clear();

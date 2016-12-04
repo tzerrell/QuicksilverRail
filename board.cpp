@@ -224,6 +224,6 @@ bool board::isOnBoard(board::coord pt) {
     return true;
 }
 
-void board::setLocationTerrain(int x, int y, terrain t) {
-    getLocation(coord(x,y,this))->setTerrain(t);
+void board::setLocationTerrain(coord pt, terrain t) {
+    getLocation(pt)->setTerrain(t);
 }

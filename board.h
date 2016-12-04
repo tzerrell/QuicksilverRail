@@ -101,11 +101,11 @@ public:
     };
     
     location* getLocation(coord pt);
-    void setLocationTerrain(int x, int y, terrain t);
-    crossing* getCrossing(int x, int y, direction d);
-    void setCrossing(int x, int y, direction d, crossing c);
-    track* getTrack(int x, int y, direction d);
-    void setTrack(int x, int y, direction d, track t);
+    void setLocationTerrain(coord pt, terrain t);
+    crossing* getCrossing(coord pt, direction d);
+    void setCrossing(coord pt, direction d, crossing c);
+    track* getTrack(coord pt, direction d);
+    void setTrack(coord pt, direction d, track t);
     void resize(int height, int width);
     int getNumRows() { return rows; };
     int getNumCols() { return columns; };

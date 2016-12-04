@@ -74,8 +74,8 @@ void boardWindow::setRootWindow(QMainWindow* newRoot) {rootWin = newRoot;}
 
 void boardWindow::initGL() {
     //TODO: debug code
-    subject->setLocationTerrain(1,1, static_cast<terrain>(1));
-    subject->setLocationTerrain(2,3, static_cast<terrain>(2));
+    subject->setLocationTerrain(board::coord(1,1,subject), static_cast<terrain>(1));
+    subject->setLocationTerrain(board::coord(1,1,subject), static_cast<terrain>(2));
     //TODO: end debug
     
     

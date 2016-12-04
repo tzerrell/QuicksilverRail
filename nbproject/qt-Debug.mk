@@ -756,6 +756,8 @@ build/Debug/MinGW_Qt-Windows/MainGameplayWindow.o: MainGameplayWindow.cpp C:/Qt/
 		board.h \
 		direction.h \
 		terrain.h \
+		location.h \
+		connectionEnums.h \
 		MainGameplayWindow.h \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QMenu \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QAction

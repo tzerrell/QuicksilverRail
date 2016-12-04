@@ -44,6 +44,7 @@ board::board(int height, int width)
     for (int i = 0; i < columns + 1; ++i) {
         for (int j = 0; j < rows; ++j) {
             loc[i][j].setParent(this);
+            loc[i][j].setPosition(i, j);
         }
     }
 }
@@ -194,7 +195,14 @@ int board::coord::m() {
 }
 
 int board::coord::i() {
-    return (int)((t()+1)/2 + s());
+    float M = m();
+    
+    float Mrounder;
+    if (M >= 0)
+        Mrounder = 1;
+    else
+        Mrounder = 1; //Mrounder = 0;
+    return (int)((M + Mrounder)/2) + (int)(l());
 }
 int board::coord::j() {
     return m();

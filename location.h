@@ -35,7 +35,7 @@ public:
     virtual ~location();
     
     void setParent(board* p) { parent = p; }
-    board::coord getCoord() { return board::coord(x, y, parent); };
+    board::coord getCoord() { return board::coord(x, y, parent, board::coord::system::orthoLattice); };
     terrain getTerrain() { return terr; }
     void setTerrain(terrain t) { terr = t; }
     connection* getConnection(direction towardDir);

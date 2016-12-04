@@ -20,6 +20,9 @@
 #include "boardWindow.h"
 #include "board.h"
 
+//TODO: Temp?
+#include "location.h"
+
 #include "MainGameplayWindow.h"
 
 MainGameplayWindow::MainGameplayWindow(QWidget* parent)
@@ -80,8 +83,16 @@ void MainGameplayWindow::mouseMoveEvent(QMouseEvent *event) {
     internalCoords.append(",");
     strBuilder.setNum(pt.t()); internalCoords.append(strBuilder);
     internalCoords.append(")");
-    if (mainView->getSubject()->isOnBoard(pt))
+    if (mainView->getSubject()->isOnBoard(pt)) {
         internalCoords.append(", on board");
+        internalCoords.append(", alt-(i,j): (");
+        board::coord orthoPt(pt.i(),pt.j(),mainView->getSubject());
+        location* mouseLoc = mainView->getSubject()->getLocation(orthoPt);
+        strBuilder.setNum(mouseLoc->getCoord().i(), 10); internalCoords.append(strBuilder);
+        internalCoords.append(",");
+        strBuilder.setNum(mouseLoc->getCoord().j(), 10); internalCoords.append(strBuilder);
+        internalCoords.append(")");
+    }
     else
         internalCoords.append(", off board");
     

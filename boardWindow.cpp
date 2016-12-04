@@ -356,7 +356,7 @@ bool boardWindow::createShaderProgram(QOpenGLShaderProgram* prog) {
 bool boardWindow::constructGLBuffers() {
     //construct a vertex buffer for the location icon quadrilaterals
     //also construct UV coordinates for textures for each vertex
-    std::vector<GLfloat> vertexCoords;
+    std::vector<GLfloat> vertexCoords;  //coords for the graphical vertices, not abstract locations
     std::vector<GLfloat> vertexUVs;
     std::vector<GLfloat> terrainTypeIndices;    //these are integer indices, but stored in a float to be passed to GLSL
     if (verbose) std::cout << "Constructing locationVertexBuffer.\n";
@@ -377,6 +377,10 @@ bool boardWindow::constructGLBuffers() {
          * Note that for these to connect correctly, we must have 
          *               vertexIconWidth == locHorizSpacing
          * and so vertexIconWidth is not a separate parameter.
+         * 
+         * TODO: These i and j *should* match as described below, but unfortunately
+         * they are currently swapped (i = j and j = i). Fix.
+         * These i and j match up with the i and j of (local) board::coord s
          */
         for (int i = 0; i < subject->getNumRows(); ++i) {
             int rowParity = i%2;

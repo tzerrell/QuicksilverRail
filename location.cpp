@@ -74,17 +74,13 @@ void location::setConnection(direction towardDir, crossing_t crossing,
 
 board::coord location::positionToward(direction dir) {
     board::coord ret(x,y,parent);
-    std::cout << "{Position From: (" << x << "," << y << ") ";
-    std::cout << "ie (" << ret.x << "," << ret.y << ") ";
     switch(dir) {
         case (direction::E):
             ret.x += 1;
             break;
         case (direction::NE):
-            std::cout << "[NE" << ret.x << "," << ret.y << ";";
             ret.x += 0.5;
             ret.y += 1;
-            std::cout << ret.x << "," << ret.y << "]";
             break;
         case (direction::NW):
             ret.x -= 0.5;
@@ -94,20 +90,16 @@ board::coord location::positionToward(direction dir) {
             ret.x -= 1;
             break;
         case (direction::SW):
-            if (ret.j() % 2 == 1)
-                ret.x -= 1;
+            ret.x -= 0.5;
             ret.y -= 1;
             break;
         case (direction::SE):
-            if (ret.j() % 2 == 0)
-                ret.x += 1;
+            ret.x += 0.5;
             ret.y -= 1;
             break;
         default:
             throw(std::out_of_range("Invalid direction in positionToward()"));
     }
-    std::cout << "Position To: (" << ret.i() << "," << ret.j() << ") ";
-    std::cout << "ie (" << ret.x << "," << ret.y << ")}\n";
     return ret;
 }
 

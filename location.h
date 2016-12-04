@@ -34,8 +34,8 @@ public:
     location(const location& orig);
     virtual ~location();
     
-    void setParent(board* p) { parent = p; }
-    board::coord getCoord() { return board::coord(x, y, parent, board::coord::system::orthoLattice); };
+    void setOwner(board* p) { coordinates.owner = p; }
+    board::coord getCoord() { return coordinates; };
     terrain getTerrain() { return terr; }
     void setTerrain(terrain t) { terr = t; }
     connection* getConnection(direction towardDir);
@@ -45,10 +45,14 @@ public:
     location* getNeighbor(direction towardDir);
     bool neighborExists(direction towardDir);
     
-    void setPosition(int newX, int newY) { x = newX; y = newY; }
+    void setPosition(int first, int second, 
+            board::coord::system s = board::coord::system::orthoLattice) 
+        { coordinates.set(first, second, s); }
+    void setPosition(float first, float second, 
+            board::coord::system s = board::coord::system::ortho) 
+        { coordinates.set(first, second, s); }
 private:
-    board* parent;
-    int x;  int y;  //in global coordinates
+    board::coord coordinates;
     terrain terr;
     std::map<direction, connection> edges;  //this owns the connections in the E, NE, NW directions. Other three directions are owned by neighbors
     std::vector<good> availableGoods;   //TODO: may be the wrong way to store this. Bitfield?

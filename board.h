@@ -87,6 +87,7 @@ public:
         coord(int first, int second, board* own, system s = system::orthoLattice);
         coord(int vx, int vy, boardWindow* win);
         coord() : coord(0,0, (board*)nullptr) {};
+        coord(const coord& orig) : x(orig.x), y(orig.y), owner(orig.owner) {};
         void set(float first, float second, system s);
         void set(int first, int second, system s);
         void setFromOrthogonal(float nx, float ny) { x = nx; y = ny; };

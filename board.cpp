@@ -28,7 +28,7 @@ board::board()
 {
     for (int i = 0; i < columns + 1; ++i) {
         for (int j = 0; j < rows; ++j) {
-            loc[i][j].setParent(this);
+            loc[i][j].setOwner(this);
             loc[i][j].setPosition(i + xOffset, j + yOffset);
         }
     }
@@ -43,7 +43,7 @@ board::board(int height, int width)
 {
     for (int i = 0; i < columns + 1; ++i) {
         for (int j = 0; j < rows; ++j) {
-            loc[i][j].setParent(this);
+            loc[i][j].setOwner(this);
             loc[i][j].setPosition(i, j);
         }
     }

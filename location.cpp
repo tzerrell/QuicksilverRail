@@ -18,18 +18,16 @@
 #include <QtGui/QOpenGLTexture>
 
 location::location()
-        : parent(nullptr)
-        , x(0)
-        , y(0)
+        : coordinates(0, 0, (board*)nullptr)
         , terr(EnumTraits<terrain>::FIRST)
         , localSettlement(nullptr)
 {
     
 }
 
-location::location(const location& orig) {
-    parent = orig.parent;
-    x = orig.x; y = orig.y;
+location::location(const location& orig) 
+        : coordinates(orig.coordinates)
+{
     terr = orig.terr;
     if (!edges.empty())
         std::cerr << "Warning: Copying location with non-empty edges. This "
@@ -73,7 +71,7 @@ void location::setConnection(direction towardDir, crossing_t crossing,
 }
 
 board::coord location::positionToward(direction dir) {
-    board::coord ret(x,y,parent);
+    board::coord ret(coordinates);
     switch(dir) {
         case (direction::E):
             ret.x += 1;
@@ -104,9 +102,9 @@ board::coord location::positionToward(direction dir) {
 }
 
 bool location::neighborExists(direction towardDir) {
-    return parent->isOnBoard(positionToward(towardDir));
+    return coordinates.owner->isOnBoard(positionToward(towardDir));
 }
 
 location* location::getNeighbor(direction towardDir) {
-    return parent->getLocation(positionToward(towardDir));
+    return coordinates.owner->getLocation(positionToward(towardDir));
 }

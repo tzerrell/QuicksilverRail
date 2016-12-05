@@ -43,8 +43,8 @@ boardWindow::boardWindow(QWindow* parent)
         , zoomFactor(0.5)
         , locHorizSpacing(20.0f)
         , locVertSpacing(14.0f)
-        , connSlashOverwidth(locHorizSpacing * 0.16f)
-        , connSlashOverheight(locVertSpacing * 0.33f)
+        , connSlashOverwidth(locHorizSpacing * 0.33f)
+        , connSlashOverheight(locVertSpacing * 0.66f)
         , connDashOverwidth(locHorizSpacing * 0.33f)
         , connDashHeight(locHorizSpacing)
         , verbose(true)
@@ -441,10 +441,7 @@ bool boardWindow::constructGLBuffers() {
         for (int i = 0; i < subject->getNumRows(); ++i) {
             int rowParity = i%2;
             for (int j = 0; j < subject->getNumCols() + rowParity; ++j) {
-                //The formulas for these coordinates have two parts: the part
-                //with the i or j puts the center in the right place; the other
-                //term moves to where the vertex should be relative to the
-                //center. Note that rowParity is because every other row is
+                //Note that rowParity is because every other row is
                 //shifted 50% in order to make a hex grid.
                 
                 //Each vertex of this quad has the same terrain texture
@@ -596,136 +593,61 @@ bool boardWindow::constructGLBuffers() {
                 
                 //NW first
                 if(subject->getLocation(pt)->neighborExists(direction::NW)) {
-                    isSlash = 1.0;
-                    //upper left coord
-                    GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 2.0 - connSlashOverwidth;
-                    GLfloat ULy = i * locVertSpacing + locVertSpacing + connSlashOverheight;
-                    GLfloat ULz = 0.0;
-                    vertexCoords.push_back(ULx);
-                    vertexCoords.push_back(ULy);
-                    vertexCoords.push_back(ULz);
+                    writeRectVertexCoordsAndUVs( &vertexCoords, &vertexUVs,
+                        (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 4.0,
+                        i * locVertSpacing + locVertSpacing / 2.0,
+                        (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 4.0,
+                        i * locVertSpacing + locVertSpacing / 2.0,
+                        locHorizSpacing / 2.0 + connSlashOverwidth,
+                        locVertSpacing + connSlashOverheight);
+                    
+                    //TODO: Old comment, preserved to indicate I may need to adjust how writeRectVertexCoordsAndUVs
+                    //is called w.r.t. inversion:
                     //the first UV is inverted for all of these b/c slash is horizontally flipped from what texture has for NW
                     //TODO: These are reflipped, possibly due to coordinate system mismatch?
-                    vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
+                    
+                    //each vertex of the quad needs to know this is a slash
+                    isSlash = 1.0;
                     isSlashIndex.push_back(isSlash);
-
-                    //lower left coord
-                    GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 2.0 - connSlashOverwidth;
-                    GLfloat LLy = i * locVertSpacing - connSlashOverheight;
-                    GLfloat LLz = 0.0;
-                    vertexCoords.push_back(LLx);
-                    vertexCoords.push_back(LLy);
-                    vertexCoords.push_back(LLz);
-                    vertexUVs.push_back(0.0);   vertexUVs.push_back(0.0);
                     isSlashIndex.push_back(isSlash);
-
-                    //upper right coord
-                    GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + connSlashOverwidth;
-                    GLfloat URy = i * locVertSpacing + locVertSpacing + connSlashOverheight;
-                    GLfloat URz = 0.0;
-                    vertexCoords.push_back(URx);
-                    vertexCoords.push_back(URy);
-                    vertexCoords.push_back(URz);
-                    vertexUVs.push_back(1.0);   vertexUVs.push_back(1.0);
                     isSlashIndex.push_back(isSlash);
-
-                    //lower right coord
-                    GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + connSlashOverwidth;
-                    GLfloat LRy = i * locVertSpacing - connSlashOverheight;
-                    GLfloat LRz = 0.0;
-                    vertexCoords.push_back(LRx);
-                    vertexCoords.push_back(LRy);
-                    vertexCoords.push_back(LRz);
-                    vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
                     isSlashIndex.push_back(isSlash);
                 }
                 
                 //NE second
                 if(subject->getLocation(pt)->neighborExists(direction::NE)) {
+                    writeRectVertexCoordsAndUVs( &vertexCoords, &vertexUVs,
+                        (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 4.0,
+                        i * locVertSpacing + locVertSpacing / 2.0,
+                        (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 4.0,
+                        i * locVertSpacing + locVertSpacing / 2.0,
+                        locHorizSpacing / 2.0 + connSlashOverwidth,
+                        locVertSpacing + connSlashOverheight,
+                        true);
+                    
+                    //each of the 4 verts needs to know this is a slash
                     isSlash = 1.0;
-                    //upper left coord
-                    GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - connSlashOverwidth;
-                    GLfloat ULy = i * locVertSpacing + locVertSpacing + connSlashOverheight;
-                    GLfloat ULz = 0.0;
-                    vertexCoords.push_back(ULx);
-                    vertexCoords.push_back(ULy);
-                    vertexCoords.push_back(ULz);
-                    //TODO: These are reflipped, possibly due to coordinate system mismatch?
-                    vertexUVs.push_back(1.0);   vertexUVs.push_back(1.0);
                     isSlashIndex.push_back(isSlash);
-
-                    //lower left coord
-                    GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - connSlashOverwidth;
-                    GLfloat LLy = i * locVertSpacing - connSlashOverheight;
-                    GLfloat LLz = 0.0;
-                    vertexCoords.push_back(LLx);
-                    vertexCoords.push_back(LLy);
-                    vertexCoords.push_back(LLz);
-                    vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
                     isSlashIndex.push_back(isSlash);
-
-                    //upper right coord
-                    GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 2.0 + connSlashOverwidth;
-                    GLfloat URy = i * locVertSpacing + locVertSpacing + connSlashOverheight;
-                    GLfloat URz = 0.0;
-                    vertexCoords.push_back(URx);
-                    vertexCoords.push_back(URy);
-                    vertexCoords.push_back(URz);
-                    vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
                     isSlashIndex.push_back(isSlash);
-
-                    //lower right coord
-                    GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing/2.0 + connSlashOverwidth;
-                    GLfloat LRy = i * locVertSpacing - connSlashOverheight;
-                    GLfloat LRz = 0.0;
-                    vertexCoords.push_back(LRx);
-                    vertexCoords.push_back(LRy);
-                    vertexCoords.push_back(LRz);
-                    vertexUVs.push_back(0.0);   vertexUVs.push_back(0.0);
                     isSlashIndex.push_back(isSlash);
                 }
                 
                 //E third
                 if(subject->getLocation(pt)->neighborExists(direction::E)) {
+                    writeRectVertexCoordsAndUVs( &vertexCoords, &vertexUVs,
+                        (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 2.0,
+                        i * locVertSpacing,
+                        (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 2.0,
+                        i * locVertSpacing,
+                        locHorizSpacing + connDashOverwidth,
+                        connDashHeight);
+                    
+                    //each vert of quad needs to know this is a Dash (not Slash)
                     isSlash = 0.0;
-                    //upper left coord
-                    GLfloat ULx = (j - (rowParity)/2.0) * locHorizSpacing - connDashOverwidth;
-                    GLfloat ULy = i * locVertSpacing + connDashHeight;
-                    GLfloat ULz = 0.0;
-                    vertexCoords.push_back(ULx);
-                    vertexCoords.push_back(ULy);
-                    vertexCoords.push_back(ULz);
-                    vertexUVs.push_back(0.0);   vertexUVs.push_back(1.0);
                     isSlashIndex.push_back(isSlash);
-
-                    //lower left coord
-                    GLfloat LLx = (j - (rowParity)/2.0) * locHorizSpacing - connDashOverwidth;
-                    GLfloat LLy = i * locVertSpacing - connDashHeight;
-                    GLfloat LLz = 0.0;
-                    vertexCoords.push_back(LLx);
-                    vertexCoords.push_back(LLy);
-                    vertexCoords.push_back(LLz);
-                    vertexUVs.push_back(0.0);   vertexUVs.push_back(0.0);
                     isSlashIndex.push_back(isSlash);
-
-                    //upper right coord
-                    GLfloat URx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing + connSlashOverwidth;
-                    GLfloat URy = i * locVertSpacing + connDashHeight;
-                    GLfloat URz = 0.0;
-                    vertexCoords.push_back(URx);
-                    vertexCoords.push_back(URy);
-                    vertexCoords.push_back(URz);
-                    vertexUVs.push_back(1.0);   vertexUVs.push_back(1.0);
                     isSlashIndex.push_back(isSlash);
-
-                    //lower right coord
-                    GLfloat LRx = (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing + connSlashOverwidth;
-                    GLfloat LRy = i * locVertSpacing - connDashHeight;
-                    GLfloat LRz = 0.0;
-                    vertexCoords.push_back(LRx);
-                    vertexCoords.push_back(LRy);
-                    vertexCoords.push_back(LRz);
-                    vertexUVs.push_back(1.0);   vertexUVs.push_back(0.0);
                     isSlashIndex.push_back(isSlash);
                 }
                 

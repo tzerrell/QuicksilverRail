@@ -409,6 +409,16 @@ void boardWindow::writeRectVertexCoordsAndUVs( std::vector<GLfloat>* coordList,
     }
 }
 
+template <class T>
+void boardWindow::createQOpenGLBufferFromValues( QOpenGLBuffer& buffer,
+        std::vector<T>& valsByVertex) {
+    buffer.create();
+    buffer.bind();
+    buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    buffer.allocate(&valsByVertex[0], valsByVertex.size()*sizeof(valsByVertex[0]));
+    buffer.release();
+}
+
 bool boardWindow::constructGLBuffers() {
     //construct a vertex buffer for the location icon quadrilaterals
     //also construct UV coordinates for textures for each vertex
@@ -472,24 +482,10 @@ bool boardWindow::constructGLBuffers() {
                 << " is too large. Location vertex buffer not constructed.\n";
         return false;
     }
-    locationVertexBuffer.create();
-    locationVertexBuffer.bind();
-    locationVertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    locationVertexBuffer.allocate(&vertexCoords[0], vertexCoords.size()*sizeof(vertexCoords[0]));
-    locationVertexBuffer.release();
     
-    locationUVBuffer.create();
-    locationUVBuffer.bind();
-    locationUVBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    locationUVBuffer.allocate(&vertexUVs[0], vertexUVs.size()*sizeof(vertexUVs[0]));
-    locationUVBuffer.release();
-    
-    locationTerrainTypeBuffer.create();
-    locationTerrainTypeBuffer.bind();
-    locationTerrainTypeBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    locationTerrainTypeBuffer.allocate(&terrainTypeIndices[0]
-            , terrainTypeIndices.size() * sizeof(terrainTypeIndices[0]));
-    locationTerrainTypeBuffer.release();
+    createQOpenGLBufferFromValues(locationVertexBuffer, vertexCoords);
+    createQOpenGLBufferFromValues(locationUVBuffer, vertexUVs);
+    createQOpenGLBufferFromValues(locationTerrainTypeBuffer, terrainTypeIndices);
     
     //construct an element buffer for all the quads
     if (verbose) std::cout << "Constructing locationIndexBuffer.\n";
@@ -526,15 +522,10 @@ bool boardWindow::constructGLBuffers() {
     }
      
     //Note: locationIndexBuffer was constructed as an index buffer
-    locationIndexBuffer.create();
-    locationIndexBuffer.bind();
-    locationIndexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    int numQuads = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
-    locationIndexBuffer.allocate(&vertexIndices[0] 
-            , sizeof(vertexIndices[0]) * 6 * numQuads);
-    locationIndexBuffer.release();
-        
+    createQOpenGLBufferFromValues(locationIndexBuffer, vertexIndices);
+    
     if(verbose) {
+        int numQuads = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
         std::cout << "\tlocationIndexBuffer contains "
                 << 6*numQuads
                 << " indices (with corresponding terrain indices): ";
@@ -594,12 +585,12 @@ bool boardWindow::constructGLBuffers() {
                 //NW first
                 if(subject->getLocation(pt)->neighborExists(direction::NW)) {
                     writeRectVertexCoordsAndUVs( &vertexCoords, &vertexUVs,
-                        (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 4.0,
-                        i * locVertSpacing + locVertSpacing / 2.0,
-                        (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 4.0,
-                        i * locVertSpacing + locVertSpacing / 2.0,
-                        locHorizSpacing / 2.0 + connSlashOverwidth,
-                        locVertSpacing + connSlashOverheight);
+                            (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 4.0,
+                            i * locVertSpacing + locVertSpacing / 2.0,
+                            (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 4.0,
+                            i * locVertSpacing + locVertSpacing / 2.0,
+                            locHorizSpacing / 2.0 + connSlashOverwidth,
+                            locVertSpacing + connSlashOverheight);
                     
                     //TODO: Old comment, preserved to indicate I may need to adjust how writeRectVertexCoordsAndUVs
                     //is called w.r.t. inversion:
@@ -617,13 +608,13 @@ bool boardWindow::constructGLBuffers() {
                 //NE second
                 if(subject->getLocation(pt)->neighborExists(direction::NE)) {
                     writeRectVertexCoordsAndUVs( &vertexCoords, &vertexUVs,
-                        (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 4.0,
-                        i * locVertSpacing + locVertSpacing / 2.0,
-                        (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 4.0,
-                        i * locVertSpacing + locVertSpacing / 2.0,
-                        locHorizSpacing / 2.0 + connSlashOverwidth,
-                        locVertSpacing + connSlashOverheight,
-                        true);
+                            (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 4.0,
+                            i * locVertSpacing + locVertSpacing / 2.0,
+                            (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 4.0,
+                            i * locVertSpacing + locVertSpacing / 2.0,
+                            locHorizSpacing / 2.0 + connSlashOverwidth,
+                            locVertSpacing + connSlashOverheight,
+                            true);
                     
                     //each of the 4 verts needs to know this is a slash
                     isSlash = 1.0;
@@ -636,12 +627,12 @@ bool boardWindow::constructGLBuffers() {
                 //E third
                 if(subject->getLocation(pt)->neighborExists(direction::E)) {
                     writeRectVertexCoordsAndUVs( &vertexCoords, &vertexUVs,
-                        (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 2.0,
-                        i * locVertSpacing,
-                        (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 2.0,
-                        i * locVertSpacing,
-                        locHorizSpacing + connDashOverwidth,
-                        connDashHeight);
+                            (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 2.0,
+                            i * locVertSpacing,
+                            (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 2.0,
+                            i * locVertSpacing,
+                            locHorizSpacing + connDashOverwidth,
+                            connDashHeight);
                     
                     //each vert of quad needs to know this is a Dash (not Slash)
                     isSlash = 0.0;
@@ -665,24 +656,10 @@ bool boardWindow::constructGLBuffers() {
         return false;
     }
     
-    connectionVertexBuffer.create();
-    connectionVertexBuffer.bind();
-    connectionVertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    connectionVertexBuffer.allocate(&vertexCoords[0], vertexCoords.size()*sizeof(vertexCoords[0]));
-    connectionVertexBuffer.release();
     
-    connectionUVBuffer.create();
-    connectionUVBuffer.bind();
-    connectionUVBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    connectionUVBuffer.allocate(&vertexUVs[0], vertexUVs.size()*sizeof(vertexUVs[0]));
-    connectionUVBuffer.release();
-    
-    connectionDashSlashBuffer.create();
-    connectionDashSlashBuffer.bind();
-    connectionDashSlashBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    connectionDashSlashBuffer.allocate(&isSlashIndex[0]
-            , isSlashIndex.size() * sizeof(isSlashIndex[0]));
-    connectionDashSlashBuffer.release();
+    createQOpenGLBufferFromValues(connectionVertexBuffer, vertexCoords);
+    createQOpenGLBufferFromValues(connectionUVBuffer, vertexUVs);
+    createQOpenGLBufferFromValues(connectionDashSlashBuffer, isSlashIndex);
     
     //construct an element buffer for all the quads
     if (verbose) std::cout << "Constructing connectionIndexBuffer.\n";
@@ -726,12 +703,7 @@ bool boardWindow::constructGLBuffers() {
     }
      
     //Note: connectionIndexBuffer was constructed as an index buffer
-    connectionIndexBuffer.create();
-    connectionIndexBuffer.bind();
-    connectionIndexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    connectionIndexBuffer.allocate(&vertexIndices[0] 
-            , sizeof(vertexIndices[0]) * vertexIndices.size());
-    connectionIndexBuffer.release();
+    createQOpenGLBufferFromValues(connectionIndexBuffer, vertexIndices);
         
     if(verbose) {
         std::cout << "\tconnectionIndexBuffer contains "

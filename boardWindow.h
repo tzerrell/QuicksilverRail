@@ -111,7 +111,10 @@ private:
         std::vector<GLfloat>* UVList,
         GLfloat left, GLfloat top, GLfloat right, GLfloat bottom, 
         GLfloat horizOverflow, GLfloat vertOverflow,
-        bool invertU = false, bool invertV = false, GLfloat z = 0.0);
+        bool invertU = false, bool invertV = false, GLfloat z = 0.0
+    );
+    template <class T>
+    void createQOpenGLBufferFromValues( QOpenGLBuffer& buffer, std::vector<T>& valsByVertex);
     
     /*
      * Graphical parameters

@@ -22,7 +22,7 @@ location::location()
         , terr(EnumTraits<terrain>::FIRST)
         , localSettlement(nullptr)
 {
-    
+
 }
 
 location::location(const location& orig) 
@@ -62,6 +62,7 @@ void location::setConnection(direction towardDir, crossing_t crossing,
                 //else overwrite
                 edges[towardDir].reset(crossing, t, trackOwner);
             }
+            break;
         case (direction::W):
         case (direction::SW):
         case (direction::SE):

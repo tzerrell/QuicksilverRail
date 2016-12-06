@@ -685,12 +685,12 @@ bool boardWindow::setConnIndexBuffer() {
                 for (direction dir = direction::E; dir != direction::W; ++dir) {
                     if (!loc->neighborExists(dir))
                         continue;   //Skip if there's no neighbor in this direction
-                    //connection* conn = loc->getConnection(dir); //TODO: Crashes here
-                    //if (conn->trackType() == track_t::none) {
+                    connection* conn = loc->getConnection(dir);
+                    if (conn->trackType() == track_t::none) {
                         //Bypass if there is no track here
-                    //    currIndex += 4;
-                    //    continue;
-                    //}
+                        currIndex += 4;
+                        continue;
+                    }
                     
                     for (int twice = 0; twice < 2; ++twice) {   //quads have 2 triangles
                         if (verbose) {
@@ -710,8 +710,14 @@ bool boardWindow::setConnIndexBuffer() {
         }
     }
     catch (const std::bad_alloc& ex) {
-        std::cerr << "\tBad allocation in constructGLBuffers. The board"
+        std::cerr << "\tBad allocation in setConnIndexBuffer. The board"
                 << " is too large. Location element buffers not constructed.\n";
+        std::cerr << "Warning: Partial construction of GLBuffers.\n";
+        return false;
+    }
+    catch (const std::out_of_range& ex) {
+        std::cerr << "\tOut of range error in setConnIndexBuffer. Perhaps due"
+                << " to a location without an expected connection?\n";
         std::cerr << "Warning: Partial construction of GLBuffers.\n";
         return false;
     }

@@ -30,6 +30,12 @@ board::board()
         for (int j = 0; j < rows; ++j) {
             loc[i][j].setOwner(this);
             loc[i][j].setPosition(i + xOffset, j + yOffset);
+            for (direction dir = direction::E; dir != direction::W; ++dir) {
+                if (loc[i][j].neighborExists(dir)) {
+                    loc[i][j].setConnection(dir, crossing_t::land);   //trackless land connections by default
+                    //loc[i][j].setConnection(dir, crossing_t::land, track_t::rail);    //Use this version to have tracks by default. For debugging.
+                }
+            }
         }
     }
 }

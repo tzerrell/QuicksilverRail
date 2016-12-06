@@ -20,11 +20,11 @@
 
 #include "board.h"
 #include "terrain.h"
+#include "connection.h"
 #include "connectionEnums.h"
 
 enum class direction;
 enum class good;
-class connection;
 class settlement;
 class player;
 
@@ -38,7 +38,7 @@ public:
     board::coord getCoord() { return coordinates; };
     terrain getTerrain() { return terr; }
     void setTerrain(terrain t) { terr = t; }
-    connection* getConnection(direction towardDir);
+    connection* getConnection(direction towardDir) { return &(edges.at(towardDir)); };
     void setConnection(direction towardDir, crossing_t crossing, 
             track_t t = track_t::none, player* trackOwner = nullptr,
             bool overwrite = false);

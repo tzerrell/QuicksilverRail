@@ -28,9 +28,10 @@
 
 #include "terrain.h"
 #include "board.h"
-
 #include "boardWindow.h"
 #include "location.h"
+#include "connection.h"
+
 #include <qopengl.h>
 
 boardWindow::boardWindow(QWindow* parent)
@@ -662,10 +663,14 @@ bool boardWindow::constructGLBuffers() {
     createQOpenGLBufferFromValues(connectionUVBuffer, vertexUVs);
     createQOpenGLBufferFromValues(connectionDashSlashBuffer, isSlashIndex);
     
-    //construct an element buffer for all the quads
+    return setConnIndexBuffer();
+}
+
+bool boardWindow::setConnIndexBuffer() {
+    //construct an element buffer for all the connection quads
     if (verbose) std::cout << "Constructing connectionIndexBuffer.\n";
-    vertexIndices.clear();
-    currIndex = 0;
+    std::vector<GLushort> vertexIndices;
+    GLushort currIndex = 0;
     try {
         if (verbose) std::cout << "\tWriting connection vertex indices:\n";
         for (int i = 0; i < subject->getNumRows(); ++i) {
@@ -675,10 +680,18 @@ bool boardWindow::constructGLBuffers() {
                 if (verbose) std::cout << "\n\t\tj = " << j << " of " << subject->getNumCols() + rowParity << ":\t";
                 board::coord pt(j, i, subject,
                         board::coord::system::globalOrthoLattice);
+                location* loc = subject->getLocation(pt);
                 
                 for (direction dir = direction::E; dir != direction::W; ++dir) {
-                    if (!subject->getLocation(pt)->neighborExists(dir))
+                    if (!loc->neighborExists(dir))
                         continue;   //Skip if there's no neighbor in this direction
+                    //connection* conn = loc->getConnection(dir); //TODO: Crashes here
+                    //if (conn->trackType() == track_t::none) {
+                        //Bypass if there is no track here
+                    //    currIndex += 4;
+                    //    continue;
+                    //}
+                    
                     for (int twice = 0; twice < 2; ++twice) {   //quads have 2 triangles
                         if (verbose) {
                             std::cout << currIndex << ' ' << currIndex + 1 << ' '

@@ -65,6 +65,7 @@ protected:
     void mouseMoveEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
     
     bool constructGLBuffers();
+    bool setConnIndexBuffer();
 private:
     QMainWindow* rootWin;
     board* subject;

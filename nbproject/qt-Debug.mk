@@ -757,6 +757,7 @@ build/Debug/MinGW_Qt-Windows/MainGameplayWindow.o: MainGameplayWindow.cpp C:/Qt/
 		direction.h \
 		terrain.h \
 		location.h \
+		connection.h \
 		connectionEnums.h \
 		MainGameplayWindow.h \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QMenu \
@@ -862,6 +863,7 @@ build/Debug/MinGW_Qt-Windows/board.o: board.cpp C:/Qt/5.7/mingw53_32/include/QtG
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopengles2ext.h \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopenglext.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QScopedPointer \
+		connection.h \
 		connectionEnums.h \
 		boardWindow.h \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QMainWindow \
@@ -1059,6 +1061,7 @@ build/Debug/MinGW_Qt-Windows/boardWindow.o: boardWindow.cpp C:/Qt/5.7/mingw53_32
 		C:/Qt/5.7/mingw53_32/include/QtGui/QOpenGLDebugLogger \
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopengldebug.h \
 		location.h \
+		connection.h \
 		connectionEnums.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/Debug/MinGW_Qt-Windows/boardWindow.o boardWindow.cpp
 
@@ -1156,8 +1159,8 @@ build/Debug/MinGW_Qt-Windows/location.o: location.cpp location.h \
 		board.h \
 		direction.h \
 		terrain.h \
-		connectionEnums.h \
-		connection.h
+		connection.h \
+		connectionEnums.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/Debug/MinGW_Qt-Windows/location.o location.cpp
 
 build/Debug/MinGW_Qt-Windows/player.o: player.cpp player.h \

@@ -27,6 +27,9 @@ public:
     virtual ~connection();
     
     void reset(crossing_t c, track_t t, player* p);
+    player* getOwner() { return owner; };
+    track_t trackType() { return track; };
+    crossing_t crossingType() { return crossing; };
 private:
     crossing_t crossing;
     track_t track;

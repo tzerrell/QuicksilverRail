@@ -18,6 +18,8 @@
 #include "board.h"
 #include "location.h"
 #include "boardWindow.h"
+#include "gameState.h"
+extern gameState globalState;
 
 board::board() 
         : rows(7)   //TODO: initialize these in a sensible way
@@ -38,6 +40,17 @@ board::board()
             }
         }
     }
+    
+    //TODO: Test code
+    loc[2][3].setConnection(direction::E, crossing_t::land, track_t::rail,
+            globalState.currentPlayer(), true);
+    loc[2][3].setConnection(direction::NE, crossing_t::land, track_t::rail,
+            globalState.currentPlayer(), true);
+    //loc[2][3].setConnection(direction::NW, crossing_t::land, track_t::rail,
+    //        globalState.currentPlayer(), true);
+    //TODO: E and NW appear to be swapped! Fix!
+    
+    
 }
 
 board::board(int height, int width)

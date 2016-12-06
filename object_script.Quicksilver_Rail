@@ -5,6 +5,7 @@ INPUT(
 ./build/Debug/MinGW_Qt-Windows/connection.o
 ./build/Debug/MinGW_Qt-Windows/delivery.o
 ./build/Debug/MinGW_Qt-Windows/direction.o
+./build/Debug/MinGW_Qt-Windows/gameState.o
 ./build/Debug/MinGW_Qt-Windows/location.o
 ./build/Debug/MinGW_Qt-Windows/player.o
 ./build/Debug/MinGW_Qt-Windows/settlement.o

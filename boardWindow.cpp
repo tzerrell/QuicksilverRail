@@ -137,6 +137,7 @@ void boardWindow::render() {
         initializeOpenGLFunctions();
         initGL();   //other OpenGL initialization code goes here
     }
+    setConnIndexBuffer();
     
     const qreal pixelRatio = devicePixelRatio();
     glViewport(0, 0, width() * pixelRatio, height() * pixelRatio);
@@ -564,9 +565,10 @@ bool boardWindow::constructGLBuffers() {
                 //TODO: Debug
                 std::cout << "Point (" << pt.i() << ", " << pt.j() 
                         << ") connects to ";
-                if (subject->getLocation(pt)->neighborExists(direction::NW)) {
-                    std::cout << "NW ";
-                    board::coord dest = subject->getLocation(pt)->getNeighbor(direction::NW)->getCoord();
+                
+                if (subject->getLocation(pt)->neighborExists(direction::E)) {
+                    std::cout << "E ";
+                    board::coord dest = subject->getLocation(pt)->getNeighbor(direction::E)->getCoord();
                     std::cout << "(" << dest.i() << ", " << dest.j() << ") ie ";
                     std::cout << "(" << dest.x << ", " << dest.y << ") ";
                 }
@@ -576,31 +578,26 @@ bool boardWindow::constructGLBuffers() {
                     std::cout << "(" << dest.i() << ", " << dest.j() << ") ie ";
                     std::cout << "(" << dest.x << ", " << dest.y << ") ";
                 }
-                if (subject->getLocation(pt)->neighborExists(direction::E)) {
-                    std::cout << "E ";
-                    board::coord dest = subject->getLocation(pt)->getNeighbor(direction::E)->getCoord();
+                if (subject->getLocation(pt)->neighborExists(direction::NW)) {
+                    std::cout << "NW ";
+                    board::coord dest = subject->getLocation(pt)->getNeighbor(direction::NW)->getCoord();
                     std::cout << "(" << dest.i() << ", " << dest.j() << ") ie ";
                     std::cout << "(" << dest.x << ", " << dest.y << ") ";
                 }
                 //end debug
                 
-                //NW first
-                if(subject->getLocation(pt)->neighborExists(direction::NW)) {
+                //E first
+                if(subject->getLocation(pt)->neighborExists(direction::E)) {
                     writeRectVertexCoordsAndUVs( &vertexCoords, &vertexUVs,
-                            (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 4.0,
-                            i * locVertSpacing + locVertSpacing / 2.0,
-                            (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 4.0,
-                            i * locVertSpacing + locVertSpacing / 2.0,
-                            locHorizSpacing / 2.0 + connSlashOverwidth,
-                            locVertSpacing + connSlashOverheight);
+                            (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 2.0,
+                            i * locVertSpacing,
+                            (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 2.0,
+                            i * locVertSpacing,
+                            locHorizSpacing + connDashOverwidth,
+                            connDashHeight);
                     
-                    //TODO: Old comment, preserved to indicate I may need to adjust how writeRectVertexCoordsAndUVs
-                    //is called w.r.t. inversion:
-                    //the first UV is inverted for all of these b/c slash is horizontally flipped from what texture has for NW
-                    //TODO: These are reflipped, possibly due to coordinate system mismatch?
-                    
-                    //each vertex of the quad needs to know this is a slash
-                    isSlash = 1.0;
+                    //each vert of quad needs to know this is a Dash (not Slash)
+                    isSlash = 0.0;
                     isSlashIndex.push_back(isSlash);
                     isSlashIndex.push_back(isSlash);
                     isSlashIndex.push_back(isSlash);
@@ -626,18 +623,23 @@ bool boardWindow::constructGLBuffers() {
                     isSlashIndex.push_back(isSlash);
                 }
                 
-                //E third
-                if(subject->getLocation(pt)->neighborExists(direction::E)) {
+                //NW third
+                if(subject->getLocation(pt)->neighborExists(direction::NW)) {
                     writeRectVertexCoordsAndUVs( &vertexCoords, &vertexUVs,
-                            (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 2.0,
-                            i * locVertSpacing,
-                            (j - (rowParity)/2.0) * locHorizSpacing + locHorizSpacing / 2.0,
-                            i * locVertSpacing,
-                            locHorizSpacing + connDashOverwidth,
-                            connDashHeight);
+                            (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 4.0,
+                            i * locVertSpacing + locVertSpacing / 2.0,
+                            (j - (rowParity)/2.0) * locHorizSpacing - locHorizSpacing / 4.0,
+                            i * locVertSpacing + locVertSpacing / 2.0,
+                            locHorizSpacing / 2.0 + connSlashOverwidth,
+                            locVertSpacing + connSlashOverheight);
                     
-                    //each vert of quad needs to know this is a Dash (not Slash)
-                    isSlash = 0.0;
+                    //TODO: Old comment, preserved to indicate I may need to adjust how writeRectVertexCoordsAndUVs
+                    //is called w.r.t. inversion:
+                    //the first UV is inverted for all of these b/c slash is horizontally flipped from what texture has for NW
+                    //TODO: These are reflipped, possibly due to coordinate system mismatch?
+                    
+                    //each vertex of the quad needs to know this is a slash
+                    isSlash = 1.0;
                     isSlashIndex.push_back(isSlash);
                     isSlashIndex.push_back(isSlash);
                     isSlashIndex.push_back(isSlash);
@@ -723,7 +725,7 @@ bool boardWindow::setConnIndexBuffer() {
     }
      
     //Note: connectionIndexBuffer was constructed as an index buffer
-    createQOpenGLBufferFromValues(connectionIndexBuffer, vertexIndices);
+    createQOpenGLBufferFromValues(connectionIndexBuffer, vertexIndices, QOpenGLBuffer::DynamicDraw);
         
     if(verbose) {
         std::cout << "\tconnectionIndexBuffer contains "

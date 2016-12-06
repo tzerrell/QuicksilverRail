@@ -16,6 +16,9 @@
 
 #include <cstddef>
 #include <array>
+
+#include <QtGui/QOpenGLFunctions>
+
 #include "train.h"
 #include "delivery.h"
 #include "engineer.h"
@@ -26,7 +29,9 @@ public:
     player(const player& orig);
     virtual ~player();
     
-    std::array<int, 4> getColor() { return color; };
+    std::array<GLfloat, 4> getColor() { return color; };
+    void setColor(std::array<GLfloat, 4> col) { color = col; };
+    void setColor(const GLfloat* col) { for (int i = 0; i < color.size(); ++i) color[i] = col[i]; };
     
     bool isActive() { return active; };
     void setActive(bool actv) { active = actv; };
@@ -38,7 +43,7 @@ private:
     bool active;
     engineer eng;
     std::array<delivery,num_deliveries> deliv;
-    std::array<int, 4> color;   //RGBA components in range [0, 255]
+    std::array<GLfloat, 4> color;   //RGBA components in range [0.0, 1.0]
 };
 
 #endif /* PLAYER_H */

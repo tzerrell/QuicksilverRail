@@ -17,6 +17,8 @@
 #include <cstdio>
 #include <iostream>
 #include "boardWindow.h"
+#include "gameState.h"
+gameState globalState;
 
 #include "board.h"
 #include "terrain.h"

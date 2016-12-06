@@ -108,13 +108,14 @@ private:
     
     //Board render helper functions
     void writeRectVertexCoordsAndUVs(std::vector<GLfloat>* coordList,
-        std::vector<GLfloat>* UVList,
-        GLfloat left, GLfloat top, GLfloat right, GLfloat bottom, 
-        GLfloat horizOverflow, GLfloat vertOverflow,
-        bool invertU = false, bool invertV = false, GLfloat z = 0.0
-    );
+            std::vector<GLfloat>* UVList,
+            GLfloat left, GLfloat top, GLfloat right, GLfloat bottom, 
+            GLfloat horizOverflow, GLfloat vertOverflow,
+            bool invertU = false, bool invertV = false, GLfloat z = 0.0);
     template <class T>
-    void createQOpenGLBufferFromValues( QOpenGLBuffer& buffer, std::vector<T>& valsByVertex);
+    void createQOpenGLBufferFromValues( QOpenGLBuffer& buffer, 
+            std::vector<T>& valsByVertex,
+            QOpenGLBuffer::UsagePattern usage = QOpenGLBuffer::StaticDraw);
     
     /*
      * Graphical parameters

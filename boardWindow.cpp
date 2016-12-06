@@ -411,10 +411,11 @@ void boardWindow::writeRectVertexCoordsAndUVs( std::vector<GLfloat>* coordList,
 
 template <class T>
 void boardWindow::createQOpenGLBufferFromValues( QOpenGLBuffer& buffer,
-        std::vector<T>& valsByVertex) {
+        std::vector<T>& valsByVertex,
+        QOpenGLBuffer::UsagePattern usage) {
     buffer.create();
     buffer.bind();
-    buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    buffer.setUsagePattern(usage);
     buffer.allocate(&valsByVertex[0], valsByVertex.size()*sizeof(valsByVertex[0]));
     buffer.release();
 }
@@ -709,7 +710,7 @@ bool boardWindow::constructGLBuffers() {
         std::cout << "\tconnectionIndexBuffer contains "
                 << vertexIndices.size()
                 << " indices: ";
-        for (int j = 0; j < vertexIndices.size(); ++j) {
+        for (size_t j = 0; j < vertexIndices.size(); ++j) {
             std::cout << vertexIndices[j] << " ";
         }
         std::cout << '\n';

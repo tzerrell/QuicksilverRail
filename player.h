@@ -25,6 +25,11 @@ public:
     player();
     player(const player& orig);
     virtual ~player();
+    
+    std::array<int, 4> getColor() { return color; };
+    
+    bool isActive() { return active; };
+    void setActive(bool actv) { active = actv; };
 private:
     static constexpr std::size_t num_deliveries = 3;
     train trn;
@@ -33,6 +38,7 @@ private:
     bool active;
     engineer eng;
     std::array<delivery,num_deliveries> deliv;
+    std::array<int, 4> color;   //RGBA components in range [0, 255]
 };
 
 #endif /* PLAYER_H */

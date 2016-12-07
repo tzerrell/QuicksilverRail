@@ -4,12 +4,10 @@ flat in float textureType;
 flat in vec4 col;
 uniform sampler2DArray tex;
 
-const vec4 TODOtest = vec4(1.0, 0.0, 0.0, 1.0);
-
 out vec4 color;
 void main(){
   
   uint textureIndex = uint(textureType);
-  color = texture( tex, vec3(UV,textureIndex) ).rgba * TODOtest.rgba;   //TODO: Revamp for player color working?
+  color = texture( tex, vec3(UV,textureIndex) ).rgba * col.rgba;
 }
 

@@ -18,7 +18,7 @@ gameState::gameState() {
     //what we want for the long term.
     
     players.push_back(player());
-    players[0].setColor(std::array<GLfloat,4> {1,0,0,1}); 
+    players[0].setColor(std::array<GLfloat,4> {0,1,0,1}); 
     currPlayer = &players[0];
 }
 

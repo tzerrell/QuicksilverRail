@@ -146,6 +146,7 @@ void boardWindow::render() {
     //Pass our orthographic projection matrix to GLSL
     QMatrix4x4 renderMatrix;
     renderMatrix.ortho(view);
+    shaderProgram.bind();
     glUniformMatrix4fv(projMatrixHandle, 1, GL_FALSE, renderMatrix.constData());
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -196,7 +197,15 @@ void boardWindow::render() {
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
     
+    glDisable(GL_BLEND);
+    shaderProgram.release();
+    
     //Connections
+    fixedColorShaderProgram.bind();
+    glUniformMatrix4fv(projMatrixHandle, 1, GL_FALSE, renderMatrix.constData());
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     connectionVertexBuffer.bind();
     vertPositionHandle = fixedColorShaderProgram.attributeLocation("position");
     fixedColorShaderProgram.enableAttributeArray(vertPositionHandle);
@@ -236,7 +245,7 @@ void boardWindow::render() {
         std::cerr << "Error binding terrain texture atlas.\n";
     }
     terrainTextureHandle[0] = 4;
-    shaderProgram.setUniformValueArray("terrainTextures", terrainTextureHandle, 1);
+    fixedColorShaderProgram.setUniformValueArray("tex", terrainTextureHandle, 1);
     //TODO: End of fake textures
     
     int numVerts = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
@@ -249,10 +258,12 @@ void boardWindow::render() {
     connectionTextureAtlas.release();
     connectionVertexBuffer.release();
     
+    
     glDisableVertexAttribArray(3);
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
+    fixedColorShaderProgram.release();
     
     glDisable(GL_BLEND);
     
@@ -759,18 +770,22 @@ bool boardWindow::setConnIndexBuffer() {
                     connection* conn = loc->getConnection(dir);
                     if (conn->trackType() == track_t::none) {
                         //if there's no track here, color is clear
-                        for (int i = 0; i < 4; ++i) 
-                            vertexColor.push_back(0.0);
+                        for (int k = 0; k < 4; ++k) {
+                            for (int comp = 0; comp < 4; ++comp)
+                                vertexColor.push_back(0.0);
+                        }
                         continue;
                     }
                     player* owner = conn->getOwner();
                     if (owner == nullptr) {
                         //if the track is unowned, color is grey
-                        vertexColor.push_back(0.4);
-                        vertexColor.push_back(0.4);
-                        vertexColor.push_back(0.4);
-                        
-                        vertexColor.push_back(0.0);
+                        for (int k = 0; k < 4; ++k) {
+                            vertexColor.push_back(0.4);
+                            vertexColor.push_back(0.4);
+                            vertexColor.push_back(0.4);
+
+                            vertexColor.push_back(0.0);
+                        }
                         continue;
                     }
                     
@@ -780,9 +795,11 @@ bool boardWindow::setConnIndexBuffer() {
                         std::cout << "This color is: ";
                     }
                     for (int k = 0; k < 4; ++k) {
-                        vertexColor.push_back(owner->getColor()[k]);
-                        if (verbose)
-                            std::cout << owner->getColor()[k] << ',';
+                        for (int comp = 0; comp < 4; ++comp) {
+                            vertexColor.push_back(owner->getColor()[comp]);
+                            if (verbose && k == 0)
+                                std::cout << owner->getColor()[comp] << ',';
+                        }
                     }
                     if (verbose) std::cout << '\n';
                 }

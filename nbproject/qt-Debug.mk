@@ -1072,7 +1072,12 @@ build/Debug/MinGW_Qt-Windows/boardWindow.o: boardWindow.cpp C:/Qt/5.7/mingw53_32
 		C:/Qt/5.7/mingw53_32/include/QtGui/qopengldebug.h \
 		location.h \
 		connection.h \
-		connectionEnums.h
+		connectionEnums.h \
+		player.h \
+		train.h \
+		goods.h \
+		delivery.h \
+		engineer.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o build/Debug/MinGW_Qt-Windows/boardWindow.o boardWindow.cpp
 
 build/Debug/MinGW_Qt-Windows/connection.o: connection.cpp connection.h \

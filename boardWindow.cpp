@@ -31,6 +31,7 @@
 #include "boardWindow.h"
 #include "location.h"
 #include "connection.h"
+#include "player.h"
 
 #include <qopengl.h>
 
@@ -81,7 +82,7 @@ void boardWindow::initGL() {
     
     
     updateShaders("generic.vertexshader", "generic.fragmentshader", &shaderProgram);    //TODO: adjust to allow custom filenames
-    updateShaders("generic.vertexshader", "fixedColor.fragmentshader", &fixedColorShaderProgram);
+    updateShaders("fixedColor.vertexshader", "fixedColor.fragmentshader", &fixedColorShaderProgram);
     projMatrixHandle = glGetUniformLocation(shaderProgram.programId(), "projectionMat");
     constructGLBuffers();
     loadTerrainTextures();
@@ -213,20 +214,28 @@ void boardWindow::render() {
     glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
     
     connectionDashSlashBuffer.bind();
-    texTerrTypeHandle = fixedColorShaderProgram.attributeLocation("terrain");
-    fixedColorShaderProgram.enableAttributeArray(texTerrTypeHandle);
-    fixedColorShaderProgram.setAttributeBuffer(texTerrTypeHandle, GL_FLOAT, 0, 1,
+    int texTypeHandle = fixedColorShaderProgram.attributeLocation("texType");
+    fixedColorShaderProgram.enableAttributeArray(texTypeHandle);
+    fixedColorShaderProgram.setAttributeBuffer(texTypeHandle, GL_FLOAT, 0, 1,
             sizeof(GLfloat));
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2,1,GL_FLOAT, GL_FALSE, 0, (void*)0);
     
+    connectionColorBuffer.bind();
+    int connColorHandle = fixedColorShaderProgram.attributeLocation("color");
+    fixedColorShaderProgram.enableAttributeArray(connColorHandle);
+    fixedColorShaderProgram.setAttributeBuffer(connColorHandle, GL_FLOAT, 0, 4,
+            sizeof(GLfloat));
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3,4,GL_FLOAT, GL_FALSE, 0, (void*)0);
+    
     //TODO: Need textures here
     //TODO: Using fake textures
-    connectionTextureAtlas.bind(3);
+    connectionTextureAtlas.bind(4);
     if (!connectionTextureAtlas.isBound()) {
         std::cerr << "Error binding terrain texture atlas.\n";
     }
-    terrainTextureHandle[0] = 3;
+    terrainTextureHandle[0] = 4;
     shaderProgram.setUniformValueArray("terrainTextures", terrainTextureHandle, 1);
     //TODO: End of fake textures
     
@@ -240,6 +249,7 @@ void boardWindow::render() {
     connectionTextureAtlas.release();
     connectionVertexBuffer.release();
     
+    glDisableVertexAttribArray(3);
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
@@ -713,7 +723,7 @@ bool boardWindow::setConnIndexBuffer() {
     }
     catch (const std::bad_alloc& ex) {
         std::cerr << "\tBad allocation in setConnIndexBuffer. The board"
-                << " is too large. Location element buffers not constructed.\n";
+                << " is too large. Connection index buffer not constructed.\n";
         std::cerr << "Warning: Partial construction of GLBuffers.\n";
         return false;
     }
@@ -723,9 +733,85 @@ bool boardWindow::setConnIndexBuffer() {
         std::cerr << "Warning: Partial construction of GLBuffers.\n";
         return false;
     }
+    
+    
+    
+    
+    //TODO: This chunk
+    //construct a (rail) color buffer for all the connection quads
+    //colors are 4D GLfloat vectors
+    if (verbose) std::cout << "Constructing railColorBuffer.\n";
+    std::vector<GLfloat> vertexColor;
+    try {
+        if (verbose) std::cout << "\tWriting connection vertex indices:\n";
+        for (int i = 0; i < subject->getNumRows(); ++i) {
+            int rowParity = i%2;
+            if (verbose) std::cout << "\ti = " << i;
+            for (int j = 0; j < subject->getNumCols() + rowParity; ++j) {
+                if (verbose) std::cout << "\n\t\tj = " << j << " of " << subject->getNumCols() + rowParity << ":\t";
+                board::coord pt(j, i, subject,
+                        board::coord::system::globalOrthoLattice);
+                location* loc = subject->getLocation(pt);
+                
+                for (direction dir = direction::E; dir != direction::W; ++dir) {
+                    if (!loc->neighborExists(dir))
+                        continue;   //Skip if there's no neighbor in this direction
+                    connection* conn = loc->getConnection(dir);
+                    if (conn->trackType() == track_t::none) {
+                        //if there's no track here, color is clear
+                        for (int i = 0; i < 4; ++i) 
+                            vertexColor.push_back(0.0);
+                        continue;
+                    }
+                    player* owner = conn->getOwner();
+                    if (owner == nullptr) {
+                        //if the track is unowned, color is grey
+                        vertexColor.push_back(0.4);
+                        vertexColor.push_back(0.4);
+                        vertexColor.push_back(0.4);
+                        
+                        vertexColor.push_back(0.0);
+                        continue;
+                    }
+                    
+                    if (verbose) {
+                        std::cout << "Setting color at (" << i << "," << j <<
+                                ") for player at index " << owner << '\n';
+                        std::cout << "This color is: ";
+                    }
+                    for (int k = 0; k < 4; ++k) {
+                        vertexColor.push_back(owner->getColor()[k]);
+                        if (verbose)
+                            std::cout << owner->getColor()[k] << ',';
+                    }
+                    if (verbose) std::cout << '\n';
+                }
+            }
+            if (verbose) std::cout << '\n';
+        }
+    }
+    catch (const std::bad_alloc& ex) {
+        std::cerr << "\tBad allocation in setConnIndexBuffer. The board"
+                << " is too large. Connection color buffers not constructed.\n";
+        std::cerr << "Warning: Partial construction of GLBuffers.\n";
+        return false;
+    }
+    catch (const std::out_of_range& ex) {
+        std::cerr << "\tOut of range error in setConnIndexBuffer. Perhaps due"
+                << " to a location without an expected connection?\n";
+        std::cerr << "Warning: Partial construction of GLBuffers.\n";
+        return false;
+    }
+    //TODO: End of chunk
      
+    
+    
+    
+    
+    
     //Note: connectionIndexBuffer was constructed as an index buffer
     createQOpenGLBufferFromValues(connectionIndexBuffer, vertexIndices, QOpenGLBuffer::DynamicDraw);
+    createQOpenGLBufferFromValues(connectionColorBuffer, vertexColor, QOpenGLBuffer::DynamicDraw);
         
     if(verbose) {
         std::cout << "\tconnectionIndexBuffer contains "

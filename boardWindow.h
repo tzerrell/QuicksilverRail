@@ -91,6 +91,7 @@ private:
     QOpenGLBuffer connectionUVBuffer;
     QOpenGLBuffer connectionDashSlashBuffer;
     QOpenGLBuffer connectionIndexBuffer;
+    QOpenGLBuffer connectionColorBuffer;
     std::map<terrain, std::string> terrainTextureFilenames;
     
     void initGL();

@@ -265,8 +265,9 @@ int board::coord::connLForNWNEOnly() {
     //determine connDir, and so we can't determine which branch to use for connL
     //without the NW/NE value of connL
     
-    int ret = (int)(s() + (yMantissa()/2.0) + 0.5);
-    if (s() < 0) --ret;
+    float preRounding = s() + (yMantissa()/2.0) + 0.5;
+    int ret = (int)(preRounding);
+    if (preRounding < 0) --ret;
     return ret;
 }
 
@@ -296,40 +297,6 @@ direction board::coord::connDir() {
     if (yMantCenter0 > 0.5) yMantCenter0 -= 1;
     
     float xMant = xMantissa();
-    
-    /*
-     * TODO: Delete this block once local testing is complete
-    if (true) {
-        //TODO: TEMP!!!!
-        std::cout << "xMantissa: " << xMant << ", yMantissa @ 0: " << yMantCenter0 << "; ";
-        
-        std::cout << "bdd:";
-        std::cout << (2.0/3) * (xMant - 1) << "< yMant@0 <" << (2.0/3) * xMant << ';';
-        std::cout << (-2.0/3) * (xMant) << "< yMant@0 <" << (-2.0/3) * (xMant - 1) << '. ';
-        //TODO: Mirror
-        if ((2.0/3) * (xMant - 1) < yMantCenter0)
-            std::cout << "true,";
-        else
-            std::cout << "false,";
-        
-        if (yMantCenter0 < (2.0/3) * xMant)
-            std::cout << "true,";
-        else
-            std::cout << "false,";
-        
-        if ((-2.0/3) * (xMant) < yMantCenter0)
-            std::cout << "true,";
-        else
-            std::cout << "false,";
-        
-        if (yMantCenter0 < (-2.0/3) * (xMant - 1))
-            std::cout << "true.";
-        else
-            std::cout << "false.";
-        
-        std::cout << "\n";
-    }
-    */
     
     if ((2.0/3) * (xMant - 1) < yMantCenter0 && yMantCenter0 < (2.0/3) * xMant
             && (-2.0/3) * (xMant) < yMantCenter0 && yMantCenter0 < (-2.0/3) * (xMant - 1)) {

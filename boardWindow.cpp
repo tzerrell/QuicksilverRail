@@ -230,13 +230,7 @@ void boardWindow::render() {
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2,1,GL_FLOAT, GL_FALSE, 0, (void*)0);
     
-    connectionColorBuffer.bind();
-    int connColorHandle = fixedColorShaderProgram.attributeLocation("color");
-    fixedColorShaderProgram.enableAttributeArray(connColorHandle);
-    fixedColorShaderProgram.setAttributeBuffer(connColorHandle, GL_FLOAT, 0, 4,
-            sizeof(GLfloat));
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3,4,GL_FLOAT, GL_FALSE, 0, (void*)0);
+    bindGLSLBuffer(&fixedColorShaderProgram, &connectionColorBuffer, "color", 3, 4);
     
     //TODO: Need textures here
     //TODO: Using fake textures
@@ -273,6 +267,17 @@ void boardWindow::render() {
     
     if (animating) renderLater();
 }
+
+ void boardWindow::bindGLSLBuffer(QOpenGLShaderProgram* prog, QOpenGLBuffer* buff, 
+            std::string name, int index, int dim, int type) {
+    buff->bind();
+    int handle = prog->attributeLocation(name.c_str());
+    prog->enableAttributeArray(handle);
+    prog->setAttributeBuffer(handle, type, 0, dim,
+            sizeof(type));
+    glEnableVertexAttribArray(index);
+    glVertexAttribPointer(index,dim,type, GL_FALSE, 0, (void*)0);
+ }
 
 void boardWindow::mouseMoveEvent(QMouseEvent* event) {
     QCoreApplication::sendEvent(rootWin, event);

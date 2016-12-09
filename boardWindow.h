@@ -103,6 +103,8 @@ private:
     
     //Shaders
     bool createShaderProgram(QOpenGLShaderProgram* prog);     //return whether successfully created. If false, the old shader program (if any) is retained in the shader program
+    void bindGLSLBuffer(QOpenGLShaderProgram* prog, QOpenGLBuffer* buff, 
+            std::string name, int index, int dim, int type = GL_FLOAT);
     std::string vertexShaderFilename;
     std::string fragmentShaderFilename;
     QOpenGLShaderProgram shaderProgram;

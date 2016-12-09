@@ -180,12 +180,15 @@ void boardWindow::render() {
     glDisable(GL_BLEND);
     shaderProgram.release();
     
-    //Connections
+    /* 
+     * Connections 
+     */
     fixedColorShaderProgram.bind();
     glUniformMatrix4fv(projMatrixHandle, 1, GL_FALSE, renderMatrix.constData());
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
+    //main connections
     bindGLSLBuffer(&fixedColorShaderProgram, &connectionVertexBuffer, "position", 0, 3);
     bindGLSLBuffer(&fixedColorShaderProgram, &connectionUVBuffer, "UV", 1, 2);
     bindGLSLBuffer(&fixedColorShaderProgram, &connectionDashSlashBuffer, "texType", 2, 1);    
@@ -195,17 +198,14 @@ void boardWindow::render() {
     //TODO: Using fake textures
     connectionTextureAtlas.bind(4);
     if (!connectionTextureAtlas.isBound()) {
-        std::cerr << "Error binding terrain texture atlas.\n";
+        std::cerr << "Error binding connection texture atlas.\n";
     }
     terrainTextureHandle[0] = 4;
     fixedColorShaderProgram.setUniformValueArray("tex", terrainTextureHandle, 1);
     //TODO: End of fake textures
     
-    int numVerts = subject->getNumRows() * subject->getNumCols() + subject->getNumRows()/2;
-    numQuads = numVerts * 3 - 2 * subject->getNumCols() - subject->getNumRows()
-            - 2 * (subject->getNumRows()/2);
     connectionIndexBuffer.bind();
-    glDrawElements(GL_TRIANGLES, numQuads * 6, 
+    glDrawElements(GL_TRIANGLES, connectionIndexBuffer.size(), 
             GL_UNSIGNED_SHORT, 0);
     connectionIndexBuffer.release();
     connectionTextureAtlas.release();

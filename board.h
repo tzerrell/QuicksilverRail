@@ -98,6 +98,13 @@ public:
         int i();    int j();    //The orthogonal lattice coordinates of this pt
         int l();    int m();    //The triangular lattice coordinates of this pt
         float s();  float t();  //The triangular analog coordinates of this pt
+        int connI();int connJ();//The ortho lattice coords of the root pt for the connection this coord is in
+        int connL();int connM();//The ortho lattice coords of the root pt for the connection this coord is in
+        direction connDir();    //The direction of the connection this coord is in
+    private:
+        float xMantissa();
+        float yMantissa();
+        int connLForNWNEOnly();
     };
     
     location* getLocation(coord pt);

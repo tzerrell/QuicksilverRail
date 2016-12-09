@@ -95,6 +95,26 @@ void MainGameplayWindow::mouseMoveEvent(QMouseEvent *event) {
     }
     else
         internalCoords.append(", off board");
+    internalCoords.append("; connection: (");
+    strBuilder.setNum(pt.connI()); internalCoords.append(strBuilder);
+    internalCoords.append(",");
+    strBuilder.setNum(pt.connJ()); internalCoords.append(strBuilder);
+    internalCoords.append(",");
+    switch (pt.connDir()) {
+    case direction::E:
+        internalCoords.append("E)");
+        break;
+    case direction::NE:
+        internalCoords.append("NE)");
+        break;
+    case direction::NW:
+        internalCoords.append("NW)");
+        break;
+    default:
+        internalCoords.append("ERROR)");
+        std::cerr << "String display error from invalid connDir()\n";
+        break;
+    }
     
     statusBar()->showMessage(internalCoords);
     QMainWindow::mouseMoveEvent(event);

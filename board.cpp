@@ -215,16 +215,97 @@ int board::coord::m() {
 
 int board::coord::i() {
     float M = m();
-    
-    float Mrounder;
-    if (M >= 0)
-        Mrounder = 1;
-    else
-        Mrounder = 1; //Mrounder = 0;
+    float Mrounder = 1;
     return (int)((M + Mrounder)/2) + (int)(l());
 }
+
 int board::coord::j() {
     return m();
+}
+
+int board::coord::connM() {
+    if (connDir() == direction::E) {
+        int roundedT = (int)(t() + 0.5);
+        if (t() + 0.5 < 0) --roundedT;
+        return roundedT;
+    }
+    
+    int ret = (int)t();
+    if (t() < 0) --ret;
+    return ret;
+}
+
+int board::coord::connJ() {
+    if (connDir() == direction::E) {
+        int roundedY = (int)(y + 0.5);
+        if (y + 0.5 < 0) --roundedY;
+        return roundedY;
+    }
+    
+    int ret = (int)y;
+    if (y < 0) --ret;
+    return ret;
+}
+
+float board::coord::xMantissa() {
+    float ret = x - (int)x;
+    if (x < 0) ret += 1;
+    return ret;
+}
+
+float board::coord::yMantissa() {
+    float ret = y - (int)y;
+    if (y < 0) ret += 1;
+    return ret;
+}
+
+int board::coord::connLForNWNEOnly() {
+    //The value of connL for NW and NE needs to be calculated in a separate
+    //function from that for E because the NW/NE value of connL is used to 
+    //determine connDir, and so we can't determine which branch to use for connL
+    //without the NW/NE value of connL
+    
+    int ret = (int)(s() + (yMantissa()/2.0) + 0.5);
+    if (s() < 0) --ret;
+    return ret;
+}
+
+int board::coord::connL() {
+    if (connDir() == direction::E) {
+        int ret = (int)(l());
+        if (l() < 0) {
+            --ret;
+        }
+        return ret;
+    }
+    
+    return connLForNWNEOnly();
+}
+
+int board::coord::connI() {
+    if (connDir() == direction::E) {
+        int ret = (int)(x + 0.5 * (j() % 2));
+        if (x + 0.5 * (j() % 2) < 0) --ret;
+        return ret;
+    }
+    return (int)((connM() + 1)/2) + connL();
+}
+
+direction board::coord::connDir() {
+    float yMantCenter0 = yMantissa();
+    if (yMantCenter0 > 0.5) yMantCenter0 -= 1;
+    
+    float xMant = xMantissa();
+    
+    if ((2/3) * (xMant -1) < yMantCenter0 && yMantCenter0 < (2/3) * xMant
+            && (-2/3) * (xMant) && (-2/3) * (xMant - 1)) {
+        return direction::E;
+    }
+    
+    if (connLForNWNEOnly() >= s())
+        return direction::NW;
+    else
+        return direction::NE;
 }
 
 location* board::getLocation(board::coord pt) {

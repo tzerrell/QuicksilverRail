@@ -155,29 +155,9 @@ void boardWindow::render() {
     
     //Render scene
     //Locations
-    locationVertexBuffer.bind();
-    int vertPositionHandle = shaderProgram.attributeLocation("position");
-    shaderProgram.enableAttributeArray(vertPositionHandle);
-    shaderProgram.setAttributeBuffer(vertPositionHandle, GL_FLOAT, 0, 
-            3, sizeof(GLfloat));
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
-    
-    locationUVBuffer.bind();
-    int texUVHandle = shaderProgram.attributeLocation("UV");
-    shaderProgram.enableAttributeArray(texUVHandle);
-    shaderProgram.setAttributeBuffer(texUVHandle, GL_FLOAT, 0, 2,
-            sizeof(GLfloat));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
-    
-    locationTerrainTypeBuffer.bind();
-    int texTerrTypeHandle = shaderProgram.attributeLocation("terrain");
-    shaderProgram.enableAttributeArray(texTerrTypeHandle);
-    shaderProgram.setAttributeBuffer(texTerrTypeHandle, GL_FLOAT, 0, 1,
-            sizeof(GLfloat));
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2,1,GL_FLOAT, GL_FALSE, 0, (void*)0);
+    bindGLSLBuffer(&shaderProgram, &locationVertexBuffer, "position", 0, 3);
+    bindGLSLBuffer(&shaderProgram, &locationUVBuffer, "UV", 1, 2);
+    bindGLSLBuffer(&shaderProgram, &locationTerrainTypeBuffer, "terrain", 2, 1);
     
     terrainTextureAtlas.bind(3);
     if (!terrainTextureAtlas.isBound()) {
@@ -206,30 +186,9 @@ void boardWindow::render() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    connectionVertexBuffer.bind();
-    vertPositionHandle = fixedColorShaderProgram.attributeLocation("position");
-    fixedColorShaderProgram.enableAttributeArray(vertPositionHandle);
-    fixedColorShaderProgram.setAttributeBuffer(vertPositionHandle, GL_FLOAT, 0, 
-            3, sizeof(GLfloat));
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,0,(void*)0);
-    
-    connectionUVBuffer.bind();
-    texUVHandle = fixedColorShaderProgram.attributeLocation("UV");
-    fixedColorShaderProgram.enableAttributeArray(texUVHandle);
-    fixedColorShaderProgram.setAttributeBuffer(texUVHandle, GL_FLOAT, 0, 2,
-            sizeof(GLfloat));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1,2,GL_FLOAT, GL_FALSE, 0, (void*)0);
-    
-    connectionDashSlashBuffer.bind();
-    int texTypeHandle = fixedColorShaderProgram.attributeLocation("texType");
-    fixedColorShaderProgram.enableAttributeArray(texTypeHandle);
-    fixedColorShaderProgram.setAttributeBuffer(texTypeHandle, GL_FLOAT, 0, 1,
-            sizeof(GLfloat));
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2,1,GL_FLOAT, GL_FALSE, 0, (void*)0);
-    
+    bindGLSLBuffer(&fixedColorShaderProgram, &connectionVertexBuffer, "position", 0, 3);
+    bindGLSLBuffer(&fixedColorShaderProgram, &connectionUVBuffer, "UV", 1, 2);
+    bindGLSLBuffer(&fixedColorShaderProgram, &connectionDashSlashBuffer, "texType", 2, 1);    
     bindGLSLBuffer(&fixedColorShaderProgram, &connectionColorBuffer, "color", 3, 4);
     
     //TODO: Need textures here
@@ -252,14 +211,13 @@ void boardWindow::render() {
     connectionTextureAtlas.release();
     connectionVertexBuffer.release();
     
-    
     glDisableVertexAttribArray(3);
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
+    glDisable(GL_BLEND);
     fixedColorShaderProgram.release();
     
-    glDisable(GL_BLEND);
     
     printDebugLog();
     

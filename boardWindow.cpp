@@ -146,15 +146,67 @@ void boardWindow::render() {
     //Pass our orthographic projection matrix to GLSL
     QMatrix4x4 renderMatrix;
     renderMatrix.ortho(view);
-    shaderProgram.bind();
-    glUniformMatrix4fv(projMatrixHandle, 1, GL_FALSE, renderMatrix.constData());
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    //Render scene
+    renderLocations();
+    
+    /* 
+     * Connections 
+     */
+    fixedColorShaderProgram.bind();
+    glUniformMatrix4fv(projMatrixHandle, 1, GL_FALSE, renderMatrix.constData());
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    //Render scene
-    //Locations
+    //main connections
+    bindGLSLBuffer(&fixedColorShaderProgram, &connectionVertexBuffer, "position", 0, 3);
+    bindGLSLBuffer(&fixedColorShaderProgram, &connectionUVBuffer, "UV", 1, 2);
+    bindGLSLBuffer(&fixedColorShaderProgram, &connectionDashSlashBuffer, "texType", 2, 1);    
+    bindGLSLBuffer(&fixedColorShaderProgram, &connectionColorBuffer, "color", 3, 4);
+    
+    //TODO: Need textures here
+    //TODO: Using fake textures
+    connectionTextureAtlas.bind(4);
+    if (!connectionTextureAtlas.isBound()) {
+        std::cerr << "Error binding connection texture atlas.\n";
+    }
+    int terrainTextureHandle[1] = { 4 };
+    fixedColorShaderProgram.setUniformValueArray("tex", terrainTextureHandle, 1);
+    //TODO: End of fake textures
+    
+    connectionIndexBuffer.bind();
+    glDrawElements(GL_TRIANGLES, connectionIndexBuffer.size(), 
+            GL_UNSIGNED_SHORT, 0);
+    connectionIndexBuffer.release();
+    connectionTextureAtlas.release();
+    connectionVertexBuffer.release();
+    
+    glDisableVertexAttribArray(3);
+    glDisableVertexAttribArray(2);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(0);
+    glDisable(GL_BLEND);
+    fixedColorShaderProgram.release();
+    
+    
+    printDebugLog();
+    
+    context->swapBuffers(this);
+    
+    if (animating) renderLater();
+}
+
+void boardWindow::renderLocations() {
+    QMatrix4x4 renderMatrix;
+    renderMatrix.ortho(view);
+    shaderProgram.bind();
+    glUniformMatrix4fv(projMatrixHandle, 1, GL_FALSE, renderMatrix.constData());
+    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     bindGLSLBuffer(&shaderProgram, &locationVertexBuffer, "position", 0, 3);
     bindGLSLBuffer(&shaderProgram, &locationUVBuffer, "UV", 1, 2);
     bindGLSLBuffer(&shaderProgram, &locationTerrainTypeBuffer, "terrain", 2, 1);
@@ -179,51 +231,6 @@ void boardWindow::render() {
     
     glDisable(GL_BLEND);
     shaderProgram.release();
-    
-    /* 
-     * Connections 
-     */
-    fixedColorShaderProgram.bind();
-    glUniformMatrix4fv(projMatrixHandle, 1, GL_FALSE, renderMatrix.constData());
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-    //main connections
-    bindGLSLBuffer(&fixedColorShaderProgram, &connectionVertexBuffer, "position", 0, 3);
-    bindGLSLBuffer(&fixedColorShaderProgram, &connectionUVBuffer, "UV", 1, 2);
-    bindGLSLBuffer(&fixedColorShaderProgram, &connectionDashSlashBuffer, "texType", 2, 1);    
-    bindGLSLBuffer(&fixedColorShaderProgram, &connectionColorBuffer, "color", 3, 4);
-    
-    //TODO: Need textures here
-    //TODO: Using fake textures
-    connectionTextureAtlas.bind(4);
-    if (!connectionTextureAtlas.isBound()) {
-        std::cerr << "Error binding connection texture atlas.\n";
-    }
-    terrainTextureHandle[0] = 4;
-    fixedColorShaderProgram.setUniformValueArray("tex", terrainTextureHandle, 1);
-    //TODO: End of fake textures
-    
-    connectionIndexBuffer.bind();
-    glDrawElements(GL_TRIANGLES, connectionIndexBuffer.size(), 
-            GL_UNSIGNED_SHORT, 0);
-    connectionIndexBuffer.release();
-    connectionTextureAtlas.release();
-    connectionVertexBuffer.release();
-    
-    glDisableVertexAttribArray(3);
-    glDisableVertexAttribArray(2);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(0);
-    glDisable(GL_BLEND);
-    fixedColorShaderProgram.release();
-    
-    
-    printDebugLog();
-    
-    context->swapBuffers(this);
-    
-    if (animating) renderLater();
 }
 
  void boardWindow::bindGLSLBuffer(QOpenGLShaderProgram* prog, QOpenGLBuffer* buff, 

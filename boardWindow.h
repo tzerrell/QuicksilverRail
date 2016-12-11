@@ -120,6 +120,7 @@ private:
     void createQOpenGLBufferFromValues( QOpenGLBuffer& buffer, 
             std::vector<T>& valsByVertex,
             QOpenGLBuffer::UsagePattern usage = QOpenGLBuffer::StaticDraw);
+    void renderLocations();
     
     /*
      * Graphical parameters

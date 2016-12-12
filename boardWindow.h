@@ -95,6 +95,7 @@ private:
     std::map<terrain, std::string> terrainTextureFilenames;
     
     void initGL();
+    void createContext();
     void loadTerrainTextureFilenames(std::istream& in);
     void loadTerrainTextures();
     void initializeTextureAtlas(QOpenGLTexture& atlas, std::size_t layers, 

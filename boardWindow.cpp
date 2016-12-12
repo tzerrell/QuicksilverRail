@@ -110,26 +110,26 @@ void boardWindow::printDebugLog() {
     } while (errorCode != GL_NO_ERROR);
 }
 
+void boardWindow::createContext() {
+    context = new QOpenGLContext(this); //TODO: is deleting in dtor right?
+    debugLogger = new QOpenGLDebugLogger(); //TODO: is deleting in dtor right?
+    if (!debugLogger->initialize())
+        std::cerr << "Unable to initialize OpenGL Debug Logger.\n";
+    QSurfaceFormat format(QSurfaceFormat::defaultFormat());
+    format.setAlphaBufferSize(8);
+    format.setOption(QSurfaceFormat::DebugContext);
+    context->setFormat(format);
+    context->create();
+    debugLogger->startLogging();
+}
+
 void boardWindow::render() {
-    if (!isExposed()) return;
+    if (!isExposed()) return;   //Don't draw if window can't be seen
     
+    //On first render, initialize OpenGL and the context.
     bool uninitialized = false;
     if (!context) {
-        context = new QOpenGLContext(this); //TODO: is deleting in dtor right?
-        debugLogger = new QOpenGLDebugLogger(); //TODO: is deleting in dtor right?
-        if (!debugLogger->initialize())
-            std::cerr << "Unable to initialize OpenGL Debug Logger.\n";
-        QSurfaceFormat format(QSurfaceFormat::defaultFormat());
-        format.setAlphaBufferSize(8);
-        format.setOption(QSurfaceFormat::DebugContext);
-        context->setFormat(format);
-        context->create();
-        debugLogger->startLogging();
-        
-        //We would use this if we had VAOs, but we're using OpenGL 2 so we don't
-        //glGenVertexArrays(1, &vertexArrayID);
-        //glBindVertexArray(vertexArrayID);
-        
+        createContext();
         uninitialized = true;
     }
     context->makeCurrent(this);
@@ -138,7 +138,8 @@ void boardWindow::render() {
         initializeOpenGLFunctions();
         initGL();   //other OpenGL initialization code goes here
     }
-    setConnIndexBuffer();
+    
+    setConnIndexBuffer();   //Show connections that actually exist
     
     const qreal pixelRatio = devicePixelRatio();
     glViewport(0, 0, width() * pixelRatio, height() * pixelRatio);

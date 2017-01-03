@@ -66,6 +66,7 @@ protected:
     
     bool constructGLBuffers();
     bool setConnIndexBuffer();
+    void setMouseHoverBuffers(board::coord mouseLoc);
 private:
     QMainWindow* rootWin;
     board* subject;

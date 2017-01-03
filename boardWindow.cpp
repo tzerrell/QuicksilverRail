@@ -246,9 +246,23 @@ void boardWindow::renderLocations() {
  }
 
 void boardWindow::mouseMoveEvent(QMouseEvent* event) {
-    QCoreApplication::sendEvent(rootWin, event);
+    if (!context) {
+        //Do nothing but pass this event on if there is no context yet
+        QCoreApplication::sendEvent(rootWin, event);
+        return;
+    }
     
-    //QWindow::mouseMoveEvent(event);
+    board::coord mouseLoc(event->x(), event->y(), this);
+    if (subject->isOnBoard(mouseLoc)) {
+        int i = mouseLoc.connI();
+        int j = mouseLoc.connJ();
+        direction dir = mouseLoc.connDir();
+        
+        setMouseHoverBuffers(mouseLoc); //Prepare graphics related to mouse hovering
+    }
+    
+    //Higher level window gets to process this as well
+    QCoreApplication::sendEvent(rootWin, event);
 }
 
 bool boardWindow::event(QEvent *event)
@@ -658,6 +672,71 @@ bool boardWindow::constructGLBuffers() {
     createQOpenGLBufferFromValues(connectionDashSlashBuffer, isSlashIndex);
     
     return setConnIndexBuffer();
+}
+
+void boardWindow::setMouseHoverBuffers(board::coord mouseLoc) {
+    //For now, this only shows a potential added rail section (and w/out nuance)
+    std::vector<GLushort> vertexIndices;
+    try {
+        /*
+         * Formula for the number of connection quads prior to the one at (i,j,d):
+         * 
+         * For even parity rows, there are 3 connections for each location except
+         * the last, which is lacking the East connection. This gives a total of
+         * 3*width - 1 connections.
+         * For odd parity rows, there are 3 connections for each location except
+         * the first, which is lacking the NW connection, and the last, which is
+         * lacking the NE and E connections. This gives a total of 3*width
+         * connections (from 3*(width+1) locations - 3 missing connections).
+         * For the final row all the NE and NW connections are missing and so
+         * there is only 1 connection per location.
+         * Connections are drawn in the order E then NE then NW.
+         */
+        int i = mouseLoc.connI();
+        int j = mouseLoc.connJ();
+        direction dir = mouseLoc.connDir();
+        GLushort firstVertIndex = 0;//For now this counts the number of
+                                    //preceding quads. Later we'll multiply by 4
+                                    //to get the actual index of the first vert
+                                    //of this connection quad.
+        firstVertIndex += ((j+1)/2) * (3 * subject->getNumCols() - 1);
+        firstVertIndex += (j/2) * (3 * subject->getNumCols());
+        if (j == subject->getNumRows() - 1) {
+            //On last row ...
+            firstVertIndex += i;
+        }
+        else {
+            int parity = j % 2;
+            if (parity == 0) {
+                firstVertIndex += 3 * i;
+                if (i == subject->getNumCols() - 1) {
+                    if (dir == direction::NW)
+                        firstVertIndex += 1;
+                }
+            }
+            else // parity == 1
+            {
+                firstVertIndex += 3 * i - 1;
+                if (i != subject->getNumCols()) {
+                    //Do not have to do i == 0 case separately as the missing
+                    //connection when i == 0 is in the last direction (NW)
+                    if (dir == direction::NE) {
+                        firstVertIndex += 1;
+                    }
+                    else if (dir == direction::NW) {
+                        firstVertIndex += 2;
+                    }
+                }
+            }
+        }
+        firstVertIndex *= 4;
+        //TODO: Append this and next 3 vert indices
+        //TODO: Set the color; ideally in a global or uniform or some such, not
+        //in a buffer (which'll need a bunch of useless verts))
+    }
+    catch (TODO) {
+        
+    }
 }
 
 bool boardWindow::setConnIndexBuffer() {
